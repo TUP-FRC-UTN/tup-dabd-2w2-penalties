@@ -1,1 +1,112 @@
-<p>fine-detail works!</p>
+<div class="row justify-content-center align-items-center g-2">
+  <div class="col-12">
+    <div class="card p-3 m-3">
+      <div class="card-body">
+        <div class="row justify-content-center align-items-center g-2 mb-3">
+          <div class="col-12">
+            <h2>Multa {{ fineId }}</h2>
+            <h5>Detalle</h5>
+
+            @if(fine == undefined){
+            <div class="spinner-border" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            }@else {
+            <form #form="ngForm" class="row g-3 needs-validation" novalidate>
+              <div class="row justify-content-around align-items-center g-2">
+                <div class="col-4">
+                  <label for="inputModel" class="form-label">Lote</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="inputModel"
+                    [(ngModel)]="fine.plotId"
+                    #plot="ngModel"
+                    name="plotId"
+                    disabled
+                  />
+                </div>
+                <div class="col-4">
+                  <label for="inputModel" class="form-label">Tipo</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="inputModel"
+                    [(ngModel)]="fine.sanctionType.name"
+                    #sanctionType="ngModel"
+                    name="sanctionTypeName"
+                    disabled
+                  />
+                </div>
+              </div>
+
+              <div class="row justify-content-around align-items-center g-2">
+                <div class="col-4">
+                  <label for="inputModel" class="form-label">Alta</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    [value]="fine.createdDate | date : 'dd/MM/yyyy'"
+                    disabled
+                  />
+                </div>
+                <div class="col-4">
+                  <label for="inputModel" class="form-label">Estado</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="inputModel"
+                    [(ngModel)]="fine.fineState"
+                    #fineState="ngModel"
+                    name="fineState"
+                    disabled
+                  />
+                </div>
+              </div>
+            </form>
+
+            <div class="row justify-content-center align-items-center g-2 mt-3">
+              <div class="col">
+                <h5>Infracciones</h5>
+
+                <table class="table table-striped justify-content-around">
+                  <thead>
+                    <tr>
+                      <th scope="col">Infracción</th>
+                      <th scope="col">Usuario</th>
+                      <th scope="col">Alta</th>
+                      <th scope="col">Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (infraction of fine.infractions; track infraction.id;
+                    let i = $index) {
+                    <tr>
+                      <th scope="row">{{ infraction.id }}</th>
+                      <td>{{ infraction.createdBy | number }}</td>
+                      <td>
+                        {{ infraction.createdDate | date : "dd/MM/yyyy" }}
+                      </td>
+                      <td>
+                        <button
+                          type="button"
+                          class="btn btn-primary"
+                          (click)="viewInfractionDetail(infraction.id)"
+                        >
+                          Ver Detalle
+                        </button>
+                      </td>
+                    </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

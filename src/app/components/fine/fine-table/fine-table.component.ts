@@ -1,5 +1,5 @@
-import { AsyncPipe } from '@angular/common';
-import { Component, QueryList, ViewChildren } from '@angular/core';
+import { AsyncPipe, CommonModule } from '@angular/common';
+import { Component, inject, QueryList, ViewChildren } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { NgbdSortableHeader, SortEvent } from './sortable.directive';
@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { NgbHighlight, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { Fine } from '../../../models/moderations/fine.model';
 import { FineService } from '../../../services/fine.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-fine-table',
@@ -17,6 +18,7 @@ import { FineService } from '../../../services/fine.service';
     NgbHighlight,
     NgbdSortableHeader,
     NgbPaginationModule,
+    CommonModule
   ],
   templateUrl: './fine-table.component.html',
   providers: [FineService],
@@ -27,7 +29,7 @@ export class FineTable {
 
   @ViewChildren(NgbdSortableHeader)
   headers!: QueryList<NgbdSortableHeader>;
-  router: any;
+  router = inject(Router);
 
   constructor(public service: FineService) {
     this.fines$ = service.fines$;
@@ -47,8 +49,6 @@ export class FineTable {
   }
 
   viewDetail(id: number) {
-    console.log('boton apretados', id);
-    console.log(this.fines$);
     this.router.navigate([`/fine/${id}`]);
   }
 }
