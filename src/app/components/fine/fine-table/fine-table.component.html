@@ -14,7 +14,6 @@
         [(ngModel)]="service.searchTerm"
       />
     </div>
-
   </div>
 
   <table class="table table-striped">
@@ -36,11 +35,10 @@
     </thead>
     <tbody>
       @if (service.loading$ | async) {
-        <div class="spinner-border" role="status">
-          <span class="visually-hidden">Loading...</span>
-        </div>
-      }@else {
-      @for (fine of fines$ | async; track fine.id) {
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      }@else { @for (fine of fines$ | async; track fine.id) {
       <!-- <tr>
 					<th scope="row">{{ fine.id }}</th>
 					<td>
@@ -86,7 +84,11 @@
         </td>
 
         <td>
-          <button type="button" class="btn btn-primary" (click)="viewDetail(fine.id)">
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="viewDetail(fine.id)"
+          >
             Ver Detalle
           </button>
         </td>
@@ -95,8 +97,7 @@
       <tr>
         <td colspan="4" style="text-align: center">No results found</td>
       </tr>
-      }
-    }
+      } }
     </tbody>
   </table>
 

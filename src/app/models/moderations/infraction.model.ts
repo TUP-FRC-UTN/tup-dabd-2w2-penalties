@@ -1,6 +1,7 @@
 import { Claim } from './claim.model';
+import { EntityBase } from './entityBase.model';
 
-export interface Infraction {
+export interface Infraction extends EntityBase {
   userId: Number;
 
   description: string;

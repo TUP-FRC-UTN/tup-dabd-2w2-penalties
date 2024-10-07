@@ -125,4 +125,8 @@ export class FineService {
 
     // return of({ fines: [], total: 0 });
   }
+
+    getFineById(id: number) {
+    return this.http.get<Fine>(`${this.apiUrl}/fine/${id}`);
+  }
 }
