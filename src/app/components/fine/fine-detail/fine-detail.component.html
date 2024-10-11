@@ -51,16 +51,20 @@
                   />
                 </div>
                 <div class="col-4">
-                  <label for="inputModel" class="form-label">Estado</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="inputModel"
+                  <label for="fineStateSelect" class="form-label">Estado</label>
+                  <select
+                    class="form-select"
+                    id="fineStateSelect"
                     [(ngModel)]="fine.fineState"
-                    #fineState="ngModel"
                     name="fineState"
-                    disabled
-                  />
+                    #fineState="ngModel"
+                  >
+                    @for (key of fineService.fineStatusKeys; track $index) {
+                    <option [value]="key">
+                      {{ fineService.getValueByKeyForStatusEnum(key) }}
+                    </option>
+                    }
+                  </select>
                 </div>
               </div>
             </form>

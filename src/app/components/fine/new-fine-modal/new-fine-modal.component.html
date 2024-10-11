@@ -1,0 +1,59 @@
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Nueva Multa</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <form
+      #form="ngForm"
+      (ngSubmit)="createFine()"
+      class="row g-3 needs-validation"
+      novalidateclass="row g-3"
+    >
+      <div class="col-md-6">
+        <label for="inputState" class="form-label">Lote</label>
+        <select id="inputState" class="form-select">
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label for="inputState" class="form-label">Tipo</label>
+        <select id="inputState" class="form-select">
+          <option selected>Ruidos Molestos</option>
+          <option selected>Salida tardia</option>
+          <option selected>Mal uso de infraestructura</option>
+        </select>
+      </div>
+      <div class="col-12">
+        <label for="inputAddress" class="form-label">Descripción</label>
+        <input
+          type="text"
+          class="form-control"
+          id="inputAddress"
+          placeholder=""
+        />
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-outline-secondary"
+      (click)="modal.close('Save click')"
+    >
+      Save
+    </button>
+  </div>
+</ng-template>
+
+<button class="btn btn-lg btn-outline-primary" (click)="open(content)">
+  Nuevo
+</button>

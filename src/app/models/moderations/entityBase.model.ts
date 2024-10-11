@@ -1,9 +1,9 @@
 import { Infraction } from './infraction.model';
 
-export interface  EntityBase {
+export interface EntityBase {
   id: number;
-  createdDate: string;
+  createdDate: Date;
   createdBy: string;
-  lastUpdatedAt: number;
+  lastUpdatedAt: Date;
   lastUpdatedBy: number;
 }

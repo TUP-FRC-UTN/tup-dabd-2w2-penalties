@@ -1,13 +1,23 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { Component, inject, QueryList, ViewChildren } from '@angular/core';
+import { Component, inject, QueryList, TemplateRef, ViewChildren } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { NgbdSortableHeader, SortEvent } from './sortable.directive';
 import { FormsModule } from '@angular/forms';
-import { NgbHighlight, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
+import {
+  NgbDatepicker,
+  NgbHighlight,
+  NgbPaginationModule,
+} from '@ng-bootstrap/ng-bootstrap';
 import { Fine } from '../../../models/moderations/fine.model';
 import { FineService } from '../../../services/fine.service';
 import { Router } from '@angular/router';
+import {
+  ModalDismissReasons,
+  NgbDatepickerModule,
+  NgbModal,
+} from '@ng-bootstrap/ng-bootstrap';
+import { NewFineModalComponent } from "../new-fine-modal/new-fine-modal.component";
 
 @Component({
   selector: 'app-fine-table',
@@ -18,8 +28,10 @@ import { Router } from '@angular/router';
     NgbHighlight,
     NgbdSortableHeader,
     NgbPaginationModule,
-    CommonModule
-  ],
+    CommonModule,
+    NgbDatepicker,
+    NewFineModalComponent
+],
   templateUrl: './fine-table.component.html',
   providers: [FineService],
 })
@@ -51,4 +63,5 @@ export class FineTable {
   viewDetail(id: number) {
     this.router.navigate([`/fine/${id}`]);
   }
+
 }

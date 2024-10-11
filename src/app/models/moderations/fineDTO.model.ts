@@ -3,9 +3,9 @@ import { FineStatusEnum } from './fineStatus.enum';
 import { Infraction } from './infraction.model';
 import { SanctionType } from './sanctionType.model';
 
-export interface Fine extends EntityBase {
-  plotId: number;
+export interface FineDTO {
+  plotId: number | undefined;
   fineState: FineStatusEnum;
-  sanctionType: SanctionType;
+  sanctionType: SanctionType | undefined;
   infractions: Infraction[];
 }

@@ -1,18 +1,38 @@
 <form>
-  <div class="mb-3 row">
-    <label
-      for="table-complete-search"
-      class="col-xs-3 col-sm-auto col-form-label"
-      >Full text search:</label
-    >
-    <div class="col-xs-3 col-sm-auto">
-      <input
-        id="table-complete-search"
-        type="text"
-        class="form-control"
-        name="searchTerm"
-        [(ngModel)]="service.searchTerm"
-      />
+  <div class="mb-3 row justify-content-between align-items-center">
+    <div class="col-10">
+      <div class="row justify-content-left align-items-center g-2">
+        <div class="col-1">
+          <button
+            class="btn btn-lg btn-outline-primary d-flex justify-content-center align-items-center"
+            (click)="service.clearFilters()"
+          >
+            <i class="bi bi-trash me-1 align-items-center justify-content-between m-0"></i>
+          </button>
+        </div>
+
+        <!-- Filtro de estado -->
+        <div class="col-3">
+          <label for="fineStateFilter" class="col-form-label">Estado:</label>
+          <select
+            id="fineStateFilter"
+            class="form-select"
+            name="fineStateFilter"
+            [(ngModel)]="service.searchState"
+          >
+            <option [ngValue]="''">Todos</option>
+            @for (key of service.fineStatusKeys; track $index) {
+            <option [value]="key">
+              {{ service.getValueByKeyForStatusEnum(key) }}
+            </option>
+            }
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-1">
+      <app-new-fine-modal></app-new-fine-modal>
     </div>
   </div>
 
@@ -64,7 +84,7 @@
         </td>
         <td>
           <ngb-highlight
-            [result]="fine.fineState"
+            [result]="service.getValueByKeyForStatusEnum(fine.fineState)"
             [term]="service.searchTerm"
           />
         </td>

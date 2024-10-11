@@ -10,6 +10,7 @@ import {
 import { Fine } from '../models/moderations/fine.model';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Page } from '../models/moderations/page.model';
+import { FineStatusEnum } from '../models/moderations/fineStatus.enum';
 
 interface SearchResult {
   fines: Fine[];
@@ -20,6 +21,7 @@ interface State {
   page: number;
   pageSize: number;
   searchTerm: string;
+  searchState: string;
   sortColumn: SortColumn;
   sortDirection: SortDirection;
 }
@@ -37,11 +39,16 @@ export class FineService {
     page: 1,
     pageSize: 5,
     searchTerm: '',
+    searchState: '',
     sortColumn: '',
     sortDirection: '',
   };
 
   constructor(private http: HttpClient) {
+    // Extraemos las claves del enumerado como un array tipado
+    this.fineStatusKeys = Object.keys(FineStatusEnum) as Array<
+      keyof typeof FineStatusEnum
+    >;
     this._search$
       .pipe(
         tap(() => this._loading$.next(true)),
@@ -56,6 +63,9 @@ export class FineService {
 
     this._search$.next();
   }
+
+  FineStatusEnum = FineStatusEnum;
+  fineStatusKeys: string[] = [];
 
   get fines$() {
     return this._fines$.asObservable();
@@ -76,6 +86,10 @@ export class FineService {
     return this._state.searchTerm;
   }
 
+  get searchState() {
+    return this._state.searchState;
+  }
+
   set page(page: number) {
     this._set({ page });
   }
@@ -85,11 +99,21 @@ export class FineService {
   set searchTerm(searchTerm: string) {
     this._set({ searchTerm });
   }
+  set searchState(searchState: string) {
+    this._set({ searchState });
+  }
   set sortColumn(sortColumn: SortColumn) {
     this._set({ sortColumn });
   }
   set sortDirection(sortDirection: SortDirection) {
     this._set({ sortDirection });
+  }
+
+  public clearFilters(): void {
+    this.searchTerm = '';
+    this.searchState = '';
+    this.sortColumn = '';
+    this.sortDirection = '';
   }
 
   private _set(patch: Partial<State>) {
@@ -98,14 +122,24 @@ export class FineService {
   }
 
   private _search(): Observable<SearchResult> {
-    const { sortColumn, sortDirection, pageSize, page, searchTerm } =
-      this._state;
+    const {
+      sortColumn,
+      sortDirection,
+      pageSize,
+      page,
+      searchTerm,
+      searchState,
+    } = this._state;
 
     let params = new HttpParams()
       .set('page', (page - 1).toString())
       .set('size', pageSize.toString());
 
-    console.log('Por hacer el request');
+    if (searchState !== '') {
+      params = params.set('fineState', searchState);
+    }
+
+    console.log(params);
 
     return this.http
       .get<Page<Fine>>(`${this.apiUrl}/pageable/fine`, { params })
@@ -126,7 +160,13 @@ export class FineService {
     // return of({ fines: [], total: 0 });
   }
 
-    getFineById(id: number) {
+  getFineById(id: number) {
     return this.http.get<Fine>(`${this.apiUrl}/fine/${id}`);
+  }
+
+  getValueByKeyForStatusEnum(value: string) {
+    return Object.entries(FineStatusEnum).find(
+      ([key, val]) => key === value
+    )?.[1];
   }
 }
