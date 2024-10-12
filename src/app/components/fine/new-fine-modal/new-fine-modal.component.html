@@ -13,24 +13,29 @@
       #form="ngForm"
       (ngSubmit)="createFine()"
       class="row g-3 needs-validation"
-      novalidateclass="row g-3"
+      novalidate
     >
-      <div class="col-md-6">
-        <label for="inputState" class="form-label">Lote</label>
-        <select id="inputState" class="form-select">
-          <option>1</option>
+      <div class="col-md-2">
+        <label for="plotSelect" class="form-label">Lote</label>
+        <select
+          class="form-select"
+          id="plotSelect"
+          [(ngModel)]="fine!.plotId"
+          #plotId="ngModel"
+          name="plotId"
+        >
+          <option value="1">1</option>
           <option>2</option>
           <option>3</option>
           <option>4</option>
         </select>
       </div>
-      <div class="col-md-6">
-        <label for="inputState" class="form-label">Tipo</label>
-        <select id="inputState" class="form-select">
-          <option selected>Ruidos Molestos</option>
-          <option selected>Salida tardia</option>
-          <option selected>Mal uso de infraestructura</option>
-        </select>
+      <div class="col-md-10">
+        <app-sanction-type-select
+          (selectedSanctionTypeChange)="onSanctionTypeChange($event)"
+        >
+          >
+        </app-sanction-type-select>
       </div>
       <div class="col-12">
         <label for="inputAddress" class="form-label">Descripción</label>
@@ -42,14 +47,19 @@
         />
       </div>
     </form>
+    @if (error) {
+    <div class="alert alert-danger" role="alert">
+      {{ error }}
+    </div>
+    }
   </div>
   <div class="modal-footer">
     <button
       type="button"
       class="btn btn-outline-secondary"
-      (click)="modal.close('Save click')"
+      (click)="createFine()"
     >
-      Save
+      Guardar
     </button>
   </div>
 </ng-template>

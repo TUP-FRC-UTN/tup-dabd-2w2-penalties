@@ -1,5 +1,11 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { Component, inject, QueryList, TemplateRef, ViewChildren } from '@angular/core';
+import {
+  Component,
+  inject,
+  QueryList,
+  TemplateRef,
+  ViewChildren,
+} from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { NgbdSortableHeader, SortEvent } from './sortable.directive';
@@ -17,7 +23,7 @@ import {
   NgbDatepickerModule,
   NgbModal,
 } from '@ng-bootstrap/ng-bootstrap';
-import { NewFineModalComponent } from "../new-fine-modal/new-fine-modal.component";
+import { NewFineModalComponent } from '../new-fine-modal/new-fine-modal.component';
 
 @Component({
   selector: 'app-fine-table',
@@ -30,12 +36,14 @@ import { NewFineModalComponent } from "../new-fine-modal/new-fine-modal.componen
     NgbPaginationModule,
     CommonModule,
     NgbDatepicker,
-    NewFineModalComponent
-],
+    NewFineModalComponent,
+  ],
   templateUrl: './fine-table.component.html',
   providers: [FineService],
 })
 export class FineTable {
+  successMessage: string | null = null;
+
   fines$: Observable<Fine[]>;
   total$: Observable<number>;
 
@@ -46,6 +54,15 @@ export class FineTable {
   constructor(public service: FineService) {
     this.fines$ = service.fines$;
     this.total$ = service.total$;
+  }
+  onFineCreated(id: number) {
+    this.successMessage = `Se creó la multa ${id}`;
+    this.service._search$.next();
+
+    // Limpia el mensaje después de 3 segundos
+    setTimeout(() => {
+      this.successMessage = null;
+    }, 3000);
   }
 
   onSort({ column, direction }: SortEvent) {
@@ -63,5 +80,4 @@ export class FineTable {
   viewDetail(id: number) {
     this.router.navigate([`/fine/${id}`]);
   }
-
 }

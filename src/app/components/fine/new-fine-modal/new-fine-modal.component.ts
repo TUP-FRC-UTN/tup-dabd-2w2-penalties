@@ -1,33 +1,40 @@
-import { Component, inject, TemplateRef } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Output,
+  TemplateRef,
+} from '@angular/core';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Fine } from '../../../models/moderations/fine.model';
-import { FineStatusEnum } from '../../../models/moderations/fineStatus.enum';
 import { FineDTO } from '../../../models/moderations/fineDTO.model';
+import { FineStatusEnum } from '../../../models/moderations/fineStatus.enum';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { SanctionTypeSelectComponent } from '../../sanction-type-select/sanction-type-select.component';
+import { SanctionType } from '../../../models/moderations/sanctionType.model';
+import { FineService } from '../../../services/fine.service';
 
 @Component({
   selector: 'app-new-fine-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SanctionTypeSelectComponent],
   templateUrl: './new-fine-modal.component.html',
-  styleUrl: './new-fine-modal.component.scss',
+  styleUrls: ['./new-fine-modal.component.scss'],
 })
 export class NewFineModalComponent {
-  createFine() {
-    throw new Error('Method not implemented.');
-  }
+  @Output() fineCreated = new EventEmitter<number>();
   fine: FineDTO | undefined;
 
+  error: string | null = null;
+
   private modalService = inject(NgbModal);
+  private fineService = inject(FineService);
   closeResult = '';
 
   open(content: TemplateRef<any>) {
     this.fine = {
       plotId: 0,
-      fineState: FineStatusEnum.ON_ASSEMBLY, // Estado inicial por defecto
-      sanctionType: undefined, // Objeto SanctionType con valores por defecto
-      infractions: [], // Lista vacía de infracciones
+      sanctionTypeId: undefined,
     };
 
     this.modalService
@@ -50,6 +57,33 @@ export class NewFineModalComponent {
         return 'by clicking on a backdrop';
       default:
         return `with: ${reason}`;
+    }
+  }
+
+  onSanctionTypeChange(value: SanctionType | undefined) {
+    this.fine!.sanctionTypeId = value?.id; // Actualiza el tipo de sanción en fine
+  }
+
+  createFine() {
+    if (this.fine) {
+      this.fineService.createFine(this.fine).subscribe({
+        next: (response) => {
+          console.log('Fine created successfully:', response);
+          this.fineCreated.emit(response?.id);
+          this.modalService.dismissAll();
+        },
+        error: (error) => {
+          console.error('Error creating fine:', error);
+          this.error = `Error al crear la multa ${error}`;
+
+          // Limpia el mensaje después de 3 segundos
+          setTimeout(() => {
+            this.error = null;
+          }, 3000);
+        },
+      });
+    } else {
+      console.error('Fine is undefined or null.');
     }
   }
 }

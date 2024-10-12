@@ -1,0 +1,16 @@
+<div>
+  <label for="typeahead-template" class="col-xs-3 col-sm-auto col-form-label"
+    >Tipo:</label
+  >
+  <input
+    id="typeahead-template"
+    type="text"
+    class="form-control col"
+    [(ngModel)]="selectedSanctionType"
+    [ngbTypeahead]="search"
+    [inputFormatter]="formatter"
+    [resultFormatter]="formatter"
+    [selectOnExact]="true"
+    (selectItem)="onSelectedChange($event.item)"
+  />
+</div>
