@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 
-import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, of, Subject, throwError } from 'rxjs';
 
 import { catchError, debounceTime, map, switchMap, tap } from 'rxjs/operators';
 import {
@@ -9,8 +9,10 @@ import {
 } from '../components/fine/fine-table/sortable.directive';
 import { Fine } from '../models/moderations/fine.model';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Page } from '../models/moderations/page.model';
+import { Page } from '../models/page.model';
 import { FineStatusEnum } from '../models/moderations/fineStatus.enum';
+import { SanctionType } from '../models/moderations/sanctionType.model';
+import { FineDTO } from '../models/moderations/fineDTO.model';
 
 interface SearchResult {
   fines: Fine[];
@@ -29,7 +31,7 @@ interface State {
 @Injectable({ providedIn: 'root' })
 export class FineService {
   private _loading$ = new BehaviorSubject<boolean>(true);
-  private _search$ = new Subject<void>();
+  public _search$ = new Subject<void>();
   private _fines$ = new BehaviorSubject<Fine[]>([]);
   private _total$ = new BehaviorSubject<number>(0);
 
@@ -121,7 +123,7 @@ export class FineService {
     this._search$.next();
   }
 
-  private _search(): Observable<SearchResult> {
+  public _search(): Observable<SearchResult> {
     const {
       sortColumn,
       sortDirection,
@@ -162,6 +164,16 @@ export class FineService {
 
   getFineById(id: number) {
     return this.http.get<Fine>(`${this.apiUrl}/fine/${id}`);
+  }
+
+  createFine(fine: FineDTO): Observable<Fine> {
+    return this.http.post<Fine>(`${this.apiUrl}/fine`, fine).pipe(
+      catchError((error) => {
+        // Puedes manejar el error aquí si lo deseas
+        console.error('Error en la solicitud de creación de multa:', error);
+        return throwError(() => new Error('Error en la creación de la multa')); // Lanzar el error
+      })
+    );
   }
 
   getValueByKeyForStatusEnum(value: string) {

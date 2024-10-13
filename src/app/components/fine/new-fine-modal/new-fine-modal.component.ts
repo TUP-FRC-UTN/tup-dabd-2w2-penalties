@@ -1,55 +1,88 @@
-import { Component, inject, TemplateRef } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Output,
+  TemplateRef,
+} from '@angular/core';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Fine } from '../../../models/moderations/fine.model';
-import { FineStatusEnum } from '../../../models/moderations/fineStatus.enum';
 import { FineDTO } from '../../../models/moderations/fineDTO.model';
+import { FineStatusEnum } from '../../../models/moderations/fineStatus.enum';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
+import { SanctionTypeSelectComponent } from '../../sanction-type-select/sanction-type-select.component';
+import { SanctionType } from '../../../models/moderations/sanctionType.model';
+import { FineService } from '../../../services/fine.service';
+import { Plot } from '../../../models/plot/plot.model';
+import { CadastreService } from '../../../services/cadastre.service';
 
 @Component({
   selector: 'app-new-fine-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SanctionTypeSelectComponent],
   templateUrl: './new-fine-modal.component.html',
-  styleUrl: './new-fine-modal.component.scss',
+  styleUrls: ['./new-fine-modal.component.scss'],
 })
 export class NewFineModalComponent {
-  createFine() {
-    throw new Error('Method not implemented.');
-  }
+  @Output() fineCreated = new EventEmitter<number>();
   fine: FineDTO | undefined;
+  plots: Plot[] | undefined;
+
+  error: string | null = null;
 
   private modalService = inject(NgbModal);
-  closeResult = '';
+  private fineService = inject(FineService);
+  private cadastreService = inject(CadastreService);
 
   open(content: TemplateRef<any>) {
     this.fine = {
-      plotId: 0,
-      fineState: FineStatusEnum.ON_ASSEMBLY, // Estado inicial por defecto
-      sanctionType: undefined, // Objeto SanctionType con valores por defecto
-      infractions: [], // Lista vacía de infracciones
+      plotId: undefined,
+      sanctionTypeId: undefined,
     };
 
-    this.modalService
-      .open(content, { ariaLabelledBy: 'modal-basic-title' })
-      .result.then(
-        (result) => {
-          this.closeResult = `Closed with: ${result}`;
-        },
-        (reason) => {
-          this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-        }
-      );
+    this.cadastreService.getPlots().subscribe({
+      next: (response) => {
+        this.plots = response.content;
+
+        console.log(this.plots);
+      },
+    });
+
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' });
   }
 
-  private getDismissReason(reason: any): string {
-    switch (reason) {
-      case ModalDismissReasons.ESC:
-        return 'by pressing ESC';
-      case ModalDismissReasons.BACKDROP_CLICK:
-        return 'by clicking on a backdrop';
-      default:
-        return `with: ${reason}`;
+  onSanctionTypeChange(value: SanctionType | undefined) {
+    this.fine!.sanctionTypeId = value?.id; // Actualiza el tipo de sanción en fine
+  }
+
+  createFine(form: NgForm) {
+    if (form.valid) {
+      if (this.fine && this.fine.plotId && this.fine.sanctionTypeId) {
+        this.fineService.createFine(this.fine).subscribe({
+          next: (response) => {
+            this.fineCreated.emit(response?.id);
+            this.modalService.dismissAll();
+          },
+          error: (error) => {
+            this.error = `Error al crear la multa ${error}`;
+
+            // Limpia el mensaje después de 3 segundos
+            setTimeout(() => {
+              this.error = null;
+            }, 3000);
+          },
+        });
+      } else {
+        this.error = `Complete todos los campos`;
+      }
+    } else {
+      this.validateAllFormFields(form);
     }
+  }
+
+  validateAllFormFields(form: NgForm) {
+    Object.keys(form.controls).forEach((field) => {
+      form.controls[field].markAsTouched({ onlySelf: true });
+    });
   }
 }
