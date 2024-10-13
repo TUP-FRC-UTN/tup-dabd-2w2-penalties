@@ -9,7 +9,7 @@ import {
 } from '../components/fine/fine-table/sortable.directive';
 import { Fine } from '../models/moderations/fine.model';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Page } from '../models/moderations/page.model';
+import { Page } from '../models/page.model';
 import { FineStatusEnum } from '../models/moderations/fineStatus.enum';
 import { SanctionType } from '../models/moderations/sanctionType.model';
 import { FineDTO } from '../models/moderations/fineDTO.model';

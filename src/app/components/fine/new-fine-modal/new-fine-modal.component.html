@@ -11,26 +11,43 @@
   <div class="modal-body">
     <form
       #form="ngForm"
-      (ngSubmit)="createFine()"
+      (ngSubmit)="createFine(form)"
       class="row g-3 needs-validation"
       novalidate
     >
-      <div class="col-md-2">
+      <div class="col-md-6">
         <label for="plotSelect" class="form-label">Lote</label>
         <select
           class="form-select"
           id="plotSelect"
           [(ngModel)]="fine!.plotId"
-          #plotId="ngModel"
-          name="plotId"
+          #plot="ngModel"
+          name="selectedPlot"
+          [ngClass]="{
+            'is-invalid': plot.invalid && (plot.dirty || plot.touched)
+          }"
+          required
         >
+          @if(plots){ @for (plot of plots; track plot.plot_number) {
+          <option value="{{ plot.plot_number }}">
+            {{ plot.plot_number }} - {{ plot.plot_type }}
+          </option>
+          } }@else {
+
           <option value="1">1</option>
           <option>2</option>
           <option>3</option>
           <option>4</option>
+
+          }
         </select>
+        
+        @if (plot.invalid && (plot.dirty || plot.touched)) { @if
+        (plot.getError('required')) {
+        <div class="invalid-feedback">Este campo es obligatorio</div>
+        } }
       </div>
-      <div class="col-md-10">
+      <div class="col-md-6">
         <app-sanction-type-select
           (selectedSanctionTypeChange)="onSanctionTypeChange($event)"
         >
@@ -57,7 +74,7 @@
     <button
       type="button"
       class="btn btn-outline-secondary"
-      (click)="createFine()"
+      (click)="createFine(form)"
     >
       Guardar
     </button>

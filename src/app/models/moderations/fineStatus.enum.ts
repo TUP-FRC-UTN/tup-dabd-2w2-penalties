@@ -4,4 +4,3 @@ export enum FineStatusEnum {
   REJECTED = 'Rechazado',
   IMPUTED_ON_EXPENSE = 'Inputado en expensa',
 }
-

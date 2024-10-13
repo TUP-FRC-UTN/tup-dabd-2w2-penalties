@@ -9,10 +9,12 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FineDTO } from '../../../models/moderations/fineDTO.model';
 import { FineStatusEnum } from '../../../models/moderations/fineStatus.enum';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { SanctionTypeSelectComponent } from '../../sanction-type-select/sanction-type-select.component';
 import { SanctionType } from '../../../models/moderations/sanctionType.model';
 import { FineService } from '../../../services/fine.service';
+import { Plot } from '../../../models/plot/plot.model';
+import { CadastreService } from '../../../services/cadastre.service';
 
 @Component({
   selector: 'app-new-fine-modal',
@@ -24,66 +26,63 @@ import { FineService } from '../../../services/fine.service';
 export class NewFineModalComponent {
   @Output() fineCreated = new EventEmitter<number>();
   fine: FineDTO | undefined;
+  plots: Plot[] | undefined;
 
   error: string | null = null;
 
   private modalService = inject(NgbModal);
   private fineService = inject(FineService);
-  closeResult = '';
+  private cadastreService = inject(CadastreService);
 
   open(content: TemplateRef<any>) {
     this.fine = {
-      plotId: 0,
+      plotId: undefined,
       sanctionTypeId: undefined,
     };
 
-    this.modalService
-      .open(content, { ariaLabelledBy: 'modal-basic-title' })
-      .result.then(
-        (result) => {
-          this.closeResult = `Closed with: ${result}`;
-        },
-        (reason) => {
-          this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-        }
-      );
-  }
+    this.cadastreService.getPlots().subscribe({
+      next: (response) => {
+        this.plots = response.content;
 
-  private getDismissReason(reason: any): string {
-    switch (reason) {
-      case ModalDismissReasons.ESC:
-        return 'by pressing ESC';
-      case ModalDismissReasons.BACKDROP_CLICK:
-        return 'by clicking on a backdrop';
-      default:
-        return `with: ${reason}`;
-    }
+        console.log(this.plots);
+      },
+    });
+
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' });
   }
 
   onSanctionTypeChange(value: SanctionType | undefined) {
     this.fine!.sanctionTypeId = value?.id; // Actualiza el tipo de sanción en fine
   }
 
-  createFine() {
-    if (this.fine) {
-      this.fineService.createFine(this.fine).subscribe({
-        next: (response) => {
-          console.log('Fine created successfully:', response);
-          this.fineCreated.emit(response?.id);
-          this.modalService.dismissAll();
-        },
-        error: (error) => {
-          console.error('Error creating fine:', error);
-          this.error = `Error al crear la multa ${error}`;
+  createFine(form: NgForm) {
+    if (form.valid) {
+      if (this.fine && this.fine.plotId && this.fine.sanctionTypeId) {
+        this.fineService.createFine(this.fine).subscribe({
+          next: (response) => {
+            this.fineCreated.emit(response?.id);
+            this.modalService.dismissAll();
+          },
+          error: (error) => {
+            this.error = `Error al crear la multa ${error}`;
 
-          // Limpia el mensaje después de 3 segundos
-          setTimeout(() => {
-            this.error = null;
-          }, 3000);
-        },
-      });
+            // Limpia el mensaje después de 3 segundos
+            setTimeout(() => {
+              this.error = null;
+            }, 3000);
+          },
+        });
+      } else {
+        this.error = `Complete todos los campos`;
+      }
     } else {
-      console.error('Fine is undefined or null.');
+      this.validateAllFormFields(form);
     }
+  }
+
+  validateAllFormFields(form: NgForm) {
+    Object.keys(form.controls).forEach((field) => {
+      form.controls[field].markAsTouched({ onlySelf: true });
+    });
   }
 }
