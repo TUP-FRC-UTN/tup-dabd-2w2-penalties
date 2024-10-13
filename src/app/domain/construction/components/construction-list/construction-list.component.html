@@ -1,0 +1,29 @@
+<ng-template #actionsTemplate let-item>
+  <button
+    class="btn btn-primary btn-sm me-2"
+    (click)="goToDetails(item.construction_id)"
+  >
+    Ver más
+  </button>
+</ng-template>
+
+<app-layout title="Constructions">
+  <div class="w-100 d-flex justify-content-end">
+    <button class="btn btn-outline-primary mb-3" (click)="openFormModal()">
+      Nuevo
+    </button>
+  </div>
+  <app-table
+    [tableConfig]="{
+        items: (items$ | async) || [],
+        columns: columns,
+        pagination: {
+          totalItems: (totalItems$ | async) || 0,
+          page: page,
+          size: size,
+          onPageChange: onPageChange,
+          onPageSizeChange: onPageSizeChange
+        },
+      }"
+  ></app-table>
+</app-layout>

@@ -1,0 +1,60 @@
+<div
+  class="table-responsive border overflow-auto"
+  [ngStyle]="{ height: height }"
+>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        @for(column of tableConfig.columns; track $index) {
+        <th>{{ column.headerName }}</th>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      @for(item of tableConfig.items; track $index) {
+      <tr>
+        @for(column of tableConfig.columns; track $index) {
+        <td>
+          @if(!column.cellRenderer) {
+          <ng-container>
+            {{ item[column.accessorKey] }}
+          </ng-container>
+          } @else {
+          <ng-container
+            *ngTemplateOutlet="
+              column.cellRenderer;
+              context: { $implicit: item }
+            "
+          ></ng-container>
+          }
+        </td>
+        }
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>
+
+@if(tableConfig.pagination) {
+<div class="d-flex justify-content-between align-items-center mt-3">
+  <ngb-pagination
+    [collectionSize]="tableConfig.pagination.totalItems"
+    [(page)]="tableConfig.pagination.page"
+    [pageSize]="tableConfig.pagination.size"
+    (pageChange)="onPageChange($event)"
+  ></ngb-pagination>
+
+  <div class="form-group mb-3">
+    <select
+      id="itemsPerPage"
+      class="form-control"
+      [(ngModel)]="tableConfig.pagination.size"
+      (change)="onItemsPerPageChange(tableConfig.pagination.size)"
+    >
+      @for(option of sizeOptions; track $index) {
+      <option [value]="option">{{ option }} items per page</option>
+      }
+    </select>
+  </div>
+</div>
+}

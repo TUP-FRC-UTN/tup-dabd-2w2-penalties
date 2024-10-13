@@ -1,0 +1,14 @@
+<div class="px-5 py-4 border border-top-0">
+  <div class="w-100 d-flex justify-content-end">
+    <button class="btn btn-outline-primary mb-3" (click)="openFormModal()">
+      Nuevo
+    </button>
+  </div>
+  <app-table
+    [height]="'200px'"
+    [tableConfig]="{
+      items: workers || [],
+      columns: columns,
+    }"
+  ></app-table>
+</div>

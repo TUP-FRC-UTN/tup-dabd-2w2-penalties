@@ -1,0 +1,139 @@
+<app-layout title="Construction Detail">
+  <div class="mb-3">
+    <button class="btn btn-dark" (click)="goBack()">
+      <i class="bi bi-arrow-left-short"></i>
+    </button>
+  </div>
+  <div class="row">
+    <div class="mb-3 col-6">
+      <label for="name" class="form-label">Name</label>
+      <input
+        id="name"
+        name="name"
+        class="form-control"
+        value="{{ construction?.project_name }}"
+        disabled
+      />
+    </div>
+    <div class="mb-3 col-6">
+      <label for="address" class="form-label">Address</label>
+      <input
+        id="address"
+        name="address"
+        class="form-control"
+        value="{{ construction?.project_address }}"
+        disabled
+      />
+    </div>
+    <div class="mb-3 col-6">
+      <label for="description" class="form-label">Description</label>
+      <input
+        id="description"
+        name="description"
+        class="form-control"
+        value="{{ construction?.project_description }}"
+        disabled
+      />
+    </div>
+    <div class="mb-3 col-6">
+      <label for="status" class="form-label">Status</label>
+      <input
+        id="status"
+        name="status"
+        class="form-control"
+        value="{{ construction?.construction_status }}"
+        disabled
+      />
+    </div>
+    <div class="mb-3 col-6">
+      <label for="start_date" class="form-label">Start Date</label>
+      <input
+        id="start_date"
+        name="start_date"
+        class="form-control"
+        value="{{ construction?.planned_start_date }}"
+        disabled
+      />
+    </div>
+    <div class="mb-3 col-6">
+      <label for="end_date" class="form-label">End Date</label>
+      <input
+        id="end_date"
+        name="end_date"
+        class="form-control"
+        value="{{ construction?.planned_end_date }}"
+        disabled
+      />
+    </div>
+    <div class="mb-3 col-6">
+      <label for="plot_id" class="form-label">Plot</label>
+      <input
+        id="plot_id"
+        name="plot_id"
+        class="form-control"
+        value="{{ construction?.plot_id }}"
+        disabled
+      />
+    </div>
+    <div class="mb-3 col-6">
+      <label for="municipality" class="form-label"
+        >Approved by municipality</label
+      >
+      <input
+        id="municipality"
+        name="municipality"
+        class="form-control"
+        value="{{ construction?.approved_by_municipality }}"
+        disabled
+      />
+    </div>
+  </div>
+  <hr />
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+      <button
+        class="nav-link"
+        [ngClass]="{ active: activeTab === 'documentation' }"
+        (click)="setActiveTab('documentation')"
+      >
+        Documentos
+      </button>
+    </li>
+    <li class="nav-item">
+      <button
+        class="nav-link"
+        [ngClass]="{ active: activeTab === 'workers' }"
+        (click)="setActiveTab('workers')"
+      >
+        Obreros
+      </button>
+    </li>
+    <li class="nav-item">
+      <button
+        class="nav-link"
+        [ngClass]="{ active: activeTab === 'notes' }"
+        (click)="setActiveTab('notes')"
+      >
+        Notas
+      </button>
+    </li>
+  </ul>
+  @switch (activeTab) {
+  <!-- Documentation -->
+  @case ('documentation') {
+  <app-construction-workers
+    [workers]="construction?.construction_documentation || []"
+  >
+  </app-construction-workers>
+  }
+  <!-- Workers -->
+  @case ('workers') {
+  <app-construction-workers [workers]="construction?.workers || []">
+  </app-construction-workers>
+  }
+  <!-- Notes -->
+  @case ('notes') {
+  <app-construction-workers [workers]="construction?.notes || []">
+  </app-construction-workers>
+  } }
+</app-layout>
