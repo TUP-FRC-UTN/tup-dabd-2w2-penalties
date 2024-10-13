@@ -13,6 +13,7 @@ import { Page } from '../models/page.model';
 import { FineStatusEnum } from '../models/moderations/fineStatus.enum';
 import { SanctionType } from '../models/moderations/sanctionType.model';
 import { FineDTO } from '../models/moderations/fineDTO.model';
+import { UpdateFineStateDTO } from '../models/moderations/updateFineStateDTO.model';
 
 interface SearchResult {
   fines: Fine[];
@@ -172,6 +173,14 @@ export class FineService {
         // Puedes manejar el error aquí si lo deseas
         console.error('Error en la solicitud de creación de multa:', error);
         return throwError(() => new Error('Error en la creación de la multa')); // Lanzar el error
+      })
+    );
+  }
+  updateState(fine: UpdateFineStateDTO): Observable<Fine> {
+    return this.http.put<Fine>(`${this.apiUrl}/fine/state`, fine).pipe(
+      catchError((error) => {
+        console.error('Error en la solicitud de edición de multa:', error);
+        return throwError(() => new Error('Error en la edición de la multa'));
       })
     );
   }

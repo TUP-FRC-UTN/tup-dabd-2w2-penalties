@@ -58,6 +58,7 @@
                     [(ngModel)]="fine.fineState"
                     name="fineState"
                     #fineState="ngModel"
+                    [disabled]="fine.fineState === FineStatusEnum.APPROVED || fine.fineState === FineStatusEnum.REJECTED"
                   >
                     @for (key of fineService.fineStatusKeys; track $index) {
                     <option [value]="key">
@@ -131,3 +132,12 @@
     </div>
   </div>
 </div>
+@if (successMessage) {
+<div class="alert alert-success" role="alert">
+  {{ successMessage }}
+</div>
+} @if (error) {
+<div class="alert alert-danger" role="alert">
+  {{ error }}
+</div>
+}
