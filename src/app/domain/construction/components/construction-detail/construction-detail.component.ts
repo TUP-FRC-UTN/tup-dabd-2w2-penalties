@@ -15,6 +15,7 @@ import { FormsModule } from '@angular/forms';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { ConstructionDocumentationListComponent } from '../../../construction-documentation/components/construction-documentation-list/construction-documentation-list.component';
 import { ConstructionNotesListComponent } from '../../../note/components/construction-notes-list/construction-notes-list.component';
+import { WorkerService } from '../../../workers/services/worker.service';
 
 @Component({
   selector: 'app-construction-detail',
@@ -37,17 +38,33 @@ export class ConstructionDetailComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly activatedRoute = inject(ActivatedRoute);
   private constructionService = inject(ConstructionService);
+  private workerService = inject(WorkerService);
 
   // Properties:
   construction: ConstructionResponseDto | undefined;
   activeTab: ConstructionTab = 'documentation';
   selectedStatus!: ConstructionStatus;
   statusOptions: ConstructionStatus[] = CONSTRUCTION_STATUSES;
+  successMessage: string | null = null;
 
   ngOnInit(): void {
     this.activatedRoute.params.subscribe((params) => {
       const id = params['id'];
       this.getConstructionById(id);
+    });
+
+    this.workerService.message$.subscribe((message) => {
+      if (message) {
+        if (message.type === 'success') {
+          this.getConstructionById(this.construction?.construction_id!);
+          this.successMessage = message.message;
+          setTimeout(() => {
+            this.successMessage = null;
+          }, 3000);
+        }
+      } else {
+        this.successMessage = null;
+      }
     });
   }
 

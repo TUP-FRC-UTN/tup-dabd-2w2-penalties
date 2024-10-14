@@ -99,7 +99,7 @@
   </div>
   <hr style="color: #808080" />
   <ul class="nav nav-tabs">
-    <li class="nav-item">
+    <!-- <li class="nav-item">
       <button
         class="nav-link"
         [ngClass]="{ active: activeTab === 'documentation' }"
@@ -107,7 +107,7 @@
       >
         Documentos
       </button>
-    </li>
+    </li> -->
     <li class="nav-item">
       <button
         class="nav-link"
@@ -117,7 +117,7 @@
         Obreros
       </button>
     </li>
-    <li class="nav-item">
+    <!-- <li class="nav-item">
       <button
         class="nav-link"
         [ngClass]="{ active: activeTab === 'notes' }"
@@ -125,7 +125,7 @@
       >
         Notas
       </button>
-    </li>
+    </li> -->
   </ul>
   @switch (activeTab) {
   <!-- Documentation -->
@@ -136,7 +136,10 @@
   }
   <!-- Workers -->
   @case ('workers') {
-  <app-construction-workers [workers]="construction?.workers || []">
+  <app-construction-workers
+    [workers]="construction?.workers || []"
+    [constructionId]="construction?.construction_id"
+  >
   </app-construction-workers>
   }
   <!-- Notes -->
@@ -144,5 +147,9 @@
   <app-construction-notes-list
     [notes]="construction?.notes || []"
   ></app-construction-notes-list>
-  } }
+  } } @if (successMessage) {
+  <div class="alert alert-success" role="alert">
+    {{ successMessage }}
+  </div>
+  }
 </app-layout>
