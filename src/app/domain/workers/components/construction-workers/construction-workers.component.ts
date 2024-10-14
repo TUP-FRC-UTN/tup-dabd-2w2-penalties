@@ -12,6 +12,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { WorkerFormComponent } from '../worker-form/worker-form.component';
 import { TableComponent } from '../../../../shared/components/table/table.component';
 import { TableColumn } from '../../../../shared/components/table/table.models';
+import { WorkerService } from '../../services/worker.service';
 
 @Component({
   selector: 'app-construction-workers',
@@ -23,17 +24,24 @@ import { TableColumn } from '../../../../shared/components/table/table.models';
 export class ConstructionWorkersComponent implements AfterViewInit {
   // Inputs:
   @Input() workers: any[] = [];
+  @Input() constructionId: number | undefined;
 
   // Services:
-  private constructionService = inject(ConstructionService);
+
   private modalService = inject(NgbModal);
+
+
 
   // Properties:
   @ViewChild('actionsTemplate') actionsTemplate!: TemplateRef<any>;
 
   columns: TableColumn[] = [];
 
+  
+
   // Methods:
+
+
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.columns = [
@@ -59,6 +67,6 @@ export class ConstructionWorkersComponent implements AfterViewInit {
 
   openFormModal(itemId: number | null = null): void {
     const modalRef = this.modalService.open(WorkerFormComponent);
-    modalRef.componentInstance.itemId = itemId;
+    modalRef.componentInstance.constructionId = this.constructionId;
   }
 }
