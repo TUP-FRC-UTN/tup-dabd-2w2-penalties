@@ -8,6 +8,7 @@
       <div class="form-group mb-3">
         <label [for]="field.name">{{ field.label }}</label>
 
+        @if(field.type !== "select" && field.type !== "checkbox") {
         <input
           [attr.type]="field.type"
           [formControlName]="field.name"
@@ -22,7 +23,25 @@
               getFieldControl(field.name)?.touched
           }"
         />
-
+        } @if(field.type === "select") {
+        <select
+          [formControlName]="field.name"
+          [id]="field.name"
+          class="form-select"
+          [ngClass]="{
+            'is-invalid':
+              getFieldControl(field.name)?.invalid &&
+              getFieldControl(field.name)?.touched,
+            'is-valid':
+              getFieldControl(field.name)?.valid &&
+              getFieldControl(field.name)?.touched
+          }"
+        >
+          @for(option of field.options; track $index) {
+          <option [value]="option.value">{{ option.name }}</option>
+          }
+        </select>
+        }
         <!-- Error messages -->
         @if(getFieldControl(field.name)?.invalid &&
         getFieldControl(field.name)?.touched) {

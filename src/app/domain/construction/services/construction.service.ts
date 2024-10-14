@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, map } from 'rxjs';
 import {
   ConstructionRequestDto,
   ConstructionResponseDto,
+  ConstructionUpdateStatusRequestDto,
 } from '../models/construction.model';
 
 @Injectable({
@@ -53,6 +54,15 @@ export class ConstructionService {
           return newItem;
         })
       );
+  }
+
+  updateConstructionStatus(
+    updateStatusRequestDto: ConstructionUpdateStatusRequestDto
+  ): Observable<ConstructionResponseDto> {
+    return this.http.put<ConstructionResponseDto>(
+      `${this.apiUrl}/status`,
+      updateStatusRequestDto
+    );
   }
 
   setItems(items: ConstructionResponseDto[]): void {

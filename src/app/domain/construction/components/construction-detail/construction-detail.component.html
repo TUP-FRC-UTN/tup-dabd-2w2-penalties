@@ -1,9 +1,4 @@
-<app-layout title="Construction Detail">
-  <div class="mb-3">
-    <button class="btn btn-dark" (click)="goBack()">
-      <i class="bi bi-arrow-left-short"></i>
-    </button>
-  </div>
+<app-layout title="Construction Detail" [onGoBack]="goBack">
   <div class="row">
     <div class="mb-3 col-6">
       <label for="name" class="form-label">Name</label>
@@ -37,13 +32,27 @@
     </div>
     <div class="mb-3 col-6">
       <label for="status" class="form-label">Status</label>
-      <input
-        id="status"
-        name="status"
-        class="form-control"
-        value="{{ construction?.construction_status }}"
-        disabled
-      />
+      <div class="d-flex gap-3">
+        <select
+          id="status"
+          name="status"
+          class="form-control"
+          [(ngModel)]="selectedStatus"
+        >
+          <option *ngFor="let status of statusOptions" [value]="status">
+            {{ status }}
+          </option>
+        </select>
+        <button
+          class="btn btn-primary"
+          [disabled]="selectedStatus === construction?.construction_status"
+          (click)="updateStatus()"
+          placement="top"
+          ngbTooltip="Actualizar estado"
+        >
+          <i class="bi bi-floppy"></i>
+        </button>
+      </div>
     </div>
     <div class="mb-3 col-6">
       <label for="start_date" class="form-label">Start Date</label>
@@ -88,7 +97,7 @@
       />
     </div>
   </div>
-  <hr />
+  <hr style="color: #808080" />
   <ul class="nav nav-tabs">
     <li class="nav-item">
       <button
@@ -121,10 +130,9 @@
   @switch (activeTab) {
   <!-- Documentation -->
   @case ('documentation') {
-  <app-construction-workers
-    [workers]="construction?.construction_documentation || []"
-  >
-  </app-construction-workers>
+  <app-construction-documentation-list
+    [documentations]="construction?.construction_documentation || []"
+  ></app-construction-documentation-list>
   }
   <!-- Workers -->
   @case ('workers') {
@@ -133,7 +141,8 @@
   }
   <!-- Notes -->
   @case ('notes') {
-  <app-construction-workers [workers]="construction?.notes || []">
-  </app-construction-workers>
+  <app-construction-notes-list
+    [notes]="construction?.notes || []"
+  ></app-construction-notes-list>
   } }
 </app-layout>
