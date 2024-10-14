@@ -147,7 +147,9 @@
   <app-construction-notes-list
     [notes]="construction?.notes || []"
   ></app-construction-notes-list>
-  } } @if (successMessage) {
+  } }
+  <!-- Message -->
+  @if (successMessage) {
   <div class="alert alert-success" role="alert">
     {{ successMessage }}
   </div>
