@@ -1,7 +1,13 @@
+<ng-template #isApprovedTemplate let-item>
+  @if(item.approved) {
+  <span class="badge bg-success p-2">Aprobado</span>
+  } @else {
+  <span class="badge bg-secondary p-2">Pendiente</span>
+  }
+</ng-template>
+
 <ng-template #actionsTemplate let-item>
-  <button class="btn btn-danger btn-sm me-2" (click)="unAssignWorker(item)">
-    Remover
-  </button>
+  <button class="btn btn-primary btn-sm me-2">Ver más</button>
 </ng-template>
 
 <div class="px-5 py-4 border border-top-0">
@@ -13,10 +19,8 @@
   <app-table
     [height]="'200px'"
     [tableConfig]="{
-      items: workers || [],
+      items: documentations || [],
       columns: columns,
     }"
   ></app-table>
 </div>
-
-

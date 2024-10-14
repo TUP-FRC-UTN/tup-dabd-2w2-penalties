@@ -3,11 +3,19 @@ export type FormFieldType =
   | 'textarea'
   | 'number'
   | 'date'
-  | 'email';
+  | 'email'
+  | 'select'
+  | 'checkbox';
+
+export interface SelectOption {
+  name: string;
+  value: string;
+}
 
 export interface FormField {
   name: string;
   type: FormFieldType;
+  options?: SelectOption[];
   label: string;
   validations?: {
     required?: boolean;

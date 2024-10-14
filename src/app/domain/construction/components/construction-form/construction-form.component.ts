@@ -1,9 +1,13 @@
-import { Component, inject, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConstructionService } from '../../services/construction.service';
 import { CommonModule } from '@angular/common';
 import { FormFieldsComponent } from '../../../../shared/components/form-fields/form-fields.component';
-import { FormConfig } from '../../../../shared/components/form-fields/form-fields.model';
+import {
+  FormConfig,
+  SelectOption,
+} from '../../../../shared/components/form-fields/form-fields.model';
+import { CadastreService } from '../../../../services/cadastre.service';
 
 @Component({
   selector: 'app-construction-form',
@@ -12,12 +16,12 @@ import { FormConfig } from '../../../../shared/components/form-fields/form-field
   templateUrl: './construction-form.component.html',
   styleUrl: './construction-form.component.css',
 })
-export class ConstructionFormComponent {
+export class ConstructionFormComponent implements OnInit {
   @ViewChild(FormFieldsComponent) formFieldsComponent!: FormFieldsComponent;
 
   // Services:
   activeModal = inject(NgbActiveModal);
-
+  private cadastreService = inject(CadastreService);
   private constructionService = inject(ConstructionService);
 
   // Properties:
@@ -29,7 +33,11 @@ export class ConstructionFormComponent {
       {
         name: 'plot_id',
         label: 'Plot ID',
-        type: 'number',
+        type: 'select',
+        options: [
+          { name: '1 - Default Plot', value: '1' },
+          { name: '2 - Second Plot', value: '2' },
+        ],
         validations: { required: true, min: 1 },
       },
       {
@@ -66,6 +74,19 @@ export class ConstructionFormComponent {
       },
     ],
   };
+
+  ngOnInit(): void {
+    this.cadastreService.getPlots().subscribe((plots) => {
+      this.constructionFormConfig.fields[0].options = plots.content.map(
+        (plot) => {
+          return {
+            name: plot.plot_number.toString() + ' - ' + plot.plot_type,
+            value: plot.plot_number.toString(),
+          };
+        }
+      );
+    });
+  }
 
   onSubmit = (formValue: any): void => {
     this.constructionService.registerConstruction(formValue).subscribe(() => {

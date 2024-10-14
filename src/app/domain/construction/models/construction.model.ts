@@ -24,4 +24,24 @@ export interface ConstructionResponseDto {
   workers: any[];
 }
 
-export type ConstructionTab = 'documentation' | 'workers' | 'notes'
+export interface ConstructionUpdateStatusRequestDto {
+  construction_id: number;
+  status: string;
+}
+
+export type ConstructionTab = 'documentation' | 'workers' | 'notes';
+
+export type ConstructionStatus =
+  | 'PLANNED'
+  | 'APPROVED'
+  | 'IN_PROGRESS'
+  | 'COMPLETED'
+  | 'STOPPED';
+
+export const CONSTRUCTION_STATUSES: ConstructionStatus[] = [
+  'PLANNED',
+  'APPROVED',
+  'IN_PROGRESS',
+  'COMPLETED',
+  'STOPPED',
+];
