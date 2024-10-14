@@ -30,17 +30,12 @@ export class ConstructionWorkersComponent implements AfterViewInit {
 
   private modalService = inject(NgbModal);
 
-
-
   // Properties:
   @ViewChild('actionsTemplate') actionsTemplate!: TemplateRef<any>;
 
   columns: TableColumn[] = [];
 
-  
-
   // Methods:
-
 
   ngAfterViewInit(): void {
     setTimeout(() => {
