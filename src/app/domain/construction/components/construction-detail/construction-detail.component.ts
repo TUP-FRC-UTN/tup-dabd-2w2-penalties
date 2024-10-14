@@ -10,7 +10,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { ConstructionWorkersComponent } from '../../../workers/components/construction-workers/construction-workers.component';
 import { TableComponent } from '../../../../shared/components/table/table.component';
-import { LayoutComponent } from '../../../../shared/components/layout/layout.component';
+import { MainContainerComponent } from '../../../../shared/components/main-container/main-container.component';
 import { FormsModule } from '@angular/forms';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { ConstructionDocumentationListComponent } from '../../../construction-documentation/components/construction-documentation-list/construction-documentation-list.component';
@@ -23,7 +23,7 @@ import { WorkerService } from '../../../workers/services/worker.service';
   imports: [
     CommonModule,
     FormsModule,
-    LayoutComponent,
+    MainContainerComponent,
     TableComponent,
     ConstructionWorkersComponent,
     NgbTooltipModule,

@@ -1,8 +1,8 @@
 import { Routes } from '@angular/router';
-import { FineDetailComponent } from './components/fine/fine-detail/fine-detail.component';
-import { FineComponent } from './components/fine/fine/fine.component';
 import { ConstructionListComponent } from './domain/construction/components/construction-list/construction-list.component';
 import { ConstructionDetailComponent } from './domain/construction/components/construction-detail/construction-detail.component';
+import { FineDetailComponent } from './domain/moderations/fine/components/fine-detail/fine-detail.component';
+import { FineTable } from './domain/moderations/fine/components/fine-table/fine-table.component';
 
 export const routes: Routes = [
   {
@@ -20,7 +20,7 @@ export const routes: Routes = [
   },
   {
     path: 'fine',
-    component: FineComponent,
+    component: FineTable,
   },
   { path: 'fine/:id', component: FineDetailComponent },
 ];

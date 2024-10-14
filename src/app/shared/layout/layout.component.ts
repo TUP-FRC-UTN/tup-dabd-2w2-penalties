@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 import { RouterLink, RouterOutlet } from '@angular/router';
-import { CustomNavBarComponent } from "../../custom-nav-bar/custom-nav-bar.component";
+import { CustomNavBarComponent } from "../components/custom-nav-bar/custom-nav-bar.component";
 
 @Component({
   selector: 'app-layout',

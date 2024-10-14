@@ -1,0 +1,129 @@
+<app-main-container title="Detalle Multa" [onGoBack]="goBack">
+  @if(fine == undefined){
+  <div class="spinner-border" role="status">
+    <span class="visually-hidden">Cargando</span>
+  </div>
+  }@else {
+  <form #form="ngForm" class="row g-3 needs-validation" novalidate>
+    <div class="row justify-content-around align-items-center g-2">
+      <div class="col-4">
+        <label for="inputModel" class="form-label">Lote</label>
+        <input
+          type="text"
+          class="form-control"
+          id="inputModel"
+          [(ngModel)]="fine.plotId"
+          #plot="ngModel"
+          name="plotId"
+          readonly
+        />
+      </div>
+      <div class="col-4">
+        <label for="inputModel" class="form-label">Tipo</label>
+        <input
+          type="text"
+          class="form-control"
+          id="inputModel"
+          [(ngModel)]="fine.sanctionType.name"
+          #sanctionType="ngModel"
+          name="sanctionTypeName"
+          readonly
+        />
+      </div>
+    </div>
+
+    <div class="row justify-content-around align-items-center g-2">
+      <div class="col-4">
+        <label for="inputModel" class="form-label">Alta</label>
+        <input
+          type="text"
+          class="form-control"
+          [value]="fine.createdDate | date : 'dd/MM/yyyy'"
+          readonly
+        />
+      </div>
+      <div class="col-4">
+        <label for="fineStateSelect" class="form-label">Estado</label>
+        <select
+          class="form-select"
+          id="fineStateSelect"
+          [(ngModel)]="fine.fineState"
+          name="fineState"
+          #fineState="ngModel"
+          [disabled]="
+            fine.fineState === FineStatusEnum.APPROVED ||
+            fine.fineState === FineStatusEnum.REJECTED
+          "
+        >
+          @for (key of fineService.fineStatusKeys; track $index) {
+          <option [value]="key">
+            {{ fineService.getValueByKeyForStatusEnum(key) }}
+          </option>
+          }
+        </select>
+      </div>
+    </div>
+
+    @if (initialState !== fine.fineState) {
+
+    <div
+      class="row justify-content-left align-items-left g-2 d-flex flex-row-reverse"
+    >
+      <div class="col-1">
+        <button class="btn btn-outline-primary" (click)="save()">
+          Guardar
+        </button>
+      </div>
+    </div>
+    }
+  </form>
+
+  <div class="row justify-content-center align-items-center g-2 mt-3">
+    <div class="col">
+      <h5>Infracciones</h5>
+
+      <table class="table table-striped justify-content-around">
+        <thead>
+          <tr>
+            <th scope="col">Infracción</th>
+            <th scope="col">Usuario</th>
+            <th scope="col">Alta</th>
+            <th scope="col">Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (infraction of fine.infractions; track infraction.id; let i =
+          $index) {
+          <tr>
+            <th scope="row">{{ infraction.id }}</th>
+            <td>{{ infraction.createdBy | number }}</td>
+            <td>
+              {{ infraction.createdDate | date : "dd/MM/yyyy" }}
+            </td>
+            <td>
+              <button
+                type="button"
+                class="btn btn-primary"
+                (click)="viewInfractionDetail(infraction.id)"
+              >
+                Ver Detalle
+              </button>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+  }
+</app-main-container>
+
+@if (successMessage) {
+<div class="alert alert-success" role="alert">
+  {{ successMessage }}
+</div>
+} @if (error) {
+<div class="alert alert-danger" role="alert">
+  {{ error }}
+</div>
+}

@@ -1,0 +1,35 @@
+<form class="row m-0 p-0 needs-validation" novalidate>
+  <!--todo: lo unico que haria esto mas facil de validar es meter esto adentro del componente padre-->
+  <div>
+    <label for="typeahead-template" class="">Tipo*</label>
+    <input
+      id="typeahead-template"
+      type="text"
+      class="form-control col"
+      name="selectTypeName"
+      #selectTypeControl="ngModel"
+      [(ngModel)]="selectedSanctionType"
+      [ngbTypeahead]="search"
+      [inputFormatter]="formatter"
+      [resultFormatter]="formatter"
+      [selectOnExact]="true"
+      (selectItem)="onSelectedChange($event.item)"
+      [ngClass]="{
+        'is-invalid':
+          selectTypeControl.invalid &&
+          (selectTypeControl.dirty || selectTypeControl.touched)
+      }"
+      (blur)="validateSanctionType(selectedSanctionType)"
+      required
+    />
+
+    @if (selectTypeControl.invalid && (selectTypeControl.dirty ||
+    selectTypeControl.touched)) { @if (selectTypeControl.getError('required')) {
+    <div class="invalid-feedback">Este campo es obligatorio</div>
+    }
+    <!--      @if (!isSanctionTypeValid) {-->
+    <!--        <div class="invalid-feedback">El valor ingresado no es válido</div>-->
+    <!--      }-->
+    }
+  </div>
+</form>

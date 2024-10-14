@@ -8,12 +8,12 @@ import { ConstructionService } from '../../services/construction.service';
 import { Router } from '@angular/router';
 import { TableColumn } from '../../../../shared/components/table/table.models';
 import { TableComponent } from '../../../../shared/components/table/table.component';
-import { LayoutComponent } from '../../../../shared/components/layout/layout.component';
+import { MainContainerComponent } from '../../../../shared/components/main-container/main-container.component';
 
 @Component({
   selector: 'app-construction-list',
   standalone: true,
-  imports: [CommonModule, TableComponent, LayoutComponent],
+  imports: [CommonModule, TableComponent, MainContainerComponent],
   templateUrl: './construction-list.component.html',
   styleUrl: './construction-list.component.css',
 })
