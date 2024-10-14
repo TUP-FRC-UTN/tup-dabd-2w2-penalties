@@ -28,24 +28,27 @@
           }"
           required
         >
-          @if(plots){ @for (plot of plots; track plot.plot_number) {
-          <option value="{{ plot.plot_number }}">
-            {{ plot.plot_number }} - {{ plot.plot_type }}
-          </option>
-          } }@else {
+          @if (plots) {
+            @for (plot of plots; track plot.plot_number) {
+              <option value="{{ plot.plot_number }}">
+                {{ plot.plot_number }} - {{ plot.plot_type }}
+              </option>
+            }
+          } @else {
 
-          <option value="1">1</option>
-          <option>2</option>
-          <option>3</option>
-          <option>4</option>
+            <option value="1">1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
 
           }
         </select>
-        
-        @if (plot.invalid && (plot.dirty || plot.touched)) { @if
-        (plot.getError('required')) {
-        <div class="invalid-feedback">Este campo es obligatorio</div>
-        } }
+
+        @if (plot.invalid && (plot.dirty || plot.touched)) {
+          @if (plot.getError('required')) {
+            <div class="invalid-feedback">Este campo es obligatorio</div>
+          }
+        }
       </div>
       <div class="col-md-6">
         <app-sanction-type-select
@@ -65,9 +68,9 @@
       </div>
     </form>
     @if (error) {
-    <div class="alert alert-danger" role="alert">
-      {{ error }}
-    </div>
+      <div class="alert alert-danger" role="alert">
+        {{ error }}
+      </div>
     }
   </div>
   <div class="modal-footer">
@@ -75,6 +78,7 @@
       type="button"
       class="btn btn-outline-secondary"
       (click)="createFine(form)"
+      [disabled]="!touchSelected"
     >
       Guardar
     </button>

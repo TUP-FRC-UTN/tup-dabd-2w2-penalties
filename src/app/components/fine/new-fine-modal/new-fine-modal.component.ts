@@ -28,6 +28,8 @@ export class NewFineModalComponent {
   fine: FineDTO | undefined;
   plots: Plot[] | undefined;
 
+  touchSelected:boolean=false
+
   error: string | null = null;
 
   private modalService = inject(NgbModal);
@@ -53,10 +55,11 @@ export class NewFineModalComponent {
 
   onSanctionTypeChange(value: SanctionType | undefined) {
     this.fine!.sanctionTypeId = value?.id; // Actualiza el tipo de sanción en fine
+    this.touchSelected=true
   }
 
   createFine(form: NgForm) {
-    if (form.valid) {
+    if (form.valid&&this.touchSelected) {
       if (this.fine && this.fine.plotId && this.fine.sanctionTypeId) {
         this.fineService.createFine(this.fine).subscribe({
           next: (response) => {

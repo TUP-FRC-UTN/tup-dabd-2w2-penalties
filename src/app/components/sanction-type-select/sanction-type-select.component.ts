@@ -3,19 +3,22 @@ import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { Observable, OperatorFunction } from 'rxjs';
 import { debounceTime, switchMap } from 'rxjs/operators';
 import { FormsModule } from '@angular/forms';
-import { JsonPipe } from '@angular/common';
+import {JsonPipe, NgClass} from '@angular/common';
 import { SanctionType } from '../../models/moderations/sanctionType.model';
 import { SanctionTypeService } from '../../services/sanction-type.service';
 
 @Component({
   selector: 'app-sanction-type-select',
   standalone: true,
-  imports: [NgbTypeaheadModule, FormsModule, JsonPipe],
+  imports: [NgbTypeaheadModule, FormsModule, JsonPipe, NgClass],
   templateUrl: './sanction-type-select.component.html',
   styleUrls: ['./sanction-type-select.component.scss'],
 })
 export class SanctionTypeSelectComponent {
   selectedSanctionType: SanctionType | undefined;
+
+  isSanctionTypeValid: boolean = false;
+
   @Output() selectedSanctionTypeChange = new EventEmitter<
     SanctionType | undefined
   >();
@@ -34,12 +37,18 @@ export class SanctionTypeSelectComponent {
 
   formatter = (x: SanctionType) => x.name;
 
+
   onSelectedChange(value: SanctionType) {
     this.selectedSanctionType = value; // Actualiza la propiedad
+    this.isSanctionTypeValid = true;
     console.log(
       'Selected sanction type changed to:',
       this.selectedSanctionType
     );
     this.selectedSanctionTypeChange.emit(value); // Emite el nuevo valor
+  }
+
+  validateSanctionType(selected: SanctionType|undefined) {
+    this.isSanctionTypeValid= !!selected
   }
 }
