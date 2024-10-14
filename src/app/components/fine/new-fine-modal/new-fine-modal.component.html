@@ -15,7 +15,7 @@
       class="row g-3 needs-validation"
       novalidate
     >
-      <div class="col-md-6">
+      <div>
         <label for="plotSelect" class="form-label">Lote*</label>
         <select
           class="form-select"
@@ -50,22 +50,22 @@
           }
         }
       </div>
-      <div class="col-md-6 ">
+      <div class="p-0 m-0">
         <app-sanction-type-select
           (selectedSanctionTypeChange)="onSanctionTypeChange($event)"
         >
           >
         </app-sanction-type-select>
       </div>
-      <div class="col-12">
-        <label for="inputAddress" class="form-label">Descripción</label>
-        <input
-          type="text"
-          class="form-control"
-          id="inputAddress"
-          placeholder=""
-        />
-      </div>
+<!--      <div class="col-12">-->
+<!--        <label for="inputAddress" class="form-label">Descripción</label>-->
+<!--        <input-->
+<!--          type="text"-->
+<!--          class="form-control"-->
+<!--          id="inputAddress"-->
+<!--          placeholder=""-->
+<!--        />-->
+<!--      </div>-->
       <p>* son campos obligatorios</p>
     </form>
     @if (error) {
