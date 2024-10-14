@@ -7,7 +7,7 @@
     <input
       id="typeahead-template"
       type="text"
-      class="form-control col"
+      class="form-control col mb-md-5"
       name="selectTypeName"
       #selectTypeControl="ngModel"
       [(ngModel)]="selectedSanctionType"
@@ -19,6 +19,8 @@
       [ngClass]="{'is-invalid':selectTypeControl.invalid && (selectTypeControl.dirty||selectTypeControl.touched)}"
       (blur)="validateSanctionType(selectedSanctionType)"
       required
+
+
     />
 
     @if (selectTypeControl.invalid && (selectTypeControl.dirty || selectTypeControl.touched)) {
