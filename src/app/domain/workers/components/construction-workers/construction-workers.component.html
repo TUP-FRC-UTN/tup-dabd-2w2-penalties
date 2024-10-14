@@ -1,3 +1,9 @@
+<ng-template #actionsTemplate let-item>
+  <button class="btn btn-danger btn-sm me-2" (click)="unAssignWorker(item)">
+    Remover
+  </button>
+</ng-template>
+
 <div class="px-5 py-4 border border-top-0">
   <div class="w-100 d-flex justify-content-end">
     <button class="btn btn-outline-primary mb-3" (click)="openFormModal()">
@@ -11,5 +17,6 @@
       columns: columns,
     }"
   ></app-table>
-
 </div>
+
+

@@ -13,11 +13,17 @@ import { WorkerFormComponent } from '../worker-form/worker-form.component';
 import { TableComponent } from '../../../../shared/components/table/table.component';
 import { TableColumn } from '../../../../shared/components/table/table.models';
 import { WorkerService } from '../../services/worker.service';
+import { ConfirmAlertComponent } from '../../../../shared/components/confirm-alert/confirm-alert.component';
+import {
+  Toast,
+  ToastService,
+} from '../../../../shared/components/toast/toast-service';
+import { ToastsContainer } from '../../../../shared/components/toast/toasts-container.component';
 
 @Component({
   selector: 'app-construction-workers',
   standalone: true,
-  imports: [CommonModule, TableComponent],
+  imports: [CommonModule, TableComponent, ToastsContainer],
   templateUrl: './construction-workers.component.html',
   styleUrl: './construction-workers.component.css',
 })
@@ -29,6 +35,9 @@ export class ConstructionWorkersComponent implements AfterViewInit {
   // Services:
 
   private modalService = inject(NgbModal);
+  private workerService = inject(WorkerService);
+  private constructionService = inject(ConstructionService);
+  toastService = inject(ToastService);
 
   // Properties:
   @ViewChild('actionsTemplate') actionsTemplate!: TemplateRef<any>;
@@ -60,8 +69,41 @@ export class ConstructionWorkersComponent implements AfterViewInit {
     });
   }
 
-  openFormModal(itemId: number | null = null): void {
+  sendSuccess() {
+    let worker = { id: 1 };
+    this.toastService.sendError(
+      `Worker with ID ${worker.id} was successfully unassigned.`
+    );
+  }
+
+  openFormModal(): void {
     const modalRef = this.modalService.open(WorkerFormComponent);
     modalRef.componentInstance.constructionId = this.constructionId;
+  }
+
+  unAssignWorker(worker: any) {
+    const modalRef = this.modalService.open(ConfirmAlertComponent);
+    modalRef.componentInstance.alertTitle = 'Confirmación';
+    modalRef.componentInstance.alertMessage = `¿Estás seguro de que deseas desasignar a ${worker.lastName}, ${worker.name} ?`;
+
+    modalRef.result
+      .then((result) => {
+        if (result) {
+          this.workerService.unAssignWorker(worker.id).subscribe({
+            next: () => {
+              this.workers = this.workers.filter((w) => w.id !== worker.id);
+              this.toastService.sendSuccess(
+                `Worker with ID ${worker.id} was successfully unassigned.`
+              );
+            },
+            error: () => {
+              console.error('Error al desasignar el trabajador');
+            },
+          });
+        }
+      })
+      .catch(() => {
+        console.log('Desasignación cancelada');
+      });
   }
 }

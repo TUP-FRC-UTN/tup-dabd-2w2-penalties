@@ -15,6 +15,10 @@ export class ConstructionService {
 
   private itemsSubject = new BehaviorSubject<ConstructionResponseDto[]>([]);
   items$ = this.itemsSubject.asObservable();
+  private oneConstruction = new BehaviorSubject<
+    ConstructionResponseDto | undefined
+  >(undefined);
+  oneConstruction$ = this.oneConstruction.asObservable();
 
   private totalItemsSubject = new BehaviorSubject<number>(0);
   totalItems$ = this.totalItemsSubject.asObservable();
@@ -39,7 +43,12 @@ export class ConstructionService {
   getConstructionById(
     id: number
   ): Observable<ConstructionResponseDto | undefined> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`);
+    return this.http.get<any>(`${this.apiUrl}/${id}`).pipe(
+      map((oneConstruction) => {
+        this.oneConstruction.next(oneConstruction);
+        return oneConstruction;
+      })
+    );
   }
 
   registerConstruction(

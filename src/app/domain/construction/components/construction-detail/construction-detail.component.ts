@@ -66,6 +66,7 @@ export class ConstructionDetailComponent implements OnInit {
         this.successMessage = null;
       }
     });
+    
   }
 
   getConstructionById(id: number) {
