@@ -21,7 +21,7 @@ import { NgbToastModule } from '@ng-bootstrap/ng-bootstrap';
       }@else{
       <ng-container
         *ngTemplateOutlet="
-          toast.template;
+          toast.template!;
           context: { $implicit: toast.context }
         "
       ></ng-container>
