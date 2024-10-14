@@ -42,4 +42,20 @@ export class WorkerService {
         })
       );
   }
+
+  unAssignWorker(id: number): Observable<string> {
+    return this.http
+      .put<string>(`${this.apiUrl}/workers/${id}/unassign`, undefined)
+      .pipe(
+        map((response) => {
+          return response;
+        }),
+        catchError((error) => {
+          console.error('Error en la desasignación:', error);
+          return throwError(
+            () => new Error('Error en la desasignación del trabajador')
+          );
+        })
+      );
+  }
 }
