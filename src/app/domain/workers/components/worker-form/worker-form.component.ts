@@ -11,6 +11,7 @@ import { FormFieldsComponent } from '../../../../shared/components/form-fields/f
 import { FormConfig } from '../../../../shared/components/form-fields/form-fields.model';
 import { WorkerService } from '../../services/worker.service';
 import { WorkerRequestDto } from '../../models/worker.model';
+import { ToastService } from '../../../../shared/components/toast/toast-service';
 
 @Component({
   selector: 'app-worker-form',
@@ -29,6 +30,7 @@ export class WorkerFormComponent {
   activeModal = inject(NgbActiveModal);
 
   private workerService = inject(WorkerService);
+  private toastService = inject(ToastService);
 
   successMessage: string | null = null;
   errorMessage: string | null = null;
@@ -82,30 +84,6 @@ export class WorkerFormComponent {
     ],
   };
 
-  ngOnInit(): void {
-    this.workerService.message$.subscribe((message) => {
-      if (message) {
-        if (message.type === 'success') {
-          this.successMessage = message.message;
-          this.errorMessage = null;
-        } else if (message.type === 'error') {
-          this.errorMessage = message.message;
-          this.successMessage = null;
-        }
-      } else {
-        this.successMessage = null;
-        this.errorMessage = null;
-      }
-
-      setTimeout(() => {
-        this.successMessage = null;
-      }, 3000);
-      setTimeout(() => {
-        this.errorMessage = null;
-      }, 3000);
-    });
-  }
-
   onSubmit = (formValue: any): void => {
     console.log(formValue, this.constructionId);
 
@@ -121,8 +99,12 @@ export class WorkerFormComponent {
     };
 
     this.workerService.registerWorker(worker).subscribe({
-      next: () => {
+      next: (result) => {
         this.activeModal.close();
+        this.toastService.sendSuccess(`Se creó el trabajador ${result.id}`);
+      },
+      error: (error) => {
+        this.toastService.sendError('Ocurrió un error al crear el trabajador');
       },
     });
   };
