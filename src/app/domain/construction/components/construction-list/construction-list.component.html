@@ -8,22 +8,24 @@
 </ng-template>
 
 <app-main-container title="Constructions">
-  <div class="w-100 d-flex justify-content-end">
-    <button class="btn btn-outline-primary mb-3" (click)="openFormModal()">
+  <app-table
+    [items]="(items$ | async) || []"
+    [columns]="columns"
+    [pagination]="{
+      totalItems: (totalItems$ | async) || 0,
+      page: page,
+      size: size,
+      onPageChange: onPageChange,
+      onPageSizeChange: onPageSizeChange
+    }"
+  >
+    <div class="d-flex gap-2">
+      <input type="text" class="form-control" placeholder="Filter 1" />
+      <input type="text" class="form-control" placeholder="Filter 2" />
+      <input type="text" class="form-control" placeholder="Filter 3" />
+    </div>
+    <button class="btn btn-outline-primary" (click)="openFormModal()">
       Nuevo
     </button>
-  </div>
-  <app-table
-    [tableConfig]="{
-        items: (items$ | async) || [],
-        columns: columns,
-        pagination: {
-          totalItems: (totalItems$ | async) || 0,
-          page: page,
-          size: size,
-          onPageChange: onPageChange,
-          onPageSizeChange: onPageSizeChange
-        },
-      }"
-  ></app-table>
+  </app-table>
 </app-main-container>

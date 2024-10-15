@@ -32,7 +32,7 @@ export class FineService {
   private _fines$ = new BehaviorSubject<Fine[]>([]);
   private _total$ = new BehaviorSubject<number>(0);
 
-  private apiUrl = 'http://localhost:8082';
+  private apiUrl = 'http://localhost:8080';
 
   private _state: State = {
     page: 1,

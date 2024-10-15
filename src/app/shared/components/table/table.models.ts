@@ -13,9 +13,3 @@ export interface TablePagination {
   onPageChange: (page: number) => void;
   onPageSizeChange: (itemsPerPage: number) => void;
 }
-
-export interface TableConfig {
-  items: any[];
-  columns: TableColumn[];
-  pagination?: TablePagination;
-}

@@ -18,9 +18,7 @@
   </div>
   <app-table
     [height]="'200px'"
-    [tableConfig]="{
-      items: documentations || [],
-      columns: columns,
-    }"
+    [items]="documentations || []"
+    [columns]="columns"
   ></app-table>
 </div>

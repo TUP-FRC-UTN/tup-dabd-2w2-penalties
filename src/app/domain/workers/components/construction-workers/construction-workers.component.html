@@ -12,11 +12,7 @@
   </div>
   <app-table
     [height]="'200px'"
-    [tableConfig]="{
-      items: workers || [],
-      columns: columns,
-    }"
+    [items]="workers || []"
+    [columns]="columns"
   ></app-table>
 </div>
-
-
