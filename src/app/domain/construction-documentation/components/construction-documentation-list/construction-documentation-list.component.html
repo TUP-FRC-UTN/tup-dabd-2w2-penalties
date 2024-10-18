@@ -29,5 +29,12 @@
     [height]="'200px'"
     [items]="documentations || []"
     [columns]="columns"
-  ></app-table>
+  >
+    <div class="w-100 d-flex justify-content-end">
+      <button class="btn btn-outline-primary" (click)="approveConstruction()">
+        <i class="bi bi-clipboard-check"></i>
+        Aprobar obra
+      </button>
+    </div>
+  </app-table>
 </div>

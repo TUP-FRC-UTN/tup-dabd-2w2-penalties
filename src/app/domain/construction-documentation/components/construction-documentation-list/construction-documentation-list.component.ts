@@ -74,4 +74,21 @@ export class ConstructionDocumentationListComponent {
       
       });
   }
+
+  approveConstruction() {
+    const modalRef = this.modalService.open(ConfirmAlertComponent);
+    modalRef.componentInstance.alertTitle = 'Confirmación';
+    modalRef.componentInstance.alertMessage = `¿Está seguro de que desea aprobar esta construcción?`;
+    modalRef.componentInstance.alertType = 'success';
+
+    modalRef.result
+      .then((result) => {
+        if (result) {
+
+        }
+      })
+      .catch(() => {
+
+      });
+  }
 }
