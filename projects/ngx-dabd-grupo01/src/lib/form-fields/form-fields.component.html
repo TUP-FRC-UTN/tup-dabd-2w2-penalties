@@ -1,0 +1,146 @@
+@switch (formConfig.formType || "inline") {
+<!-- Inline -->
+@case ("inline") {
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <div class="row">
+    @for(field of formConfig.fields; track $index) {
+    <div class="col-12 col-md-{{ getFieldSpan(field.fieldSpan || 12) }}">
+      <div class="form-group mb-3">
+        <label [for]="field.name">{{ field.label }}</label>
+
+        @if(field.type !== "select" && field.type !== "checkbox") {
+        <input
+          [attr.type]="field.type"
+          [formControlName]="field.name"
+          [id]="field.name"
+          class="form-control"
+          [ngClass]="{
+            'is-invalid':
+              getFieldControl(field.name)?.invalid &&
+              getFieldControl(field.name)?.touched,
+            'is-valid':
+              getFieldControl(field.name)?.valid &&
+              getFieldControl(field.name)?.touched
+          }"
+        />
+        } @if(field.type === "select") {
+        <select
+          [formControlName]="field.name"
+          [id]="field.name"
+          class="form-select"
+          [ngClass]="{
+            'is-invalid':
+              getFieldControl(field.name)?.invalid &&
+              getFieldControl(field.name)?.touched,
+            'is-valid':
+              getFieldControl(field.name)?.valid &&
+              getFieldControl(field.name)?.touched
+          }"
+        >
+          @for(option of field.options; track $index) {
+          <option [value]="option.value">{{ option.name }}</option>
+          }
+        </select>
+        }
+        <!-- Error messages -->
+        @if(getFieldControl(field.name)?.invalid &&
+        getFieldControl(field.name)?.touched) {
+        <div class="invalid-feedback">
+          @if(getFieldControl(field.name)?.errors?.['required']){
+          <span>Este campo es obligatorio.</span>
+          }
+          <!-- -- -->
+          @if(getFieldControl(field.name)?.errors?.['min']) {
+          <span>El valor mínimo es {{ field.validations?.min }}.</span>
+          }
+          <!-- -- -->
+          @if(getFieldControl(field.name)?.errors?.['max']) {
+          <span>El valor maximo es {{ field.validations?.max }}.</span>
+          }
+          <!-- -- -->
+          @if(getFieldControl(field.name)?.errors?.['minlength']) {
+          <span>Mínimo de {{ field.validations?.minLength }} caracteres.</span>
+          } @if(getFieldControl(field.name)?.errors?.['maxlength']) {
+          <span>Máximo de {{ field.validations?.maxLength }} caracteres.</span>
+          }
+        </div>
+        }
+      </div>
+    </div>
+    }
+  </div>
+
+  @if(!isButtonOutside) {
+  <button type="submit" class="btn btn-primary mt-4">Submit</button>
+  }
+</form>
+}
+<!-- Card -->
+@case ("card") {
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">{{ formConfig.formTitle }}</h3>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        @for(field of formConfig.fields; track $index) {
+        <div class="col-12 col-md-{{ getFieldSpan(field.fieldSpan || 12) }}">
+          <div class="form-group mb-3">
+            <label [for]="field.name">{{ field.label }}</label>
+
+            <input
+              [attr.type]="field.type"
+              [formControlName]="field.name"
+              [id]="field.name"
+              class="form-control"
+              [ngClass]="{
+                'is-invalid':
+                  getFieldControl(field.name)?.invalid &&
+                  getFieldControl(field.name)?.touched,
+                'is-valid':
+                  getFieldControl(field.name)?.valid &&
+                  getFieldControl(field.name)?.touched
+              }"
+            />
+
+            <!-- Error messages -->
+            @if(getFieldControl(field.name)?.invalid &&
+            getFieldControl(field.name)?.touched) {
+            <div class="invalid-feedback">
+              @if(getFieldControl(field.name)?.errors?.['required']){
+              <span>Este campo es obligatorio.</span>
+              }
+              <!-- -- -->
+              @if(getFieldControl(field.name)?.errors?.['min']) {
+              <span>El valor mínimo es {{ field.validations?.min }}.</span>
+              }
+              <!-- -- -->
+              @if(getFieldControl(field.name)?.errors?.['max']) {
+              <span>El valor maximo es {{ field.validations?.max }}.</span>
+              }
+              <!-- -- -->
+              @if(getFieldControl(field.name)?.errors?.['minlength']) {
+              <span
+                >Mínimo de {{ field.validations?.minLength }} caracteres.</span
+              >
+              } @if(getFieldControl(field.name)?.errors?.['maxlength']) {
+              <span
+                >Máximo de {{ field.validations?.maxLength }} caracteres.</span
+              >
+              }
+            </div>
+            }
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+    @if(!isButtonOutside) {
+    <div class="card-footer">
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+    }
+  </div>
+</form>
+} }
