@@ -5,15 +5,16 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { TableColumn } from '../../../../shared/components/table/table.models';
 import { ConstructionDocumentationFormComponent } from '../construction-documentation-form/construction-documentation-form.component';
 import { TableComponent } from '../../../../shared/components/table/table.component';
+import { ConfirmAlertComponent } from 'ngx-dabd-grupo01';
 
 @Component({
   selector: 'app-construction-documentation-list',
   standalone: true,
-  imports: [TableComponent],
+  imports: [TableComponent, NgbTooltipModule],
   templateUrl: './construction-documentation-list.component.html',
   styleUrl: './construction-documentation-list.component.scss',
 })
@@ -56,5 +57,21 @@ export class ConstructionDocumentationListComponent {
       ConstructionDocumentationFormComponent
     );
     modalRef.componentInstance.itemId = itemId;
+  }
+
+  rejectDocument(document: any) {
+    const modalRef = this.modalService.open(ConfirmAlertComponent);
+    modalRef.componentInstance.alertTitle = 'Confirmación';
+    modalRef.componentInstance.alertMessage = `¿Estás seguro de que desea rechazar el documento ${document.documentPath}?`;
+
+    modalRef.result
+      .then((result) => {
+        if (result) {
+
+        }
+      })
+      .catch(() => {
+      
+      });
   }
 }
