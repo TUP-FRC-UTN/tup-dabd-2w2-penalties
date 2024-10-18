@@ -1,11 +1,13 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, map } from 'rxjs';
+import { BehaviorSubject, Observable, finalize, map } from 'rxjs';
 import {
   ConstructionRequestDto,
   ConstructionResponseDto,
   ConstructionUpdateStatusRequestDto,
 } from '../models/construction.model';
+
+type OneConstruction = ConstructionResponseDto | undefined;
 
 @Injectable({
   providedIn: 'root',
@@ -13,31 +15,44 @@ import {
 export class ConstructionService {
   private apiUrl = 'http://localhost:8080/constructions';
 
+  private oneConstruction = new BehaviorSubject<OneConstruction>(undefined);
+  oneConstruction$ = this.oneConstruction.asObservable();
+
   private itemsSubject = new BehaviorSubject<ConstructionResponseDto[]>([]);
   items$ = this.itemsSubject.asObservable();
-  private oneConstruction = new BehaviorSubject<
-    ConstructionResponseDto | undefined
-  >(undefined);
-  oneConstruction$ = this.oneConstruction.asObservable();
 
   private totalItemsSubject = new BehaviorSubject<number>(0);
   totalItems$ = this.totalItemsSubject.asObservable();
+
+  private isLoadingSubject = new BehaviorSubject<boolean>(false);
+  isLoading$ = this.isLoadingSubject.asObservable();
 
   private readonly http = inject(HttpClient);
 
   getAllConstructions(
     page: number,
-    limit: number
+    limit: number,
+    searchParams: any = {}
   ): Observable<{ items: ConstructionResponseDto[]; total: number }> {
-    return this.http
-      .get<any>(`${this.apiUrl}/pageable?page=${page - 1}&size=${limit}`)
-      .pipe(
-        map((data) => {
-          const items = data.content || [];
-          const total = data.totalElements || 0;
-          return { items, total };
-        })
-      );
+    this.isLoadingSubject.next(true); // Iniciar loading
+    let params = new HttpParams()
+      .set('page', (page - 1).toString())
+      .set('size', limit.toString());
+
+    Object.keys(searchParams).forEach((key) => {
+      if (searchParams[key]) {
+        params = params.set(key, searchParams[key]);
+      }
+    });
+
+    return this.http.get<any>(`${this.apiUrl}/pageable`, { params }).pipe(
+      map((data) => {
+        const items = data.content || [];
+        const total = data.totalElements || 0;
+        return { items, total };
+      }),
+      finalize(() => this.isLoadingSubject.next(false))
+    );
   }
 
   getConstructionById(
