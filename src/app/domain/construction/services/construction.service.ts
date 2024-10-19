@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, finalize, map } from 'rxjs';
 import {
   ConstructionRequestDto,
   ConstructionResponseDto,
+  ConstructionUpdateRequestDto,
   ConstructionUpdateStatusRequestDto,
 } from '../models/construction.model';
 
@@ -96,4 +97,14 @@ export class ConstructionService {
   setTotalItems(total: number): void {
     this.totalItemsSubject.next(total);
   }
+
+  updateWorkerDetails(
+    id: number,
+    updateStatusRequestDto: ConstructionUpdateRequestDto
+  ): Observable<ConstructionResponseDto> {
+    return this.http.put<ConstructionResponseDto>(
+      `${this.apiUrl}/updateWorkDetails/${id}`, 
+      updateStatusRequestDto
+    );
+  } 
 }

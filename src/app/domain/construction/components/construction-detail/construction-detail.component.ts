@@ -1,18 +1,20 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConstructionService } from '../../services/construction.service';
 import {
   CONSTRUCTION_STATUSES,
+  ConstructionRequestDto,
   ConstructionResponseDto,
   ConstructionStatus,
   ConstructionTab,
+  ConstructionUpdateRequestDto,
 } from '../../models/construction.model';
 import { CommonModule } from '@angular/common';
 import { ConstructionWorkersComponent } from '../../../workers/components/construction-workers/construction-workers.component';
 import { TableComponent } from '../../../../shared/components/table/table.component';
 import { MainContainerComponent } from '../../../../shared/components/main-container/main-container.component';
 import { FormsModule } from '@angular/forms';
-import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { ConstructionDocumentationListComponent } from '../../../construction-documentation/components/construction-documentation-list/construction-documentation-list.component';
 import { ConstructionNotesListComponent } from '../../../note/components/construction-notes-list/construction-notes-list.component';
 import { WorkerService } from '../../../workers/services/worker.service';
@@ -39,6 +41,7 @@ export class ConstructionDetailComponent implements OnInit {
   private readonly activatedRoute = inject(ActivatedRoute);
   private constructionService = inject(ConstructionService);
   private workerService = inject(WorkerService);
+  private modalService = inject(NgbModal);
 
   // Properties:
   construction: ConstructionResponseDto | undefined;
@@ -66,7 +69,7 @@ export class ConstructionDetailComponent implements OnInit {
         this.successMessage = null;
       }
     });
-    
+
   }
 
   getConstructionById(id: number) {
@@ -104,6 +107,53 @@ export class ConstructionDetailComponent implements OnInit {
             this.construction.construction_status = this.selectedStatus;
           }
         });
+    }
+  }
+
+
+  editConstruction: ConstructionUpdateRequestDto = {
+    description: '',
+    planned_start_date: new Date(),
+    planned_end_date: new Date(),
+    project_name: '',
+  };
+
+  @ViewChild('editModal') editModal!: TemplateRef<any>;
+  updateSuccess: boolean = false;
+
+  openEditModal(): void {
+    if (this.construction) {
+      this.editConstruction = {
+        project_name: this.construction.project_name,
+        description: this.construction.project_description,
+        planned_start_date: new Date(this.construction.planned_start_date),
+        planned_end_date: new Date(this.construction.planned_end_date),
+      };
+      this.modalService.open(this.editModal);
+    }
+  }
+
+  saveChanges(): void {
+    if (this.construction) {
+      this.constructionService.updateWorkerDetails(
+        this.construction.construction_id,
+        this.editConstruction
+      ).subscribe({
+        next: (updatedConstruction) => {
+          this.construction = updatedConstruction;
+
+          this.updateSuccess = true;
+
+          setTimeout(() => {
+            this.modalService.dismissAll();
+            this.updateSuccess = false;
+          }, 1500);
+        },
+        error: (err) => {
+          console.error('Error al actualizar los datos', err);
+          alert('Ocurrió un error al actualizar los datos.');
+        }
+      });
     }
   }
 }
