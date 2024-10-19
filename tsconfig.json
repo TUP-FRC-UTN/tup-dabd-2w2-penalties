@@ -11,6 +11,14 @@
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,
     "isolatedModules": true,
+    "paths": {
+      "ngx-dabd-grup01": [
+        "./dist/ngx-dabd-grup01"
+      ],
+      "ngx-dabd-grupo01": [
+        "./dist/ngx-dabd-grupo01"
+      ]
+    },
     "esModuleInterop": true,
     "sourceMap": true,
     "declaration": false,

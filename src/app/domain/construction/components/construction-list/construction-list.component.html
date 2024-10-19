@@ -18,6 +18,8 @@
       onPageChange: onPageChange,
       onPageSizeChange: onPageSizeChange
     }"
+    [isLoading]="(isLoading$ | async) || false"
+    (searchValueChange)="onSearchValueChange('search', $event)"
   >
     <div class="d-flex gap-2">
       <input type="text" class="form-control" placeholder="Filter 1" />

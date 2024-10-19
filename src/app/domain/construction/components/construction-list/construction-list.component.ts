@@ -28,8 +28,11 @@ export class ConstructionListComponent {
   items$: Observable<ConstructionResponseDto[]> =
     this.constructionService.items$;
   totalItems$: Observable<number> = this.constructionService.totalItems$;
+  isLoading$: Observable<boolean> = this.constructionService.isLoading$;
+
   page: number = 1;
   size: number = 10;
+  searchParams: { [key: string]: string } = {};
 
   @ViewChild('actionsTemplate') actionsTemplate!: TemplateRef<any>;
 
@@ -65,7 +68,7 @@ export class ConstructionListComponent {
 
   loadItems(): void {
     this.constructionService
-      .getAllConstructions(this.page, this.size)
+      .getAllConstructions(this.page, this.size, this.searchParams)
       .subscribe((response) => {
         this.constructionService.setItems(response.items);
         this.constructionService.setTotalItems(response.total);
@@ -82,14 +85,18 @@ export class ConstructionListComponent {
     this.loadItems();
   };
 
+  onSearchValueChange = (key: string, searchValue: any): void => {
+    this.searchParams = { [key]: searchValue };
+    this.page = 1;
+    this.loadItems();
+  };
+
   openFormModal(itemId: number | null = null): void {
-    console.log({itemId});
-    
     const modalRef = this.modalService.open(ConstructionFormComponent);
     modalRef.componentInstance.itemId = itemId;
   }
 
   goToDetails = (id: number): void => {
     this.router.navigate(['constructions', id]);
-  }
+  };
 }
