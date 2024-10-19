@@ -4,7 +4,13 @@ export interface ConstructionRequestDto {
   planned_start_date: Date;
   planned_end_date: Date;
   project_name: string;
-  project_address: string;
+}
+
+export interface ConstructionUpdateRequestDto {
+  description: string;
+  planned_start_date: Date;
+  planned_end_date: Date;
+  project_name: string;
 }
 
 export interface ConstructionResponseDto {
