@@ -1,0 +1,68 @@
+<app-main-container title="{{ sanctionType?.name }}" [onGoBack]="goBack">
+  <div class="row">
+    <div class="mb-3 col-3">
+      <label for="id" class="form-label">Id</label>
+      <input
+        class="form-control"
+        id="id"
+        [(ngModel)]="sanctionType!.id!"
+        name="id"
+        #id="ngModel"
+        disabled
+      />
+    </div>
+    <div class="mb-3 col-3">
+      <label for="chargeTypeSelect" class="form-label">Tipo</label>
+      <select
+        class="form-select"
+        id="chargeTypeSelect"
+        [(ngModel)]="sanctionType!.charge_type!"
+        name="chargeTyp"
+        #chargeTyp="ngModel"
+        [disabled]="!editing"
+      >
+        @for (sanctionTypeKey of chargeTypeKeys; track $index) {
+        <option [value]="sanctionTypeKey">
+          {{ sanctionTypeKey | getValueByKeyForEnum : ChargeTypeEnum }}
+        </option>
+        }
+      </select>
+    </div>
+    <div class="mb-3 col-3">
+      <label for="amountInput" class="form-label">Monto</label>
+      <input
+        class="form-control"
+        id="amountInput"
+        [(ngModel)]="sanctionType!.amount!"
+        name="amount"
+        #amount="ngModel"
+        [disabled]="!editing"
+      />
+    </div>
+  </div>
+  <div class="row">
+    <div class="mb-3 col-12">
+      <label for="name" class="form-label">Descripción</label>
+      <textarea
+        id="description"
+        name="description"
+        class="form-control"
+        rows="4"
+        [readonly]="!editing"
+        [(ngModel)]="sanctionType!.description!"
+        name="description"
+        #description="ngModel"
+      ></textarea>
+    </div>
+    @if(isAdmin){ @if (editing) {
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+      <button class="btn btn-danger" (click)="cancelEdit()">Cancelar</button>
+      <button class="btn btn-primary" (click)="saveEdit()">Guardar</button>
+    </div>
+    }@else {
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+      <button class="btn btn-warning" (click)="edit()">Editar</button>
+    </div>
+    } }
+  </div>
+</app-main-container>
