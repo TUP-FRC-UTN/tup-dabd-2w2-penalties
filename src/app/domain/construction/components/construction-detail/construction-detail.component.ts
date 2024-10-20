@@ -1,4 +1,10 @@
-import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConstructionService } from '../../services/construction.service';
 import {
@@ -69,7 +75,6 @@ export class ConstructionDetailComponent implements OnInit {
         this.successMessage = null;
       }
     });
-
   }
 
   getConstructionById(id: number) {
@@ -110,7 +115,6 @@ export class ConstructionDetailComponent implements OnInit {
     }
   }
 
-
   editConstruction: ConstructionUpdateRequestDto = {
     description: '',
     planned_start_date: new Date(),
@@ -135,25 +139,51 @@ export class ConstructionDetailComponent implements OnInit {
 
   saveChanges(): void {
     if (this.construction) {
-      this.constructionService.updateWorkerDetails(
-        this.construction.construction_id,
-        this.editConstruction
-      ).subscribe({
-        next: (updatedConstruction) => {
-          this.construction = updatedConstruction;
+      this.constructionService
+        .updateWorkerDetails(
+          this.construction.construction_id,
+          this.editConstruction
+        )
+        .subscribe({
+          next: (updatedConstruction) => {
+            this.construction = updatedConstruction;
 
-          this.updateSuccess = true;
+            this.updateSuccess = true;
 
-          setTimeout(() => {
-            this.modalService.dismissAll();
-            this.updateSuccess = false;
-          }, 1500);
-        },
-        error: (err) => {
-          console.error('Error al actualizar los datos', err);
-          alert('Ocurrió un error al actualizar los datos.');
-        }
-      });
+            setTimeout(() => {
+              this.modalService.dismissAll();
+              this.updateSuccess = false;
+            }, 1500);
+          },
+          error: (err) => {
+            console.error('Error al actualizar los datos', err);
+            alert('Ocurrió un error al actualizar los datos.');
+          },
+        });
     }
   }
+
+  onConstructionApproved(constructionId: number): void {
+    if (this.construction) {
+      this.constructionService
+        .approveConstruction(constructionId)
+        .subscribe(() => {
+          if (this.construction) {
+            this.construction.construction_status = 'APPROVED';
+          }
+        });
+    }
+  }
+
+  /* onConstructionRejected(constructionId: number): void {
+    if (this.construction) {
+      this.constructionService
+        .rejectConstruction(constructionId)
+        .subscribe(() => {
+          if (this.construction) {
+            this.construction.construction_status = 'REJECTED';
+          }
+        });
+    }
+  } */
 }

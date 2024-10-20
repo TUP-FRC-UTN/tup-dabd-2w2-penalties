@@ -103,8 +103,19 @@ export class ConstructionService {
     updateStatusRequestDto: ConstructionUpdateRequestDto
   ): Observable<ConstructionResponseDto> {
     return this.http.put<ConstructionResponseDto>(
-      `${this.apiUrl}/updateWorkDetails/${id}`, 
+      `${this.apiUrl}/updateWorkDetails/${id}`,
       updateStatusRequestDto
     );
-  } 
+  }
+
+  approveConstruction(id: number): Observable<ConstructionResponseDto> {
+    return this.http.put<ConstructionResponseDto>(
+      `${this.apiUrl}/approve/${id}`,
+      {}
+    );
+  }
+
+  /* rejectConstruction(id: number): Observable<ConstructionResponseDto> {
+    return this.http.put<ConstructionResponseDto>(`${this.apiUrl}/reject/${id}`, {});
+  } */
 }
