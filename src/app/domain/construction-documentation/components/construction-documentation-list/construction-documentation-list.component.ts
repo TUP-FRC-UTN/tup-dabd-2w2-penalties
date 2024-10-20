@@ -6,10 +6,8 @@ import {
   ViewChild,
 } from '@angular/core';
 import { NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
-import { TableColumn } from '../../../../shared/components/table/table.models';
 import { ConstructionDocumentationFormComponent } from '../construction-documentation-form/construction-documentation-form.component';
-import { TableComponent } from '../../../../shared/components/table/table.component';
-import { ConfirmAlertComponent } from 'ngx-dabd-grupo01';
+import { ConfirmAlertComponent, TableColumn, TableComponent } from 'ngx-dabd-grupo01';
 
 @Component({
   selector: 'app-construction-documentation-list',

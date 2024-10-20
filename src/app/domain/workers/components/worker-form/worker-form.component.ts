@@ -7,11 +7,10 @@ import {
   ViewChild,
 } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { FormFieldsComponent } from '../../../../shared/components/form-fields/form-fields.component';
-import { FormConfig } from '../../../../shared/components/form-fields/form-fields.model';
 import { WorkerService } from '../../services/worker.service';
 import { WorkerRequestDto } from '../../models/worker.model';
-import { ToastService } from '../../../../shared/components/toast/toast-service';
+import { ToastService } from '../../../../../../projects/ngx-dabd-grupo01/src/lib/toast/toast-service';
+import { FormConfig, FormFieldsComponent } from 'ngx-dabd-grupo01';
 
 @Component({
   selector: 'app-worker-form',

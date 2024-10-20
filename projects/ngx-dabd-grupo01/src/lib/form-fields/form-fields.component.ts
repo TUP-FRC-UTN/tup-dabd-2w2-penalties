@@ -53,6 +53,9 @@ export class FormFieldsComponent implements OnInit {
     if (field.validations?.maxLength) {
       validators.push(Validators.maxLength(field.validations.maxLength));
     }
+    if (field.validations?.pattern) {
+      validators.push(Validators.pattern(field.validations.pattern));
+    }
 
     return validators;
   }

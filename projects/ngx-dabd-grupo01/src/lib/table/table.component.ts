@@ -24,6 +24,7 @@ export class TableComponent {
   @Input() height?: string = '580px';
   @Input() showSearchBar?: boolean = true;
   @Input() showExportOptions?: boolean = true;
+  @Input() searchPlaceHolder?: string = 'Search...';
 
   // Outputs:
 

@@ -11,3 +11,6 @@ export * from './lib/form-fields/form-fields.model';
 export * from './lib/confirm-alert/confirm-alert.component';
 
 export * from './lib/main-container/main-container.component';
+
+export * from './lib/toast/toast-service';
+export * from './lib/toast/toasts-container.component';
