@@ -9,7 +9,10 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Page } from '../../../../shared/models/page.model';
 import { FineDTO } from '../models/fine-dto.model';
 import { UpdateFineStateDTO } from '../models/update-fine-status-dto';
-import { SortColumn, SortDirection } from '../components/fine-table/sortable.directive';
+import {
+  SortColumn,
+  SortDirection,
+} from '../components/fine-table/sortable.directive';
 
 interface SearchResult {
   fines: Fine[];
@@ -141,7 +144,7 @@ export class FineService {
     console.log(params);
 
     return this.http
-      .get<Page<Fine>>(`${this.apiUrl}/pageable/fine`, { params })
+      .get<Page<Fine>>(`${this.apiUrl}/fine/pageable`, { params })
       .pipe(
         map((data) => {
           const result: SearchResult = {
