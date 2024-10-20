@@ -8,7 +8,7 @@
       <div class="form-group mb-3">
         <label [for]="field.name">{{ field.label }}</label>
 
-        @if(field.type !== "select" && field.type !== "checkbox") {
+        @if(field.type !== "select" && field.type !== "checkbox" && field.type !== "textarea") {
         <input
           [attr.type]="field.type"
           [formControlName]="field.name"
@@ -23,7 +23,23 @@
               getFieldControl(field.name)?.touched
           }"
         />
-        } @if(field.type === "select") {
+        } 
+        @if(field.type == "textarea") {
+          <textarea
+            [attr.type]="field.type"
+            [formControlName]="field.name"
+            [id]="field.name"
+            class="form-control"
+            [ngClass]="{
+              'is-invalid':
+                getFieldControl(field.name)?.invalid &&
+                getFieldControl(field.name)?.touched,
+              'is-valid':
+                getFieldControl(field.name)?.valid &&
+                getFieldControl(field.name)?.touched
+            }"
+          ></textarea>
+          } @if(field.type === "select") {
         <select
           [formControlName]="field.name"
           [id]="field.name"
@@ -63,6 +79,9 @@
           } @if(getFieldControl(field.name)?.errors?.['maxlength']) {
           <span>Máximo de {{ field.validations?.maxLength }} caracteres.</span>
           }
+          @if(getFieldControl(field.name)?.errors?.['pattern']) {
+            <span>Error en formato.</span>
+            }
         </div>
         }
       </div>
@@ -71,7 +90,7 @@
   </div>
 
   @if(!isButtonOutside) {
-  <button type="submit" class="btn btn-primary mt-4">Submit</button>
+  <button type="submit" class="btn btn-primary mt-4">Enviar</button>
   }
 </form>
 }
@@ -138,7 +157,7 @@
     </div>
     @if(!isButtonOutside) {
     <div class="card-footer">
-      <button type="submit" class="btn btn-primary">Submit</button>
+      <button type="submit" class="btn btn-primary">Enviar</button>
     </div>
     }
   </div>

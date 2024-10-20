@@ -6,9 +6,7 @@ import { ConstructionResponseDto } from '../../models/construction.model';
 import { ConstructionFormComponent } from '../construction-form/construction-form.component';
 import { ConstructionService } from '../../services/construction.service';
 import { Router } from '@angular/router';
-import { TableColumn } from '../../../../shared/components/table/table.models';
-import { TableComponent } from '../../../../shared/components/table/table.component';
-import { MainContainerComponent } from '../../../../shared/components/main-container/main-container.component';
+import { MainContainerComponent, TableColumn, TableComponent } from 'ngx-dabd-grupo01';
 
 @Component({
   selector: 'app-construction-list',
