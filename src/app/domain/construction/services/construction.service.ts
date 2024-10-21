@@ -98,12 +98,12 @@ export class ConstructionService {
     this.totalItemsSubject.next(total);
   }
 
-  updateWorkerDetails(
+  updateConstruction(
     id: number,
     updateStatusRequestDto: ConstructionUpdateRequestDto
   ): Observable<ConstructionResponseDto> {
     return this.http.put<ConstructionResponseDto>(
-      `${this.apiUrl}/updateWorkDetails/${id}`,
+      `${this.apiUrl}/${id}`,
       updateStatusRequestDto
     );
   }
@@ -112,6 +112,16 @@ export class ConstructionService {
     return this.http.put<ConstructionResponseDto>(
       `${this.apiUrl}/approve/${id}`,
       {}
+    );
+  }
+
+  rejectConstruction(
+    id: number,
+    reason: string
+  ): Observable<ConstructionResponseDto> {
+    return this.http.put<ConstructionResponseDto>(
+      `${this.apiUrl}/reject/${id}`,
+      { reason }
     );
   }
 

@@ -44,10 +44,22 @@
           'border-success': construction?.construction_status === 'APPROVED',
           'bg-success-subtle': construction?.construction_status === 'APPROVED',
           'text-success': construction?.construction_status === 'APPROVED',
+          'border-danger': construction?.construction_status === 'REJECTED',
+          'bg-danger-subtle': construction?.construction_status === 'REJECTED',
+          'text-danger': construction?.construction_status === 'REJECTED',
+          'border-info':
+            construction?.construction_status !== 'APPROVED' &&
+            construction?.construction_status !== 'REJECTED',
+          'bg-info-subtle':
+            construction?.construction_status !== 'APPROVED' &&
+            construction?.construction_status !== 'REJECTED',
+          'text-dark':
+            construction?.construction_status !== 'APPROVED' &&
+            construction?.construction_status !== 'REJECTED'
         }"
         value="{{
           construction?.construction_status!
-            | getValueByKeyForEnum : CONSTRUCTION_DOC_STATUSES
+            | getValueByKeyForEnum : CONSTRUCTION_STATUSES_ENUM
         }}"
         disabled
       />
@@ -127,6 +139,7 @@
     (constructionApproved)="
       onConstructionApproved(construction?.construction_id!)
     "
+    (constructionRejected)="onConstructionRejected(construction?.construction_id!, $event)"
   ></app-construction-documentation-list>
   }
   <!-- Workers -->
@@ -161,9 +174,9 @@
         (click)="modal.dismiss('Cross click')"
       ></button>
     </div>
-    <div *ngIf="updateSuccess" class="alert alert-success m-3" role="alert">
+    <!-- <div *ngIf="updateSuccess" class="alert alert-success m-3" role="alert">
       Los datos se actualizaron correctamente.
-    </div>
+    </div> -->
     <div class="modal-body">
       <form #editForm="ngForm">
         <div class="mb-3">

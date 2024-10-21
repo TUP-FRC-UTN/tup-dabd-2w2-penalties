@@ -1,3 +1,22 @@
+<ng-template #confirmAlertContentTemplate>
+  <form [formGroup]="rejectForm">
+    <label for="rejectReason" class="form-label">Ingrese un motivo</label>
+    <input
+      type="text"
+      class="form-control"
+      id="rejectReason"
+      formControlName="rejectReason"
+      [ngClass]="{
+        'is-invalid':
+          rejectReasonControl?.invalid && rejectReasonControl?.touched
+      }"
+    />
+    @if(rejectReasonControl?.invalid && rejectReasonControl?.touched) {
+    <div class="invalid-feedback">El motivo es requerido.</div>
+    }
+  </form>
+</ng-template>
+
 <ng-template #isApprovedTemplate let-item>
   @if(item.state === 'APPROVED') {
   <span class="badge border border-success text-success p-2">Aprobado</span>

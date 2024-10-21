@@ -8,7 +8,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConstructionService } from '../../services/construction.service';
 import {
-  CONSTRUCTION_DOC_STATUSES,
+  CONSTRUCTION_STATUSES_ENUM,
   CONSTRUCTION_STATUSES,
   ConstructionRequestDto,
   ConstructionResponseDto,
@@ -25,6 +25,7 @@ import { ConstructionNotesListComponent } from '../../../note/components/constru
 import { WorkerService } from '../../../workers/services/worker.service';
 import { MainContainerComponent, TableComponent } from 'ngx-dabd-grupo01';
 import { GetValueByKeyForEnumPipe } from '../../../../shared/pipes/get-value-by-key-for-status.pipe';
+import { ToastService } from '../../../../../../projects/ngx-dabd-grupo01/src/public-api';
 
 @Component({
   selector: 'app-construction-detail',
@@ -50,6 +51,7 @@ export class ConstructionDetailComponent implements OnInit {
   private constructionService = inject(ConstructionService);
   private workerService = inject(WorkerService);
   private modalService = inject(NgbModal);
+  private toastService = inject(ToastService);
 
   // Properties:
   construction: ConstructionResponseDto | undefined;
@@ -57,7 +59,7 @@ export class ConstructionDetailComponent implements OnInit {
   selectedStatus!: ConstructionStatus;
   statusOptions: ConstructionStatus[] = CONSTRUCTION_STATUSES;
   successMessage: string | null = null;
-  CONSTRUCTION_DOC_STATUSES = CONSTRUCTION_DOC_STATUSES;
+  CONSTRUCTION_STATUSES_ENUM = CONSTRUCTION_STATUSES_ENUM;
 
   ngOnInit(): void {
     this.activatedRoute.params.subscribe((params) => {
@@ -126,7 +128,6 @@ export class ConstructionDetailComponent implements OnInit {
   };
 
   @ViewChild('editModal') editModal!: TemplateRef<any>;
-  updateSuccess: boolean = false;
 
   openEditModal(): void {
     if (this.construction) {
@@ -143,7 +144,7 @@ export class ConstructionDetailComponent implements OnInit {
   saveChanges(): void {
     if (this.construction) {
       this.constructionService
-        .updateWorkerDetails(
+        .updateConstruction(
           this.construction.construction_id,
           this.editConstruction
         )
@@ -151,16 +152,12 @@ export class ConstructionDetailComponent implements OnInit {
           next: (updatedConstruction) => {
             this.construction = updatedConstruction;
 
-            this.updateSuccess = true;
-
-            setTimeout(() => {
-              this.modalService.dismissAll();
-              this.updateSuccess = false;
-            }, 1500);
+            this.modalService.dismissAll();
+            this.toastService.sendSuccess('Los datos se actualizaron correctamente');
           },
           error: (err) => {
             console.error('Error al actualizar los datos', err);
-            alert('Ocurrió un error al actualizar los datos.');
+            this.toastService.sendError('Ocurrió un error al actualizar los datos');
           },
         });
     }
@@ -173,20 +170,29 @@ export class ConstructionDetailComponent implements OnInit {
         .subscribe(() => {
           if (this.construction) {
             this.construction.construction_status = 'APPROVED';
+            this.toastService.sendSuccess('Se aprobó la construcción correctamente');
           }
         });
     }
   }
 
-  /* onConstructionRejected(constructionId: number): void {
+  onConstructionRejected(constructionId: number, reason: string): void {
     if (this.construction) {
       this.constructionService
-        .rejectConstruction(constructionId)
-        .subscribe(() => {
-          if (this.construction) {
-            this.construction.construction_status = 'REJECTED';
-          }
-        });
+        .rejectConstruction(constructionId, reason)
+        .subscribe({
+          next: () => {
+            () => {
+              if (this.construction) {
+                this.construction.construction_status = 'REJECTED';
+                this.toastService.sendSuccess('Se rechazó la construcción correctamente');
+              }
+            }
+          },
+          error: (err) => {
+            this.toastService.sendError('Ocurrió un error al rechazar la construcción');
+          },
+        })
     }
-  } */
+  }
 }

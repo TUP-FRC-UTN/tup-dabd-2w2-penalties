@@ -12,15 +12,23 @@ import { ConstructionDocumentationFormComponent } from '../construction-document
 import { ConstructionDocService } from '../../service/construction-doc.service';
 import { CommonModule } from '@angular/common';
 import {
-  ConfirmAlertComponent,
   TableColumn,
   TableComponent,
+  ConfirmAlertComponent,
 } from 'ngx-dabd-grupo01';
+import {
+  FormBuilder,
+  ReactiveFormsModule,
+  FormGroup,
+  FormsModule,
+  Validators,
+} from '@angular/forms';
+//import { ConfirmAlertComponent } from '../../../../../../projects/ngx-dabd-grupo01/src/public-api';
 
 @Component({
   selector: 'app-construction-documentation-list',
   standalone: true,
-  imports: [CommonModule, TableComponent, NgbTooltipModule],
+  imports: [CommonModule, ReactiveFormsModule, TableComponent, NgbTooltipModule, FormsModule],
   templateUrl: './construction-documentation-list.component.html',
   styleUrl: './construction-documentation-list.component.scss',
 })
@@ -40,8 +48,21 @@ export class ConstructionDocumentationListComponent {
   // Properties:
   @ViewChild('actionsTemplate') actionsTemplate!: TemplateRef<any>;
   @ViewChild('isApprovedTemplate') isApprovedTemplate!: TemplateRef<any>;
+  @ViewChild('confirmAlertContentTemplate')
+  confirmAlertContentTemplate!: TemplateRef<any>;
 
   columns: TableColumn[] = [];
+  rejectForm: FormGroup;
+
+  constructor(private fb: FormBuilder) {
+    this.rejectForm = this.fb.group({
+      rejectReason: ['', Validators.required],
+    });
+  }
+
+  get rejectReasonControl() {
+    return this.rejectForm.get('rejectReason');
+  }
 
   // Methods:
   ngAfterViewInit(): void {
@@ -103,6 +124,10 @@ export class ConstructionDocumentationListComponent {
       });
   }
 
+  clearForm() {
+    this.rejectForm.reset();
+  }
+
   approveConstruction() {
     const modalRef = this.modalService.open(ConfirmAlertComponent);
     modalRef.componentInstance.alertTitle = 'Confirmación';
@@ -113,6 +138,7 @@ export class ConstructionDocumentationListComponent {
       .then((result) => {
         if (result) {
           this.constructionApproved.emit();
+          this.clearForm();
         }
       })
       .catch(() => {});
@@ -120,17 +146,23 @@ export class ConstructionDocumentationListComponent {
 
   rejectConstruction() {
     const modalRef = this.modalService.open(ConfirmAlertComponent);
+    
     modalRef.componentInstance.alertTitle = 'Confirmación';
     modalRef.componentInstance.alertMessage = `¿Está seguro de que desea rechazar esta obra?`;
     modalRef.componentInstance.alertType = 'warning';
 
-    modalRef.result
-      .then((result) => {
-        if (result) {
-          this.constructionRejected.emit();
-        }
-      })
-      .catch(() => {});
+    modalRef.componentInstance.content = this.confirmAlertContentTemplate;
+
+    modalRef.componentInstance.onConfirm = () => {
+      if (this.rejectForm.valid) {
+        const rejectReason = this.rejectForm.value.rejectReason;
+        this.constructionRejected.emit(rejectReason);
+        modalRef.close();
+        this.clearForm();
+      } else {
+        this.rejectForm.markAllAsTouched();
+      }
+    };
   }
 
   isConstructionAbleToApprove() {
