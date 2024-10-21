@@ -2,18 +2,25 @@
   <div class="row">
     <div class="mb-3 col-6">
       <label for="name" class="form-label">Name</label>
-      <input id="name" name="name" class="form-control" value="{{ construction?.project_name }}" disabled />
-    </div>
-    <div class="mb-3 col-6">
-      <label for="address" class="form-label">Address</label>
-      <input id="address" name="address" class="form-control" value="{{ construction?.project_address }}" disabled />
+      <input
+        id="name"
+        name="name"
+        class="form-control"
+        value="{{ construction?.project_name }}"
+        disabled
+      />
     </div>
     <div class="mb-3 col-6">
       <label for="description" class="form-label">Description</label>
-      <input id="description" name="description" class="form-control" value="{{ construction?.project_description }}"
-        disabled />
+      <input
+        id="description"
+        name="description"
+        class="form-control"
+        value="{{ construction?.project_description }}"
+        disabled
+      />
     </div>
-    <div class="mb-3 col-6">
+    <!-- <div class="mb-3 col-6">
       <label for="status" class="form-label">Status</label>
       <div class="d-flex gap-3">
         <select id="status" name="status" class="form-control" [(ngModel)]="selectedStatus">
@@ -26,44 +33,99 @@
           <i class="bi bi-floppy"></i>
         </button>
       </div>
+    </div> -->
+    <div class="mb-3 col-6">
+      <label for="status" class="form-label">Status</label>
+      <input
+        id="status"
+        name="status"
+        class="form-control"
+        [ngClass]="{
+          'border-success': construction?.construction_status === 'APPROVED',
+          'bg-success-subtle': construction?.construction_status === 'APPROVED',
+          'text-success': construction?.construction_status === 'APPROVED',
+          'border-danger': construction?.construction_status === 'REJECTED',
+          'bg-danger-subtle': construction?.construction_status === 'REJECTED',
+          'text-danger': construction?.construction_status === 'REJECTED',
+          'border-info':
+            construction?.construction_status !== 'APPROVED' &&
+            construction?.construction_status !== 'REJECTED',
+          'bg-info-subtle':
+            construction?.construction_status !== 'APPROVED' &&
+            construction?.construction_status !== 'REJECTED',
+          'text-dark':
+            construction?.construction_status !== 'APPROVED' &&
+            construction?.construction_status !== 'REJECTED'
+        }"
+        value="{{
+          construction?.construction_status!
+            | getValueByKeyForEnum : CONSTRUCTION_STATUSES_ENUM
+        }}"
+        disabled
+      />
     </div>
     <div class="mb-3 col-6">
       <label for="start_date" class="form-label">Start Date</label>
-      <input id="start_date" name="start_date" class="form-control" value="{{ construction?.planned_start_date }}"
-        disabled />
+      <input
+        id="start_date"
+        name="start_date"
+        class="form-control"
+        value="{{ construction?.planned_start_date }}"
+        disabled
+      />
     </div>
     <div class="mb-3 col-6">
       <label for="end_date" class="form-label">End Date</label>
-      <input id="end_date" name="end_date" class="form-control" value="{{ construction?.planned_end_date }}" disabled />
+      <input
+        id="end_date"
+        name="end_date"
+        class="form-control"
+        value="{{ construction?.planned_end_date }}"
+        disabled
+      />
     </div>
     <div class="mb-3 col-6">
       <label for="plot_id" class="form-label">Plot</label>
-      <input id="plot_id" name="plot_id" class="form-control" value="{{ construction?.plot_id }}" disabled />
-    </div>
-    <div class="mb-3 col-6">
-      <label for="municipality" class="form-label">Approved by municipality</label>
-      <input id="municipality" name="municipality" class="form-control"
-        value="{{ construction?.approved_by_municipality }}" disabled />
+      <input
+        id="plot_id"
+        name="plot_id"
+        class="form-control"
+        value="{{ construction?.plot_id }}"
+        disabled
+      />
     </div>
   </div>
   <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-    <button class="btn btn-warning" (click)="openEditModal()">Editar</button>
+    <button class="btn btn-warning" (click)="openEditModal()">
+      <i class="bi bi-pencil me-2"></i>Editar
+    </button>
   </div>
   <hr style="color: #808080" />
   <ul class="nav nav-tabs">
     <li class="nav-item">
-      <button class="nav-link" [ngClass]="{ active: activeTab === 'documentation' }"
-        (click)="setActiveTab('documentation')">
+      <button
+        class="nav-link"
+        [ngClass]="{ active: activeTab === 'documentation' }"
+        (click)="setActiveTab('documentation')"
+      >
         Documentos
       </button>
     </li>
     <li class="nav-item">
-      <button class="nav-link" [ngClass]="{ active: activeTab === 'workers' }" (click)="setActiveTab('workers')">
+      <button
+        class="nav-link"
+        [ngClass]="{ active: activeTab === 'workers' }"
+        (click)="setActiveTab('workers')"
+      >
         Obreros
       </button>
     </li>
     <li class="nav-item">
-      <button class="nav-link" [ngClass]="{ active: activeTab === 'notes' }" (click)="setActiveTab('notes')">
+      <button
+        class="nav-link"
+        [ngClass]="{ active: activeTab === 'notes' }"
+        (click)="setActiveTab('notes')"
+      >
         Notas
       </button>
     </li>
@@ -72,16 +134,27 @@
   <!-- Documentation -->
   @case ('documentation') {
   <app-construction-documentation-list
-    [documentations]="construction?.construction_documentation || []"></app-construction-documentation-list>
+    [documentations]="construction?.construction_documentation || []"
+    [currentConstructionStatus]="construction?.construction_status!"
+    (constructionApproved)="
+      onConstructionApproved(construction?.construction_id!)
+    "
+    (constructionRejected)="onConstructionRejected(construction?.construction_id!, $event)"
+  ></app-construction-documentation-list>
   }
   <!-- Workers -->
   @case ('workers') {
-  <app-construction-workers [workers]="construction?.workers || []" [constructionId]="construction?.construction_id">
+  <app-construction-workers
+    [workers]="construction?.workers || []"
+    [constructionId]="construction?.construction_id"
+  >
   </app-construction-workers>
   }
   <!-- Notes -->
   @case ('notes') {
-  <app-construction-notes-list [notes]="construction?.notes || []"></app-construction-notes-list>
+  <app-construction-notes-list
+    [notes]="construction?.notes || []"
+  ></app-construction-notes-list>
   } }
   <!-- Message -->
   @if (successMessage) {
@@ -90,44 +163,82 @@
   </div>
   }
 
-
-  <!-- forulario para editar la obra -->
+  <!-- Forulario para editar la obra -->
   <ng-template #editModal let-modal>
     <div class="modal-header">
       <h4 class="modal-title">Editar Construcción</h4>
-      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+      <button
+        type="button"
+        class="btn-close"
+        aria-label="Close"
+        (click)="modal.dismiss('Cross click')"
+      ></button>
     </div>
-    <div *ngIf="updateSuccess" class="alert alert-success m-3" role="alert">
+    <!-- <div *ngIf="updateSuccess" class="alert alert-success m-3" role="alert">
       Los datos se actualizaron correctamente.
-    </div>
+    </div> -->
     <div class="modal-body">
       <form #editForm="ngForm">
         <div class="mb-3">
-          <label for="project_name" class="form-label">Nombre del Proyecto</label>
-          <input id="project_name" name="project_name" class="form-control" [(ngModel)]="editConstruction.project_name"
-            required />
+          <label for="project_name" class="form-label"
+            >Nombre del Proyecto</label
+          >
+          <input
+            id="project_name"
+            name="project_name"
+            class="form-control"
+            [(ngModel)]="editConstruction.project_name"
+            required
+          />
         </div>
         <div class="mb-3">
-          <label for="project_description" class="form-label">Descripción</label>
-          <input id="project_description" name="project_description" class="form-control"
-            [(ngModel)]="editConstruction.description" />
+          <label for="project_description" class="form-label"
+            >Descripción</label
+          >
+          <input
+            id="project_description"
+            name="project_description"
+            class="form-control"
+            [(ngModel)]="editConstruction.description"
+          />
         </div>
         <div class="mb-3">
-          <label for="planned_start_date" class="form-label">Fecha de Inicio</label>
-          <input type="date" id="planned_start_date" name="planned_start_date" class="form-control"
-            [(ngModel)]="editConstruction.planned_start_date" required />
+          <label for="planned_start_date" class="form-label"
+            >Fecha de Inicio</label
+          >
+          <input
+            type="date"
+            id="planned_start_date"
+            name="planned_start_date"
+            class="form-control"
+            [(ngModel)]="editConstruction.planned_start_date"
+            required
+          />
         </div>
         <div class="mb-3">
           <label for="planned_end_date" class="form-label">Fecha de Fin</label>
-          <input type="date" id="planned_end_date" name="planned_end_date" class="form-control"
-            [(ngModel)]="editConstruction.planned_end_date" required />
+          <input
+            type="date"
+            id="planned_end_date"
+            name="planned_end_date"
+            class="form-control"
+            [(ngModel)]="editConstruction.planned_end_date"
+            required
+          />
         </div>
       </form>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-secondary" (click)="modal.dismiss('Cancel click')">Cancelar</button>
-      <button class="btn btn-primary" [disabled]="!editForm.form.valid" (click)="saveChanges()">Guardar</button>
+      <button class="btn btn-secondary" (click)="modal.dismiss('Cancel click')">
+        Cancelar
+      </button>
+      <button
+        class="btn btn-primary"
+        [disabled]="!editForm.form.valid"
+        (click)="saveChanges()"
+      >
+        Guardar
+      </button>
     </div>
   </ng-template>
-
 </app-main-container>

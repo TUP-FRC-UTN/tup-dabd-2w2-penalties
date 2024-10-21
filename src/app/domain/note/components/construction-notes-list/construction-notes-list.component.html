@@ -3,7 +3,7 @@
 </ng-template>
 
 <div class="px-5 py-4 border border-top-0">
-  <app-table [height]="'200px'" [items]="notes || []" [columns]="columns">
+  <app-table [height]="'200px'" [items]="notes || []" [columns]="columns" [showExportOptions]="false">
     <div class="w-100 d-flex justify-content-end">
       <button class="btn btn-outline-primary" (click)="openFormModal()">
         Nuevo

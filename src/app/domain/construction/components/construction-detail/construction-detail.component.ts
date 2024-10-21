@@ -1,7 +1,14 @@
-import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConstructionService } from '../../services/construction.service';
 import {
+  CONSTRUCTION_STATUSES_ENUM,
   CONSTRUCTION_STATUSES,
   ConstructionRequestDto,
   ConstructionResponseDto,
@@ -17,6 +24,8 @@ import { ConstructionDocumentationListComponent } from '../../../construction-do
 import { ConstructionNotesListComponent } from '../../../note/components/construction-notes-list/construction-notes-list.component';
 import { WorkerService } from '../../../workers/services/worker.service';
 import { MainContainerComponent, TableComponent } from 'ngx-dabd-grupo01';
+import { GetValueByKeyForEnumPipe } from '../../../../shared/pipes/get-value-by-key-for-status.pipe';
+import { ToastService } from '../../../../../../projects/ngx-dabd-grupo01/src/public-api';
 
 @Component({
   selector: 'app-construction-detail',
@@ -30,6 +39,7 @@ import { MainContainerComponent, TableComponent } from 'ngx-dabd-grupo01';
     NgbTooltipModule,
     ConstructionDocumentationListComponent,
     ConstructionNotesListComponent,
+    GetValueByKeyForEnumPipe
   ],
   templateUrl: './construction-detail.component.html',
   styleUrl: './construction-detail.component.css',
@@ -41,6 +51,7 @@ export class ConstructionDetailComponent implements OnInit {
   private constructionService = inject(ConstructionService);
   private workerService = inject(WorkerService);
   private modalService = inject(NgbModal);
+  private toastService = inject(ToastService);
 
   // Properties:
   construction: ConstructionResponseDto | undefined;
@@ -48,6 +59,7 @@ export class ConstructionDetailComponent implements OnInit {
   selectedStatus!: ConstructionStatus;
   statusOptions: ConstructionStatus[] = CONSTRUCTION_STATUSES;
   successMessage: string | null = null;
+  CONSTRUCTION_STATUSES_ENUM = CONSTRUCTION_STATUSES_ENUM;
 
   ngOnInit(): void {
     this.activatedRoute.params.subscribe((params) => {
@@ -68,7 +80,6 @@ export class ConstructionDetailComponent implements OnInit {
         this.successMessage = null;
       }
     });
-
   }
 
   getConstructionById(id: number) {
@@ -109,7 +120,6 @@ export class ConstructionDetailComponent implements OnInit {
     }
   }
 
-
   editConstruction: ConstructionUpdateRequestDto = {
     description: '',
     planned_start_date: new Date(),
@@ -118,7 +128,6 @@ export class ConstructionDetailComponent implements OnInit {
   };
 
   @ViewChild('editModal') editModal!: TemplateRef<any>;
-  updateSuccess: boolean = false;
 
   openEditModal(): void {
     if (this.construction) {
@@ -134,25 +143,56 @@ export class ConstructionDetailComponent implements OnInit {
 
   saveChanges(): void {
     if (this.construction) {
-      this.constructionService.updateWorkerDetails(
-        this.construction.construction_id,
-        this.editConstruction
-      ).subscribe({
-        next: (updatedConstruction) => {
-          this.construction = updatedConstruction;
+      this.constructionService
+        .updateConstruction(
+          this.construction.construction_id,
+          this.editConstruction
+        )
+        .subscribe({
+          next: (updatedConstruction) => {
+            this.construction = updatedConstruction;
 
-          this.updateSuccess = true;
-
-          setTimeout(() => {
             this.modalService.dismissAll();
-            this.updateSuccess = false;
-          }, 1500);
-        },
-        error: (err) => {
-          console.error('Error al actualizar los datos', err);
-          alert('Ocurrió un error al actualizar los datos.');
-        }
-      });
+            this.toastService.sendSuccess('Los datos se actualizaron correctamente');
+          },
+          error: (err) => {
+            console.error('Error al actualizar los datos', err);
+            this.toastService.sendError('Ocurrió un error al actualizar los datos');
+          },
+        });
+    }
+  }
+
+  onConstructionApproved(constructionId: number): void {
+    if (this.construction) {
+      this.constructionService
+        .approveConstruction(constructionId)
+        .subscribe(() => {
+          if (this.construction) {
+            this.construction.construction_status = 'APPROVED';
+            this.toastService.sendSuccess('Se aprobó la construcción correctamente');
+          }
+        });
+    }
+  }
+
+  onConstructionRejected(constructionId: number, reason: string): void {
+    if (this.construction) {
+      this.constructionService
+        .rejectConstruction(constructionId, reason)
+        .subscribe({
+          next: () => {
+            () => {
+              if (this.construction) {
+                this.construction.construction_status = 'REJECTED';
+                this.toastService.sendSuccess('Se rechazó la construcción correctamente');
+              }
+            }
+          },
+          error: (err) => {
+            this.toastService.sendError('Ocurrió un error al rechazar la construcción');
+          },
+        })
     }
   }
 }
