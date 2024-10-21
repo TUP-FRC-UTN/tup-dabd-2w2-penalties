@@ -106,8 +106,6 @@ export class SanctionTypeDetailComponent {
   }
 
   private resetSanctionType() {
-    console.log(this.initialSanctionType);
-    console.log(this.sanctionType);
     this.sanctionType = JSON.parse(JSON.stringify(this.initialSanctionType));
   }
 }

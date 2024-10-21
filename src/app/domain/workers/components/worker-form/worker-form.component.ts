@@ -84,7 +84,6 @@ export class WorkerFormComponent {
   };
 
   onSubmit = (formValue: any): void => {
-    console.log(formValue, this.constructionId);
 
     const worker: WorkerRequestDto = {
       construction_id: this.constructionId!,

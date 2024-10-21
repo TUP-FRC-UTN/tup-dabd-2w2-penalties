@@ -9,7 +9,6 @@ import {
 } from '@angular/core';
 import { NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { ConstructionDocumentationFormComponent } from '../construction-documentation-form/construction-documentation-form.component';
-import { ConstructionDocService } from '../../service/construction-doc.service';
 import { CommonModule } from '@angular/common';
 import {
   TableColumn,
@@ -23,18 +22,25 @@ import {
   FormsModule,
   Validators,
 } from '@angular/forms';
+import { ConstructionDocumentationService } from '../../services/construction-documentation.service';
 //import { ConfirmAlertComponent } from '../../../../../../projects/ngx-dabd-grupo01/src/public-api';
 
 @Component({
   selector: 'app-construction-documentation-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TableComponent, NgbTooltipModule, FormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    TableComponent,
+    NgbTooltipModule,
+    FormsModule,
+  ],
   templateUrl: './construction-documentation-list.component.html',
   styleUrl: './construction-documentation-list.component.scss',
 })
 export class ConstructionDocumentationListComponent {
   // Inputs:
-  @Input() documentations: any[] = [];
+  @Input() construction: any = undefined;
   @Input() currentConstructionStatus!: string;
 
   // Outputs:
@@ -43,11 +49,13 @@ export class ConstructionDocumentationListComponent {
 
   // Services:
   private modalService = inject(NgbModal);
-  construcionDocService = inject(ConstructionDocService);
+  constructionDocumentationService = inject(ConstructionDocumentationService);
 
   // Properties:
   @ViewChild('actionsTemplate') actionsTemplate!: TemplateRef<any>;
   @ViewChild('isApprovedTemplate') isApprovedTemplate!: TemplateRef<any>;
+  @ViewChild('documentTypeNameTemplate')
+  documentTypeNameTemplate!: TemplateRef<any>;
   @ViewChild('confirmAlertContentTemplate')
   confirmAlertContentTemplate!: TemplateRef<any>;
 
@@ -74,8 +82,12 @@ export class ConstructionDocumentationListComponent {
           accessorKey: 'approved',
           cellRenderer: this.isApprovedTemplate,
         },
-        { headerName: 'Document path', accessorKey: 'document_identifier' },
-        { headerName: 'Document type', accessorKey: 'document_type' },
+        { headerName: 'Nombre', accessorKey: 'documentIdentifier' },
+        {
+          headerName: 'Document type',
+          accessorKey: 'documentType.name',
+          cellRenderer: this.documentTypeNameTemplate,
+        },
         {
           headerName: 'Actions',
           accessorKey: 'actions',
@@ -85,11 +97,20 @@ export class ConstructionDocumentationListComponent {
     });
   }
 
-  openFormModal(itemId: number | null = null): void {
+  openFormModal(): void {
     const modalRef = this.modalService.open(
       ConstructionDocumentationFormComponent
     );
-    modalRef.componentInstance.itemId = itemId;
+    modalRef.componentInstance.constructionId =
+      this.construction.construction_id;
+
+    modalRef.result
+      .then((result) => {
+        if (result) {
+          this.construction = result;
+        }
+      })
+      .catch(() => {});
   }
 
   rejectDocument(document: any) {
@@ -100,7 +121,7 @@ export class ConstructionDocumentationListComponent {
     modalRef.result
       .then((result) => {
         if (result) {
-          this.construcionDocService
+          this.constructionDocumentationService
             .updateConstructionDocStatus({
               documentation_id: document.id,
               status: 'REJECTED',
@@ -114,7 +135,7 @@ export class ConstructionDocumentationListComponent {
   }
 
   approveDocument(document: any) {
-    this.construcionDocService
+    this.constructionDocumentationService
       .updateConstructionDocStatus({
         documentation_id: document.id,
         status: 'APPROVED',
@@ -146,7 +167,7 @@ export class ConstructionDocumentationListComponent {
 
   rejectConstruction() {
     const modalRef = this.modalService.open(ConfirmAlertComponent);
-    
+
     modalRef.componentInstance.alertTitle = 'Confirmación';
     modalRef.componentInstance.alertMessage = `¿Está seguro de que desea rechazar esta obra?`;
     modalRef.componentInstance.alertType = 'warning';
@@ -167,8 +188,18 @@ export class ConstructionDocumentationListComponent {
 
   isConstructionAbleToApprove() {
     return (
-      !this.documentations.some((doc) => doc.state === 'PENDING_APPROVAL') &&
-      !this.documentations.some((doc) => doc.state === 'REJECTED')
+      !this.construction.construction_documentation.some(
+        (doc: { state: string }) => doc.state === 'PENDING_APPROVAL'
+      ) &&
+      !this.construction.construction_documentation.some(
+        (doc: { state: string }) => doc.state === 'REJECTED'
+      )
+    );
+  }
+
+  download(documentationId: number): void {
+    this.constructionDocumentationService.downloadDocumentation(
+      documentationId
     );
   }
 }

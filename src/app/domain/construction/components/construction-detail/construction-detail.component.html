@@ -134,7 +134,7 @@
   <!-- Documentation -->
   @case ('documentation') {
   <app-construction-documentation-list
-    [documentations]="construction?.construction_documentation || []"
+    [construction]="construction || []"
     [currentConstructionStatus]="construction?.construction_status!"
     (constructionApproved)="
       onConstructionApproved(construction?.construction_id!)
