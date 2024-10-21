@@ -6,9 +6,8 @@ import {
   ViewChild,
 } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { TableColumn } from '../../../../shared/components/table/table.models';
 import { ConstructionNotesFormComponent } from '../construction-notes-form/construction-notes-form.component';
-import { TableComponent } from '../../../../shared/components/table/table.component';
+import { TableColumn, TableComponent } from 'ngx-dabd-grupo01';
 
 @Component({
   selector: 'app-construction-notes-list',

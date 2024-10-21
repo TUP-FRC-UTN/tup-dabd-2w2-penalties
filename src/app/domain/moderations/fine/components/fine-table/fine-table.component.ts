@@ -18,7 +18,7 @@ import { Router } from '@angular/router';
 import { NewFineModalComponent } from '../new-fine-modal/new-fine-modal.component';
 import { FineService } from '../../services/fine.service';
 import { Fine } from '../../models/fine.model';
-import { MainContainerComponent } from "../../../../../shared/components/main-container/main-container.component";
+import { MainContainerComponent } from 'ngx-dabd-grupo01';
 
 @Component({
   selector: 'app-fine-table',

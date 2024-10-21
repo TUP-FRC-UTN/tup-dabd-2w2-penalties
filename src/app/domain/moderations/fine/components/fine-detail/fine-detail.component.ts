@@ -6,7 +6,7 @@ import { Fine } from '../../models/fine.model';
 import { FineStatusEnum } from '../../models/fine-status.enum';
 import { FineService } from '../../services/fine.service';
 import { UpdateFineStateDTO } from '../../models/update-fine-status-dto';
-import { MainContainerComponent } from '../../../../../shared/components/main-container/main-container.component';
+import { MainContainerComponent } from 'ngx-dabd-grupo01';
 
 @Component({
   selector: 'app-fine-detail',

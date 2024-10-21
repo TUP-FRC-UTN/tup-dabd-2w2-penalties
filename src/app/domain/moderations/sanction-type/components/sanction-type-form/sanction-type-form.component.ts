@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { FormConfig, FormFieldsComponent } from 'ngx-dabd-grupo01';
 import { SanctionTypeService } from '../../services/sanction-type.service';
-import { ChargeTypeEnum } from '../../models/sanction-type.model';
-import { ToastService } from '../../../../../shared/components/toast/toast-service';
+import { ToastService } from '../../../../../../../projects/ngx-dabd-grupo01/src/lib/toast/toast-service';
+import { FormFieldsComponent } from '../../../../../../../projects/ngx-dabd-grupo01/src/lib/form-fields/form-fields.component';
+import { FormConfig } from '../../../../../../../projects/ngx-dabd-grupo01/src/lib/form-fields/form-fields.model';
 @Component({
   selector: 'app-sanction-type-form',
   standalone: true,
@@ -49,10 +49,24 @@ export class SanctionTypeFormComponent {
       },
       {
         name: 'amount',
-        label: 'Cantidad',
-        type: 'text',
+        label: 'Monto',
+        type: 'number',
         fieldSpan: 1,
-        validations: { required: true, pattern: '^d+(.d+)?$' },
+        validations: { required: true, pattern: '^[0-9]+(.[0-9]{1,2})?$' },
+      },
+      {
+        name: 'infraction_days_to_expire',
+        label: 'Dias de vencimiento',
+        type: 'number',
+        fieldSpan: 1,
+        validations: { required: true, pattern: '^[0-9]+$' },
+      },
+      {
+        name: 'amount_of_infractions_for_fine',
+        label: 'Strikes',
+        type: 'number',
+        fieldSpan: 1,
+        validations: { required: true, pattern: '^[0-9]+$' },
       },
       {
         name: 'description',

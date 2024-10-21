@@ -4,15 +4,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ChargeTypeEnum, SanctionType } from '../../models/sanction-type.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import {
-  ConfirmAlertComponent,
-  MainContainerComponent,
-  TableComponent,
-} from 'ngx-dabd-grupo01';
+
 import { NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { GetValueByKeyForEnumPipe } from '../../../../../shared/pipes/get-value-by-key-for-status.pipe';
-import { ModalConfirmComponent, ModalService } from 'ngx-dabd-2w1-core';
-import { ToastService } from '../../../../../shared/components/toast/toast-service';
+import { ToastService } from '../../../../../../../projects/ngx-dabd-grupo01/src/lib/toast/toast-service';
+import { MainContainerComponent } from '../../../../../../../projects/ngx-dabd-grupo01/src/lib/main-container/main-container.component';
+import { TableComponent } from '../../../../../../../projects/ngx-dabd-grupo01/src/lib/table/table.component';
+import { ConfirmAlertComponent } from '../../../../../../../projects/ngx-dabd-grupo01/src/lib/confirm-alert/confirm-alert.component';
 
 @Component({
   selector: 'app-sanction-type-detail',

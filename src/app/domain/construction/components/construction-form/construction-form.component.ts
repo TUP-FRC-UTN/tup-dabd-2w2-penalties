@@ -2,9 +2,8 @@ import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConstructionService } from '../../services/construction.service';
 import { CommonModule } from '@angular/common';
-import { FormFieldsComponent } from '../../../../shared/components/form-fields/form-fields.component';
-import { FormConfig } from '../../../../shared/components/form-fields/form-fields.model';
 import { CadastreService } from '../../../cadastre/services/cadastre.service';
+import { FormConfig, FormFieldsComponent } from 'ngx-dabd-grupo01';
 
 @Component({
   selector: 'app-construction-form',

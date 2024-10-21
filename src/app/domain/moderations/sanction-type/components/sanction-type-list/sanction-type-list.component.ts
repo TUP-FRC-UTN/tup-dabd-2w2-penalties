@@ -1,11 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, TemplateRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import {
-  MainContainerComponent,
-  TableColumn,
-  TableComponent,
-} from 'ngx-dabd-grupo01';
+
 import { SanctionTypeService } from '../../services/sanction-type.service';
 import { debounceTime, distinctUntilChanged, Observable, Subject } from 'rxjs';
 import { ChargeTypeEnum, SanctionType } from '../../models/sanction-type.model';
@@ -13,6 +9,9 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SanctionTypeFormComponent } from '../sanction-type-form/sanction-type-form.component';
 import { GetValueByKeyForEnumPipe } from '../../../../../shared/pipes/get-value-by-key-for-status.pipe';
 import { TruncatePipe } from '../../../../../shared/pipes/truncate.pipe';
+import { TableComponent } from '../../../../../../../projects/ngx-dabd-grupo01/src/lib/table/table.component';
+import { MainContainerComponent } from '../../../../../../../projects/ngx-dabd-grupo01/src/lib/main-container/main-container.component';
+import { TableColumn } from '../../../../../../../projects/ngx-dabd-grupo01/src/lib/table/table.models';
 
 @Component({
   selector: 'app-sanction-type-list',
@@ -81,9 +80,9 @@ export class SanctionTypeListComponent {
           accessorKey: 'charge_type',
           cellRenderer: this.chargeType,
         },
-        { headerName: 'Valor', accessorKey: 'amount' },
+        { headerName: 'Monto', accessorKey: 'amount' },
         {
-          headerName: 'Actions',
+          headerName: 'Acciones',
           accessorKey: 'actions',
           cellRenderer: this.actionsTemplate,
         },
