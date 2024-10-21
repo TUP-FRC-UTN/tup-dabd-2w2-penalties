@@ -11,7 +11,11 @@ import { NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { ConstructionDocumentationFormComponent } from '../construction-documentation-form/construction-documentation-form.component';
 import { ConstructionDocService } from '../../service/construction-doc.service';
 import { CommonModule } from '@angular/common';
-import { ConfirmAlertComponent, TableColumn, TableComponent } from 'ngx-dabd-grupo01';
+import {
+  ConfirmAlertComponent,
+  TableColumn,
+  TableComponent,
+} from 'ngx-dabd-grupo01';
 
 @Component({
   selector: 'app-construction-documentation-list',
