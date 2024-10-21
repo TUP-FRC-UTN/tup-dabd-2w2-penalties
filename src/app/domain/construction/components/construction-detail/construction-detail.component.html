@@ -40,7 +40,15 @@
         id="status"
         name="status"
         class="form-control"
-        value="{{ construction?.construction_status }}"
+        [ngClass]="{
+          'border-success': construction?.construction_status === 'APPROVED',
+          'bg-success-subtle': construction?.construction_status === 'APPROVED',
+          'text-success': construction?.construction_status === 'APPROVED',
+        }"
+        value="{{
+          construction?.construction_status!
+            | getValueByKeyForEnum : CONSTRUCTION_DOC_STATUSES
+        }}"
         disabled
       />
     </div>
@@ -76,7 +84,9 @@
     </div>
   </div>
   <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-    <button class="btn btn-warning" (click)="openEditModal()">Editar</button>
+    <button class="btn btn-warning" (click)="openEditModal()">
+      <i class="bi bi-pencil me-2"></i>Editar
+    </button>
   </div>
   <hr style="color: #808080" />
   <ul class="nav nav-tabs">
@@ -114,7 +124,9 @@
   <app-construction-documentation-list
     [documentations]="construction?.construction_documentation || []"
     [currentConstructionStatus]="construction?.construction_status!"
-    (constructionApproved)="onConstructionApproved(construction?.construction_id!)"
+    (constructionApproved)="
+      onConstructionApproved(construction?.construction_id!)
+    "
   ></app-construction-documentation-list>
   }
   <!-- Workers -->
@@ -138,7 +150,7 @@
   </div>
   }
 
-  <!-- forulario para editar la obra -->
+  <!-- Forulario para editar la obra -->
   <ng-template #editModal let-modal>
     <div class="modal-header">
       <h4 class="modal-title">Editar Construcción</h4>

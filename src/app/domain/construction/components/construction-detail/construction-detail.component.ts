@@ -8,6 +8,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConstructionService } from '../../services/construction.service';
 import {
+  CONSTRUCTION_DOC_STATUSES,
   CONSTRUCTION_STATUSES,
   ConstructionRequestDto,
   ConstructionResponseDto,
@@ -24,6 +25,7 @@ import { NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { ConstructionDocumentationListComponent } from '../../../construction-documentation/components/construction-documentation-list/construction-documentation-list.component';
 import { ConstructionNotesListComponent } from '../../../note/components/construction-notes-list/construction-notes-list.component';
 import { WorkerService } from '../../../workers/services/worker.service';
+import { GetValueByKeyForEnumPipe } from '../../../../shared/pipes/get-value-by-key-for-status.pipe';
 
 @Component({
   selector: 'app-construction-detail',
@@ -37,6 +39,7 @@ import { WorkerService } from '../../../workers/services/worker.service';
     NgbTooltipModule,
     ConstructionDocumentationListComponent,
     ConstructionNotesListComponent,
+    GetValueByKeyForEnumPipe
   ],
   templateUrl: './construction-detail.component.html',
   styleUrl: './construction-detail.component.css',
@@ -55,6 +58,7 @@ export class ConstructionDetailComponent implements OnInit {
   selectedStatus!: ConstructionStatus;
   statusOptions: ConstructionStatus[] = CONSTRUCTION_STATUSES;
   successMessage: string | null = null;
+  CONSTRUCTION_DOC_STATUSES = CONSTRUCTION_DOC_STATUSES;
 
   ngOnInit(): void {
     this.activatedRoute.params.subscribe((params) => {
