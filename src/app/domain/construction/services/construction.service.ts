@@ -121,7 +121,7 @@ export class ConstructionService {
   ): Observable<ConstructionResponseDto> {
     return this.http.put<ConstructionResponseDto>(
       `${this.apiUrl}/reject/${id}`,
-      { reason }
+      { rejectionReason: reason }
     );
   }
 
