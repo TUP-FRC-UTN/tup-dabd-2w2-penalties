@@ -11,6 +11,7 @@ import {
 
 import { environment } from '../../../../environments/environment';
 import { ConstructionDocumentationTypeResponseDTO } from '../models/construction-documentation.model';
+import { ConstructionDocResponseDto, ConstructionDocUpdateStatusRequestDto } from '../models/construction-doc.model';
 
 @Injectable({
   providedIn: 'root',
@@ -27,6 +28,19 @@ export class ConstructionDocumentationService {
   isLoading$ = this.isLoadingSubject.asObservable();
 
   private readonly http = inject(HttpClient);
+
+  
+  private itemsSubject = new BehaviorSubject<ConstructionDocResponseDto[]>([]);
+  items$ = this.itemsSubject.asObservable();
+
+  updateConstructionDocStatus(
+    updateStatusRequestDto: ConstructionDocUpdateStatusRequestDto
+  ): Observable<ConstructionDocResponseDto> {
+    return this.http.put<ConstructionDocResponseDto>(
+      `${this.apiUrl}/documentation/status`,
+      updateStatusRequestDto
+    );
+  }
 
   getAllDocumentationTypes(): Observable<
     ConstructionDocumentationTypeResponseDTO[]
@@ -68,6 +82,8 @@ export class ConstructionDocumentationService {
         )
       );
   }
+
+  
 
   downloadDocumentation(documentationId: number): void {
     const url = `${this.apiUrl}/constructions/documentation/${documentationId}`;

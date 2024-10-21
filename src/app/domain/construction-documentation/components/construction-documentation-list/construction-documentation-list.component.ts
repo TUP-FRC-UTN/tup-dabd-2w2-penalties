@@ -9,7 +9,6 @@ import {
 } from '@angular/core';
 import { NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { ConstructionDocumentationFormComponent } from '../construction-documentation-form/construction-documentation-form.component';
-import { ConstructionDocService } from '../../service/construction-doc.service';
 import { CommonModule } from '@angular/common';
 import {
   TableColumn,
@@ -23,12 +22,19 @@ import {
   FormsModule,
   Validators,
 } from '@angular/forms';
+import { ConstructionDocumentationService } from '../../services/construction-documentation.service';
 //import { ConfirmAlertComponent } from '../../../../../../projects/ngx-dabd-grupo01/src/public-api';
 
 @Component({
   selector: 'app-construction-documentation-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TableComponent, NgbTooltipModule, FormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    TableComponent,
+    NgbTooltipModule,
+    FormsModule,
+  ],
   templateUrl: './construction-documentation-list.component.html',
   styleUrl: './construction-documentation-list.component.scss',
 })
@@ -129,7 +135,7 @@ export class ConstructionDocumentationListComponent {
   }
 
   approveDocument(document: any) {
-    this.construcionDocService
+    this.constructionDocumentationService
       .updateConstructionDocStatus({
         documentation_id: document.id,
         status: 'APPROVED',
@@ -161,7 +167,7 @@ export class ConstructionDocumentationListComponent {
 
   rejectConstruction() {
     const modalRef = this.modalService.open(ConfirmAlertComponent);
-    
+
     modalRef.componentInstance.alertTitle = 'Confirmación';
     modalRef.componentInstance.alertMessage = `¿Está seguro de que desea rechazar esta obra?`;
     modalRef.componentInstance.alertType = 'warning';
@@ -182,10 +188,13 @@ export class ConstructionDocumentationListComponent {
 
   isConstructionAbleToApprove() {
     return (
-      !this.documentations.some((doc) => doc.state === 'PENDING_APPROVAL') &&
-      !this.documentations.some((doc) => doc.state === 'REJECTED')
+      !this.construction.construction_documentation.some(
+        (doc: { state: string }) => doc.state === 'PENDING_APPROVAL'
+      ) &&
+      !this.construction.construction_documentation.some(
+        (doc: { state: string }) => doc.state === 'REJECTED'
+      )
     );
-      .catch(() => {});
   }
 
   download(documentationId: number): void {

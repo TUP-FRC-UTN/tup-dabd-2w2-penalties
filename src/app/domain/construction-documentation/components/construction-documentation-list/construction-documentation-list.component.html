@@ -27,7 +27,7 @@
   }
 </ng-template>
 
-<ng-template #documentTypeNameTemplate let-item> 
+<ng-template #documentTypeNameTemplate let-item>
   {{ item.documentType.name }}
 </ng-template>
 
@@ -52,15 +52,13 @@
   </button>
 
   <button
-  class="btn btn-outline-primary btn-sm me-2"
-  placement="top"
-  ngbTooltip="Descargar"
-  (click)="download(item.id)"
->
-<i class="bi bi-download"></i>
-</button>
-
-  
+    class="btn btn-outline-primary btn-sm me-2"
+    placement="top"
+    ngbTooltip="Descargar"
+    (click)="download(item.id)"
+  >
+    <i class="bi bi-download"></i>
+  </button>
 </ng-template>
 
 <div class="px-5 py-4 border border-top-0">
@@ -112,8 +110,7 @@
         Aprobar obra
       </button>
       <button class="btn btn-danger" (click)="rejectConstruction()">
-        <i class="bi bi-clipboard-check"></i>
-        Rechazar obra
+        <i class="bi bi-clipboard-x"></i> Rechazar obra
       </button>
     </div>
   </app-table>
