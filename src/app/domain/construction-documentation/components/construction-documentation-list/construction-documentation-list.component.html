@@ -1,0 +1,117 @@
+<ng-template #confirmAlertContentTemplate>
+  <form [formGroup]="rejectForm">
+    <label for="rejectReason" class="form-label">Ingrese un motivo</label>
+    <input
+      type="text"
+      class="form-control"
+      id="rejectReason"
+      formControlName="rejectReason"
+      [ngClass]="{
+        'is-invalid':
+          rejectReasonControl?.invalid && rejectReasonControl?.touched
+      }"
+    />
+    @if(rejectReasonControl?.invalid && rejectReasonControl?.touched) {
+    <div class="invalid-feedback">El motivo es requerido.</div>
+    }
+  </form>
+</ng-template>
+
+<ng-template #isApprovedTemplate let-item>
+  @if(item.state === 'APPROVED') {
+  <span class="badge border border-success text-success p-2">Aprobado</span>
+  } @else if(item.state === 'REJECTED') {
+  <span class="badge border border-danger text-danger p-2">Rechazado</span>
+  } @else if (item.state === 'PENDING_APPROVAL') {
+  <span class="badge bg-secondary p-2">Pendiente</span>
+  }
+</ng-template>
+
+<ng-template #documentTypeNameTemplate let-item>
+  {{ item.documentation_type.name }}
+</ng-template>
+
+<ng-template #actionsTemplate let-item>
+  <button
+    class="btn btn-success btn-sm me-2"
+    placement="top"
+    ngbTooltip="Aprobar"
+    (click)="approveDocument(item)"
+    [disabled]="item.state === 'APPROVED'"
+  >
+    <i class="bi bi-check-lg"></i>
+  </button>
+  <button
+    class="btn btn-danger btn-sm me-2"
+    placement="top"
+    ngbTooltip="Rechazar"
+    (click)="rejectDocument(item)"
+    [disabled]="item.state === 'REJECTED'"
+  >
+    <i class="bi bi-x"></i>
+  </button>
+
+  <button
+    class="btn btn-outline-primary btn-sm me-2"
+    placement="top"
+    ngbTooltip="Descargar"
+    (click)="download(item.id)"
+  >
+    <i class="bi bi-download"></i>
+  </button>
+</ng-template>
+
+<div class="px-5 py-4 border border-top-0">
+  <app-table
+    [height]="'200px'"
+    [items]="construction?.construction_documentation || []"
+    [columns]="columns"
+    [showExportOptions]="false"
+  >
+    <div class="w-100 d-flex justify-content-end">
+      <button class="btn btn-outline-primary mx-3" (click)="openFormModal()">
+        <i class="bi bi-upload"></i>
+        Subir documento
+      </button>
+      <div
+        class="alert m-0 me-2 py-1"
+        role="alert"
+        [ngClass]="{
+          'alert-success': isConstructionAbleToApprove(),
+          'alert-warning': !isConstructionAbleToApprove()
+        }"
+      >
+        <!-- APPROVED -->
+        @if(currentConstructionStatus === 'APPROVED') {
+        <i class="bi bi-check-circle"></i>
+        La obra ya está aprobada }
+        <!-- REJECTED -->
+        @else if(currentConstructionStatus === 'REJECTED') {
+        <i class="bi bi-exclamation-circle"></i>
+        La obra ya fue rechazada }
+        <!-- ALL APPROVED -->
+        @else if(isConstructionAbleToApprove()) {
+        <i class="bi bi-check-circle"></i>
+        Todos los documentos están aprobados, puede aprobar la obra }
+        <!-- DOCUMENTS NOT APPROVED -->
+        @else {
+        <i class="bi bi-exclamation-circle"></i>
+        No podrá aprobar la obra hasta que todos los documentos estén aprobados}
+      </div>
+      <button
+        class="btn btn-primary me-2"
+        (click)="approveConstruction()"
+        [disabled]="
+          !isConstructionAbleToApprove() ||
+          currentConstructionStatus === 'APPROVED'
+        "
+      >
+        <i class="bi bi-clipboard-check"></i>
+        Aprobar obra
+      </button>
+      <button class="btn btn-danger" (click)="rejectConstruction()">
+        <i class="bi bi-clipboard-x"></i> Rechazar obra
+      </button>
+    </div>
+  </app-table>
+</div>

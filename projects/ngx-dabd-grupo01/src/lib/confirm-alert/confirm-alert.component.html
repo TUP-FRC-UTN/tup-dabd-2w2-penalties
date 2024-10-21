@@ -1,0 +1,30 @@
+<div class="modal-header">
+  <h4 class="modal-title">{{ alertTitle }}</h4>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="onCancel()"
+  ></button>
+</div>
+
+<div class="modal-body">
+  @if(contentPlacement === 'top' && content) {
+  <ng-container *ngTemplateOutlet="content"></ng-container>
+  }
+  <div class="alert alert-{{ alertType }}" role="alert">
+    {{ alertMessage }}
+  </div>
+  @if(contentPlacement === 'bottom' && content) {
+  <ng-container *ngTemplateOutlet="content"></ng-container>
+  }
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="onCancel()">
+    Cancelar
+  </button>
+  <button type="button" class="btn btn-primary" (click)="onConfirm()">
+    Confirmar
+  </button>
+</div>

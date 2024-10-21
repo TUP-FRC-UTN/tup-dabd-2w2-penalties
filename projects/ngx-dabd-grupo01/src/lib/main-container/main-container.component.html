@@ -1,0 +1,26 @@
+<div class="w-100 h-100 p-5">
+  <div class="card">
+    <div class="card-body p-4">
+      <div class="d-flex justify-content-between">
+        <div class="row mb-5">
+          <h3>{{ title }}</h3>
+          @if(subTitle){
+          <h5>{{ subTitle }}</h5>
+          }
+        </div>
+          @if(onGoBack !== undefined) {
+          <button
+            class="btn btn-outline-secondary rounded-circle d-flex justify-content-center align-items-center"
+            style="width: 36px; height: 36px"
+            (click)="goBack()"
+          >
+            <i class="bi bi-arrow-left-short"></i>
+          </button>
+          }
+        </div>
+        <main>
+          <ng-content></ng-content>
+        </main>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,88 @@
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Nueva Multa</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <form
+      #form="ngForm"
+      (ngSubmit)="createFine(form)"
+      class="row g-3 needs-validation"
+      novalidate
+    >
+      <div>
+        <label for="plotSelect" class="form-label">Lote*</label>
+        <select
+          class="form-select"
+          id="plotSelect"
+          [(ngModel)]="fine!.plotId"
+          #plot="ngModel"
+          name="selectedPlot"
+          [ngClass]="{
+            'is-invalid': plot.invalid && (plot.dirty || plot.touched)
+          }"
+          required
+        >
+          @if (plots) { @for (plot of plots; track plot.plot_number) {
+          <option value="{{ plot.plot_number }}">
+            {{ plot.plot_number }} - {{ plot.plot_type }}
+          </option>
+          } } @else {
+
+          <option value="1">1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+
+          }
+        </select>
+
+        @if (plot.invalid && (plot.dirty || plot.touched)) { @if
+        (plot.getError('required')) {
+        <div class="invalid-feedback">Este campo es obligatorio</div>
+        } }
+      </div>
+      <div class="p-0 m-0">
+        <app-sanction-type-select
+          (selectedSanctionTypeChange)="onSanctionTypeChange($event)"
+        >
+          >
+        </app-sanction-type-select>
+      </div>
+      <!--      <div class="col-12">-->
+      <!--        <label for="inputAddress" class="form-label">Descripción</label>-->
+      <!--        <input-->
+      <!--          type="text"-->
+      <!--          class="form-control"-->
+      <!--          id="inputAddress"-->
+      <!--          placeholder=""-->
+      <!--        />-->
+      <!--      </div>-->
+      <p>* son campos obligatorios</p>
+    </form>
+    @if (error) {
+    <div class="alert alert-danger" role="alert">
+      {{ error }}
+    </div>
+    }
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-outline-secondary"
+      (click)="createFine(form)"
+      [disabled]="!touchSelected"
+    >
+      Guardar
+    </button>
+  </div>
+</ng-template>
+
+<button class="btn btn-outline-primary" (click)="open(content)">
+  Nuevo
+</button>

@@ -1,0 +1,33 @@
+<ng-template #actionsTemplate let-item>
+  <button
+    class="btn btn-primary btn-sm me-2"
+    (click)="goToDetails(item.construction_id)"
+  >
+    Ver más
+  </button>
+</ng-template>
+
+<app-main-container title="Obras">
+  <app-table
+    [items]="(items$ | async) || []"
+    [columns]="columns"
+    [pagination]="{
+      totalItems: (totalItems$ | async) || 0,
+      page: page,
+      size: size,
+      onPageChange: onPageChange,
+      onPageSizeChange: onPageSizeChange
+    }"
+    [isLoading]="(isLoading$ | async) || false"
+    (searchValueChange)="onSearchValueChange('search', $event)"
+  >
+    <!-- <div class="d-flex gap-2">
+      <input type="text" class="form-control" placeholder="Filter 1" />
+      <input type="text" class="form-control" placeholder="Filter 2" />
+      <input type="text" class="form-control" placeholder="Filter 3" />
+    </div> -->
+    <button class="btn btn-outline-primary" (click)="openFormModal()">
+      Nuevo
+    </button>
+  </app-table>
+</app-main-container>
