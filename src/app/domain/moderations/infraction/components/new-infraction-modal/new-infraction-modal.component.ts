@@ -7,13 +7,15 @@ import {SanctionType} from "../../../sanction-type/models/sanction-type.model";
 import {SanctionTypeService} from "../../../sanction-type/services/sanction-type.service";
 import {InfractionServiceService} from "../../services/infraction-service.service";
 import {InfractionDto} from "../../models/infraction.model";
+import {NgClass} from "@angular/common";
 
 @Component({
   selector: 'app-new-infraction-modal',
   standalone: true,
   imports: [
     NgbInputDatepicker,
-    FormsModule
+    FormsModule,
+    NgClass
   ],
   templateUrl: './new-infraction-modal.component.html',
   styleUrl: './new-infraction-modal.component.scss'
