@@ -13,7 +13,6 @@ export class ToastService {
   toasts: Toast[] = [];
 
   show(toast: Toast) {
-    console.log(toast.context);
     this.toasts.push(toast);
   }
 

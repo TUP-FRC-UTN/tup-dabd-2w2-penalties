@@ -72,7 +72,7 @@
   <!-- Documentation -->
   @case ('documentation') {
   <app-construction-documentation-list
-    [documentations]="construction?.construction_documentation || []"></app-construction-documentation-list>
+    [construction]="construction || []"></app-construction-documentation-list>
   }
   <!-- Workers -->
   @case ('workers') {

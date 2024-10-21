@@ -141,8 +141,6 @@ export class FineService {
       params = params.set('fineState', searchState);
     }
 
-    console.log(params);
-
     return this.http
       .get<Page<Fine>>(`${this.apiUrl}/fine/pageable`, { params })
       .pipe(

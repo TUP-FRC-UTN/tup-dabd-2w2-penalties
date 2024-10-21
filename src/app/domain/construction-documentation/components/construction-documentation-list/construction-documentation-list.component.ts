@@ -7,7 +7,12 @@ import {
 } from '@angular/core';
 import { NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { ConstructionDocumentationFormComponent } from '../construction-documentation-form/construction-documentation-form.component';
-import { ConfirmAlertComponent, TableColumn, TableComponent } from 'ngx-dabd-grupo01';
+import {
+  ConfirmAlertComponent,
+  TableColumn,
+  TableComponent,
+} from 'ngx-dabd-grupo01';
+import { ConstructionDocumentationService } from '../../services/construction-documentation.service';
 
 @Component({
   selector: 'app-construction-documentation-list',
@@ -18,14 +23,17 @@ import { ConfirmAlertComponent, TableColumn, TableComponent } from 'ngx-dabd-gru
 })
 export class ConstructionDocumentationListComponent {
   // Inputs:
-  @Input() documentations: any[] = [];
+  @Input() construction: any = undefined;
 
   // Services:
   private modalService = inject(NgbModal);
+  constructionDocumentationService = inject(ConstructionDocumentationService);
 
   // Properties:
   @ViewChild('actionsTemplate') actionsTemplate!: TemplateRef<any>;
   @ViewChild('isApprovedTemplate') isApprovedTemplate!: TemplateRef<any>;
+  @ViewChild('documentTypeNameTemplate')
+  documentTypeNameTemplate!: TemplateRef<any>;
 
   columns: TableColumn[] = [];
 
@@ -39,8 +47,12 @@ export class ConstructionDocumentationListComponent {
           accessorKey: 'approved',
           cellRenderer: this.isApprovedTemplate,
         },
-        { headerName: 'Document path', accessorKey: 'documentPath' },
-        { headerName: 'Document type', accessorKey: 'documentType.name' },
+        { headerName: 'Nombre', accessorKey: 'documentIdentifier' },
+        {
+          headerName: 'Document type',
+          accessorKey: 'documentType.name',
+          cellRenderer: this.documentTypeNameTemplate,
+        },
         {
           headerName: 'Actions',
           accessorKey: 'actions',
@@ -50,11 +62,20 @@ export class ConstructionDocumentationListComponent {
     });
   }
 
-  openFormModal(itemId: number | null = null): void {
+  openFormModal(): void {
     const modalRef = this.modalService.open(
       ConstructionDocumentationFormComponent
     );
-    modalRef.componentInstance.itemId = itemId;
+    modalRef.componentInstance.constructionId =
+      this.construction.construction_id;
+
+    modalRef.result
+      .then((result) => {
+        if (result) {
+          this.construction = result;
+        }
+      })
+      .catch(() => {});
   }
 
   rejectDocument(document: any) {
@@ -65,12 +86,9 @@ export class ConstructionDocumentationListComponent {
     modalRef.result
       .then((result) => {
         if (result) {
-
         }
       })
-      .catch(() => {
-      
-      });
+      .catch(() => {});
   }
 
   approveConstruction() {
@@ -82,11 +100,14 @@ export class ConstructionDocumentationListComponent {
     modalRef.result
       .then((result) => {
         if (result) {
-
         }
       })
-      .catch(() => {
+      .catch(() => {});
+  }
 
-      });
+  download(documentationId: number): void {
+    this.constructionDocumentationService.downloadDocumentation(
+      documentationId
+    );
   }
 }

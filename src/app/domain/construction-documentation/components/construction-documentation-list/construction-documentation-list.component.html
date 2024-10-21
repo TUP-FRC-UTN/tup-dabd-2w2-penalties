@@ -6,31 +6,50 @@
   }
 </ng-template>
 
+<ng-template #documentTypeNameTemplate let-item> 
+  {{ item.documentType.name }}
+</ng-template>
+
 <ng-template #actionsTemplate let-item>
   <button
     class="btn btn-outline-success btn-sm me-2"
     placement="top"
-    ngbTooltip="Aprobar documento"
+    ngbTooltip="Aprobar"
   >
     <i class="bi bi-check-lg"></i>
   </button>
   <button
     class="btn btn-outline-danger btn-sm me-2"
     placement="top"
-    ngbTooltip="Rechazar documento"
+    ngbTooltip="Rechazar"
     (click)="rejectDocument(item)"
   >
     <i class="bi bi-x"></i>
   </button>
+
+  <button
+  class="btn btn-outline-primary btn-sm me-2"
+  placement="top"
+  ngbTooltip="Descargar"
+  (click)="download(item.id)"
+>
+<i class="bi bi-download"></i>
+</button>
+
+  
 </ng-template>
 
 <div class="px-5 py-4 border border-top-0">
   <app-table
     [height]="'200px'"
-    [items]="documentations || []"
+    [items]="construction?.construction_documentation || []"
     [columns]="columns"
   >
     <div class="w-100 d-flex justify-content-end">
+      <button class="btn btn-outline-primary mx-3" (click)="openFormModal()">
+        <i class="bi bi-upload"></i>
+        Subir documento
+      </button>
       <button class="btn btn-outline-primary" (click)="approveConstruction()">
         <i class="bi bi-clipboard-check"></i>
         Aprobar obra
