@@ -1,7 +1,7 @@
-<app-main-container title="Construction Detail" [onGoBack]="goBack">
+<app-main-container title="Construcción {{construction?.construction_id}}" [onGoBack]="goBack">
   <div class="row">
     <div class="mb-3 col-6">
-      <label for="name" class="form-label">Name</label>
+      <label for="name" class="form-label">Nombre</label>
       <input
         id="name"
         name="name"
@@ -11,7 +11,7 @@
       />
     </div>
     <div class="mb-3 col-6">
-      <label for="description" class="form-label">Description</label>
+      <label for="description" class="form-label">Descripción</label>
       <input
         id="description"
         name="description"
@@ -35,7 +35,7 @@
       </div>
     </div> -->
     <div class="mb-3 col-6">
-      <label for="status" class="form-label">Status</label>
+      <label for="status" class="form-label">Estado</label>
       <input
         id="status"
         name="status"
@@ -65,7 +65,7 @@
       />
     </div>
     <div class="mb-3 col-6">
-      <label for="start_date" class="form-label">Start Date</label>
+      <label for="start_date" class="form-label">Fecha estimada de inicio</label>
       <input
         id="start_date"
         name="start_date"
@@ -75,7 +75,7 @@
       />
     </div>
     <div class="mb-3 col-6">
-      <label for="end_date" class="form-label">End Date</label>
+      <label for="end_date" class="form-label">Fecha estimada de finalización</label>
       <input
         id="end_date"
         name="end_date"
@@ -85,7 +85,7 @@
       />
     </div>
     <div class="mb-3 col-6">
-      <label for="plot_id" class="form-label">Plot</label>
+      <label for="plot_id" class="form-label">Lote</label>
       <input
         id="plot_id"
         name="plot_id"

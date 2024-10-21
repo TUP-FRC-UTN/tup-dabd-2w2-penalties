@@ -52,18 +52,18 @@ export class ConstructionWorkersComponent implements AfterViewInit {
     setTimeout(() => {
       this.columns = [
         { headerName: 'Id', accessorKey: 'id' },
-        { headerName: 'Contact', accessorKey: 'contact' },
-        { headerName: 'Address', accessorKey: 'address' },
-        { headerName: 'Name', accessorKey: 'name' },
-        { headerName: 'Last Name', accessorKey: 'last_name' },
+        { headerName: 'Contacto', accessorKey: 'contact' },
+        { headerName: 'Dirección', accessorKey: 'address' },
+        { headerName: 'Nombre', accessorKey: 'name' },
+        { headerName: 'Apellido', accessorKey: 'last_name' },
         { headerName: 'Cuil', accessorKey: 'cuil' },
-        { headerName: 'Document', accessorKey: 'document' },
+        { headerName: 'DNI', accessorKey: 'document' },
         {
-          headerName: 'Worker Speciality',
+          headerName: 'Especialidad',
           accessorKey: 'worker_speciality_type',
         },
         {
-          headerName: 'Actions',
+          headerName: 'Acciones',
           accessorKey: 'actions',
           cellRenderer: this.actionsTemplate,
         },

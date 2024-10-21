@@ -78,18 +78,18 @@ export class ConstructionDocumentationListComponent {
       this.columns = [
         { headerName: 'Id', accessorKey: 'id' },
         {
-          headerName: 'Is approved',
+          headerName: 'Estado',
           accessorKey: 'approved',
           cellRenderer: this.isApprovedTemplate,
         },
-        { headerName: 'Nombre', accessorKey: 'documentIdentifier' },
+        { headerName: 'Nombre', accessorKey: 'document_identifier' },
         {
-          headerName: 'Document type',
+          headerName: 'Tipo',
           accessorKey: 'documentType.name',
           cellRenderer: this.documentTypeNameTemplate,
         },
         {
-          headerName: 'Actions',
+          headerName: 'Acciones',
           accessorKey: 'actions',
           cellRenderer: this.actionsTemplate,
         },
@@ -187,14 +187,18 @@ export class ConstructionDocumentationListComponent {
   }
 
   isConstructionAbleToApprove() {
-    return (
-      !this.construction.construction_documentation.some(
-        (doc: { state: string }) => doc.state === 'PENDING_APPROVAL'
-      ) &&
-      !this.construction.construction_documentation.some(
-        (doc: { state: string }) => doc.state === 'REJECTED'
-      )
-    );
+    if (this.construction.construction_documentation) {
+      return (
+        !this.construction.construction_documentation.some(
+          (doc: { state: string }) => doc.state === 'PENDING_APPROVAL'
+        ) &&
+        !this.construction.construction_documentation.some(
+          (doc: { state: string }) => doc.state === 'REJECTED'
+        )
+      );
+    } else {
+      return false;
+    }
   }
 
   download(documentationId: number): void {

@@ -7,7 +7,7 @@
   </button>
 </ng-template>
 
-<app-main-container title="Constructions">
+<app-main-container title="Obras">
   <app-table
     [items]="(items$ | async) || []"
     [columns]="columns"
@@ -21,11 +21,11 @@
     [isLoading]="(isLoading$ | async) || false"
     (searchValueChange)="onSearchValueChange('search', $event)"
   >
-    <div class="d-flex gap-2">
+    <!-- <div class="d-flex gap-2">
       <input type="text" class="form-control" placeholder="Filter 1" />
       <input type="text" class="form-control" placeholder="Filter 2" />
       <input type="text" class="form-control" placeholder="Filter 3" />
-    </div>
+    </div> -->
     <button class="btn btn-outline-primary" (click)="openFormModal()">
       Nuevo
     </button>
