@@ -64,12 +64,15 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "template-app:build"
+          },
           "configurations": {
             "production": {
-              "buildTarget": "template-app:build:production"
+              "browserTarget": "template-app:build:production"
             },
             "development": {
-              "buildTarget": "template-app:build:development"
+              "browserTarget": "template-app:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -137,5 +140,6 @@
   },
   "cli": {
     "analytics": false
-  }
+  },
+  "defaultProject": "template-app"
 }

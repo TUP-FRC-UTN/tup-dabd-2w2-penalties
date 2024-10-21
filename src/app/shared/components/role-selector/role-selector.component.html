@@ -1,0 +1,27 @@
+<form>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4">
+          <label for="roles">Selección Rol:</label>
+          <select id="roles" class="form-select" [(ngModel)]="selectedRole" (change)="onRoleChange($event)">
+            <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+          </select>
+        </div>
+  
+        <div class="col-md-4">
+          <label for="lotes">Selección Lotes:</label>
+          <select id="lotes" class="form-select" multiple [(ngModel)]="selectedLotes" (change)="onLotesChange($event)">
+            <option *ngFor="let lote of lotes" [value]="lote">Lote {{ lote }}</option>
+          </select>
+        </div>
+  
+        <div class="col-md-4">
+          <label for="userId">Selección UserID:</label>
+          <select id="userId" class="form-select" [(ngModel)]="selectedUserId" (change)="onUserIdChange($event)">
+            <option *ngFor="let user of userIds" [value]="user">UserID {{ user }}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </form>
+  
