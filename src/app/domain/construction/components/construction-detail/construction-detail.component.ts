@@ -39,7 +39,7 @@ import { ToastService } from '../../../../../../projects/ngx-dabd-grupo01/src/pu
     NgbTooltipModule,
     ConstructionDocumentationListComponent,
     ConstructionNotesListComponent,
-    GetValueByKeyForEnumPipe
+    GetValueByKeyForEnumPipe,
   ],
   templateUrl: './construction-detail.component.html',
   styleUrl: './construction-detail.component.css',
@@ -153,11 +153,15 @@ export class ConstructionDetailComponent implements OnInit {
             this.construction = updatedConstruction;
 
             this.modalService.dismissAll();
-            this.toastService.sendSuccess('Los datos se actualizaron correctamente');
+            this.toastService.sendSuccess(
+              'Los datos se actualizaron correctamente'
+            );
           },
           error: (err) => {
             console.error('Error al actualizar los datos', err);
-            this.toastService.sendError('Ocurrió un error al actualizar los datos');
+            this.toastService.sendError(
+              'Ocurrió un error al actualizar los datos'
+            );
           },
         });
     }
@@ -170,7 +174,9 @@ export class ConstructionDetailComponent implements OnInit {
         .subscribe(() => {
           if (this.construction) {
             this.construction.construction_status = 'APPROVED';
-            this.toastService.sendSuccess('Se aprobó la construcción correctamente');
+            this.toastService.sendSuccess(
+              'Se aprobó la construcción correctamente'
+            );
           }
         });
     }
@@ -181,18 +187,21 @@ export class ConstructionDetailComponent implements OnInit {
       this.constructionService
         .rejectConstruction(constructionId, reason)
         .subscribe({
-          next: () => {
-            () => {
-              if (this.construction) {
-                this.construction.construction_status = 'REJECTED';
-                this.toastService.sendSuccess('Se rechazó la construcción correctamente');
-              }
+          next: (constructionResponse: any) => {
+            if (this.construction) {
+              this.construction.construction_status = 'REJECTED';
+              this.construction.notes = constructionResponse.notes;
+              this.toastService.sendSuccess(
+                'Se rechazó la construcción correctamente'
+              );
             }
           },
           error: (err) => {
-            this.toastService.sendError('Ocurrió un error al rechazar la construcción');
+            this.toastService.sendError(
+              'Ocurrió un error al rechazar la construcción'
+            );
           },
-        })
+        });
     }
   }
 }
