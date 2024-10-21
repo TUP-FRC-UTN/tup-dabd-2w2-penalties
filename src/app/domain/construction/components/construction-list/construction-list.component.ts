@@ -6,7 +6,11 @@ import { ConstructionResponseDto } from '../../models/construction.model';
 import { ConstructionFormComponent } from '../construction-form/construction-form.component';
 import { ConstructionService } from '../../services/construction.service';
 import { Router } from '@angular/router';
-import { MainContainerComponent, TableColumn, TableComponent } from 'ngx-dabd-grupo01';
+import {
+  MainContainerComponent,
+  TableColumn,
+  TableComponent,
+} from 'ngx-dabd-grupo01';
 
 @Component({
   selector: 'app-construction-list',
@@ -45,18 +49,18 @@ export class ConstructionListComponent {
     setTimeout(() => {
       this.columns = [
         { headerName: 'Id', accessorKey: 'construction_id' },
-        { headerName: 'Description', accessorKey: 'project_description' },
-        { headerName: 'Plot Id', accessorKey: 'plot_id' },
-        { headerName: 'Planned Start Date', accessorKey: 'planned_start_date' },
-        { headerName: 'Planned End Date', accessorKey: 'planned_end_date' },
-        { headerName: 'Project Name', accessorKey: 'project_name' },
-        { headerName: 'Project Address', accessorKey: 'project_address' },
+        { headerName: 'Descripción', accessorKey: 'project_description' },
+        { headerName: 'Lote', accessorKey: 'plot_id' },
+        { headerName: 'Inicio', accessorKey: 'planned_start_date' },
+        { headerName: 'Finalización', accessorKey: 'planned_end_date' },
+        { headerName: 'Nombre', accessorKey: 'project_name' },
+        { headerName: 'Dirección', accessorKey: 'project_address' },
         {
-          headerName: 'Construction Status',
+          headerName: 'Estado',
           accessorKey: 'construction_status',
         },
         {
-          headerName: 'Actions',
+          headerName: 'Acciones',
           accessorKey: 'actions',
           cellRenderer: this.actionsTemplate,
         },

@@ -33,12 +33,8 @@ export class ConstructionNotesListComponent {
     setTimeout(() => {
       this.columns = [
         { headerName: 'Id', accessorKey: 'id' },
-        { headerName: 'Description', accessorKey: 'description' },
-        {
-          headerName: 'Actions',
-          accessorKey: 'actions',
-          cellRenderer: this.actionsTemplate,
-        },
+        { headerName: 'Nota', accessorKey: 'description' },
+      
       ];
     });
   }

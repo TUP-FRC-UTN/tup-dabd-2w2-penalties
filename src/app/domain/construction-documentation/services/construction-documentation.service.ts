@@ -11,7 +11,10 @@ import {
 
 import { environment } from '../../../../environments/environment';
 import { ConstructionDocumentationTypeResponseDTO } from '../models/construction-documentation.model';
-import { ConstructionDocResponseDto, ConstructionDocUpdateStatusRequestDto } from '../models/construction-doc.model';
+import {
+  ConstructionDocResponseDto,
+  ConstructionDocUpdateStatusRequestDto,
+} from '../models/construction-doc.model';
 
 @Injectable({
   providedIn: 'root',
@@ -29,7 +32,6 @@ export class ConstructionDocumentationService {
 
   private readonly http = inject(HttpClient);
 
-  
   private itemsSubject = new BehaviorSubject<ConstructionDocResponseDto[]>([]);
   items$ = this.itemsSubject.asObservable();
 
@@ -37,7 +39,7 @@ export class ConstructionDocumentationService {
     updateStatusRequestDto: ConstructionDocUpdateStatusRequestDto
   ): Observable<ConstructionDocResponseDto> {
     return this.http.put<ConstructionDocResponseDto>(
-      `${this.apiUrl}/documentation/status`,
+      `${this.apiUrl}/constructions/documentation/status`,
       updateStatusRequestDto
     );
   }
@@ -72,7 +74,7 @@ export class ConstructionDocumentationService {
       .pipe(
         map(
           (newDocumentation) => {
-            return newDocumentation
+            return newDocumentation;
           },
           catchError((error) => {
             return throwError(
@@ -82,8 +84,6 @@ export class ConstructionDocumentationService {
         )
       );
   }
-
-  
 
   downloadDocumentation(documentationId: number): void {
     const url = `${this.apiUrl}/constructions/documentation/${documentationId}`;
@@ -108,21 +108,4 @@ export class ConstructionDocumentationService {
     window.URL.revokeObjectURL(url);
   }
 
-  // registerConstruction(
-  //   construction: ConstructionRequestDto
-  // ): Observable<ConstructionResponseDto> {
-  //   return this.http
-  //     .post<ConstructionResponseDto>(this.apiUrl, construction)
-  //     .pipe(
-  //       map((newItem) => {
-  //         const updatedItems = [...this.itemsSubject.value, newItem];
-  //         this.itemsSubject.next(updatedItems);
-  //         return newItem;
-  //       })
-  //     );
-  // }
-
-  // setDocumentation(items: ConstructionResponseDto[]): void {
-  //   this.documentationTypes$.next(items);
-  // }
 }
