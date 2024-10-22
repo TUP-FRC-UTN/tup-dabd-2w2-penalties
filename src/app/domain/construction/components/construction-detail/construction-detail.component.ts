@@ -18,12 +18,22 @@ import {
 } from '../../models/construction.model';
 import { CommonModule } from '@angular/common';
 import { ConstructionWorkersComponent } from '../../../workers/components/construction-workers/construction-workers.component';
-import { FormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { ConstructionDocumentationListComponent } from '../../../construction-documentation/components/construction-documentation-list/construction-documentation-list.component';
 import { ConstructionNotesListComponent } from '../../../note/components/construction-notes-list/construction-notes-list.component';
 import { WorkerService } from '../../../workers/services/worker.service';
-import { MainContainerComponent, TableComponent } from 'ngx-dabd-grupo01';
+import {
+  ConfirmAlertComponent,
+  MainContainerComponent,
+  TableComponent,
+} from 'ngx-dabd-grupo01';
 import { GetValueByKeyForEnumPipe } from '../../../../shared/pipes/get-value-by-key-for-status.pipe';
 import { ToastService } from '../../../../../../projects/ngx-dabd-grupo01/src/public-api';
 
@@ -32,6 +42,7 @@ import { ToastService } from '../../../../../../projects/ngx-dabd-grupo01/src/pu
   standalone: true,
   imports: [
     CommonModule,
+    ReactiveFormsModule,
     FormsModule,
     MainContainerComponent,
     TableComponent,
@@ -60,6 +71,19 @@ export class ConstructionDetailComponent implements OnInit {
   statusOptions: ConstructionStatus[] = CONSTRUCTION_STATUSES;
   successMessage: string | null = null;
   CONSTRUCTION_STATUSES_ENUM = CONSTRUCTION_STATUSES_ENUM;
+  @ViewChild('confirmAlertContentTemplate')
+  confirmAlertContentTemplate!: TemplateRef<any>;
+  rejectForm: FormGroup;
+
+  constructor(private fb: FormBuilder) {
+    this.rejectForm = this.fb.group({
+      rejectReason: ['', Validators.required],
+    });
+  }
+
+  get rejectReasonControl() {
+    return this.rejectForm.get('rejectReason');
+  }
 
   ngOnInit(): void {
     this.activatedRoute.params.subscribe((params) => {
@@ -203,5 +227,59 @@ export class ConstructionDetailComponent implements OnInit {
           },
         });
     }
+  }
+
+  isConstructionAbleToApprove() {
+    if (this.construction?.construction_documentation) {
+      return (
+        !this.construction.construction_documentation.some(
+          (doc: { state: string }) => doc.state === 'PENDING_APPROVAL'
+        ) &&
+        !this.construction.construction_documentation.some(
+          (doc: { state: string }) => doc.state === 'REJECTED'
+        )
+      );
+    } else {
+      return false;
+    }
+  }
+
+  approveConstruction() {
+    const modalRef = this.modalService.open(ConfirmAlertComponent);
+    modalRef.componentInstance.alertTitle = 'Confirmación';
+    modalRef.componentInstance.alertMessage = `¿Está seguro de que desea aprobar esta obra?`;
+    modalRef.componentInstance.alertType = 'info';
+
+    modalRef.result
+      .then((result) => {
+        if (result) {
+          this.onConstructionApproved(this.construction?.construction_id || 0);
+        }
+      })
+      .catch(() => {});
+  }
+
+  rejectConstruction() {
+    const modalRef = this.modalService.open(ConfirmAlertComponent);
+
+    modalRef.componentInstance.alertTitle = 'Confirmación';
+    modalRef.componentInstance.alertMessage = `¿Está seguro de que desea rechazar esta obra?`;
+    modalRef.componentInstance.alertType = 'warning';
+
+    modalRef.componentInstance.content = this.confirmAlertContentTemplate;
+
+    modalRef.componentInstance.onConfirm = () => {
+      if (this.rejectForm.valid) {
+        const rejectReason = this.rejectForm.value.rejectReason;
+        this.onConstructionRejected(
+          this.construction?.construction_id || 0,
+          rejectReason
+        );
+        modalRef.close();
+        this.rejectForm.reset();
+      } else {
+        this.rejectForm.markAllAsTouched();
+      }
+    };
   }
 }

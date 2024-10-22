@@ -1,4 +1,26 @@
-<app-main-container title="Construcción {{construction?.construction_id}}" [onGoBack]="goBack">
+<ng-template #confirmAlertContentTemplate>
+  <form [formGroup]="rejectForm">
+    <label for="rejectReason" class="form-label">Ingrese un motivo</label>
+    <input
+      type="text"
+      class="form-control"
+      id="rejectReason"
+      formControlName="rejectReason"
+      [ngClass]="{
+        'is-invalid':
+          rejectReasonControl?.invalid && rejectReasonControl?.touched
+      }"
+    />
+    @if(rejectReasonControl?.invalid && rejectReasonControl?.touched) {
+    <div class="invalid-feedback">El motivo es requerido.</div>
+    }
+  </form>
+</ng-template>
+
+<app-main-container
+  title="Construcción {{ construction?.construction_id }}"
+  [onGoBack]="goBack"
+>
   <div class="row">
     <div class="mb-3 col-6">
       <label for="name" class="form-label">Nombre</label>
@@ -20,20 +42,6 @@
         disabled
       />
     </div>
-    <!-- <div class="mb-3 col-6">
-      <label for="status" class="form-label">Status</label>
-      <div class="d-flex gap-3">
-        <select id="status" name="status" class="form-control" [(ngModel)]="selectedStatus">
-          <option *ngFor="let status of statusOptions" [value]="status">
-            {{ status }}
-          </option>
-        </select>
-        <button class="btn btn-primary" [disabled]="selectedStatus === construction?.construction_status"
-          (click)="updateStatus()" placement="top" ngbTooltip="Actualizar estado">
-          <i class="bi bi-floppy"></i>
-        </button>
-      </div>
-    </div> -->
     <div class="mb-3 col-6">
       <label for="status" class="form-label">Estado</label>
       <input
@@ -65,7 +73,9 @@
       />
     </div>
     <div class="mb-3 col-6">
-      <label for="start_date" class="form-label">Fecha estimada de inicio</label>
+      <label for="start_date" class="form-label"
+        >Fecha estimada de inicio</label
+      >
       <input
         id="start_date"
         name="start_date"
@@ -75,7 +85,9 @@
       />
     </div>
     <div class="mb-3 col-6">
-      <label for="end_date" class="form-label">Fecha estimada de finalización</label>
+      <label for="end_date" class="form-label"
+        >Fecha estimada de finalización</label
+      >
       <input
         id="end_date"
         name="end_date"
@@ -95,10 +107,57 @@
       />
     </div>
   </div>
-  <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-    <button class="btn btn-warning" (click)="openEditModal()">
-      <i class="bi bi-pencil me-2"></i>Editar
-    </button>
+  <hr style="color: #808080" />
+  <div class="d-grid gap-2 d-md-flex justify-content-between">
+    <div
+      class="alert m-0 me-2 py-1"
+      role="alert"
+      [ngClass]="{
+        'alert-success': isConstructionAbleToApprove() && construction?.construction_status !== 'REJECTED',
+        'alert-danger': construction?.construction_status === 'REJECTED',
+        'alert-warning': !isConstructionAbleToApprove()
+      }"
+    >
+      <!-- APPROVED -->
+      @if(construction?.construction_status === 'APPROVED') {
+      <i class="bi bi-check-circle"></i>
+      La obra ya está aprobada }
+      <!-- REJECTED -->
+      @else if(construction?.construction_status === 'REJECTED') {
+      <i class="bi bi-exclamation-circle"></i>
+      La obra ya fue rechazada }
+      <!-- ALL APPROVED -->
+      @else if(isConstructionAbleToApprove()) {
+      <i class="bi bi-check-circle"></i>
+      Todos los documentos están aprobados, puede aprobar la obra }
+      <!-- DOCUMENTS NOT APPROVED -->
+      @else {
+      <i class="bi bi-exclamation-circle"></i>
+      No podrá aprobar la obra hasta que todos los documentos estén aprobados}
+    </div>
+    <div>
+      <button
+        class="btn btn-primary me-2"
+        (click)="approveConstruction()"
+        [disabled]="
+          !isConstructionAbleToApprove() ||
+          construction?.construction_status === 'APPROVED'
+        "
+      >
+        <i class="bi bi-clipboard-check"></i>
+        Aprobar obra
+      </button>
+      <button
+        class="btn btn-danger me-2"
+        (click)="rejectConstruction()"
+        [disabled]="construction?.construction_status === 'REJECTED'"
+      >
+        <i class="bi bi-clipboard-x"></i> Rechazar obra
+      </button>
+      <button class="btn btn-warning" (click)="openEditModal()">
+        <i class="bi bi-pencil me-2"></i>Editar
+      </button>
+    </div>
   </div>
   <hr style="color: #808080" />
   <ul class="nav nav-tabs">
@@ -139,7 +198,9 @@
     (constructionApproved)="
       onConstructionApproved(construction?.construction_id!)
     "
-    (constructionRejected)="onConstructionRejected(construction?.construction_id!, $event)"
+    (constructionRejected)="
+      onConstructionRejected(construction?.construction_id!, $event)
+    "
   ></app-construction-documentation-list>
   }
   <!-- Workers -->
