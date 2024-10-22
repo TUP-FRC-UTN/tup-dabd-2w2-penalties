@@ -51,3 +51,13 @@ export const CONSTRUCTION_STATUSES: ConstructionStatus[] = [
   'COMPLETED',
   'STOPPED',
 ];
+
+export enum CONSTRUCTION_STATUSES_ENUM {
+  LOADING = 'En proceso de carga',
+  PLANNED = 'En planeación',
+  APPROVED = 'Aprobada',
+  REJECTED = 'Rechazada',
+  IN_PROGRESS = 'En progreso',
+  COMPLETED = 'Completada',
+  STOPPED = 'Frenada',
+}

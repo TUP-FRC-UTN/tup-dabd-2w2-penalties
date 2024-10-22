@@ -15,7 +15,7 @@ import {
 } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { SafeCall } from '@angular/compiler';
-import { ToastService } from '../../../../shared/components/toast/toast-service';
+import { ToastService } from '../../../../../../projects/ngx-dabd-grupo01/src/lib/toast/toast-service';
 
 type OneSanctionType = SanctionType | undefined;
 @Injectable({
@@ -111,7 +111,6 @@ export class SanctionTypeService {
         map((newItem) => {
           const updatedItems = [...this.itemsSubject.value, newItem];
           this.itemsSubject.next(updatedItems);
-          this.toastService.sendSuccess(`Se creó el tipo: ${newItem.id}`);
           return newItem;
         }),
         catchError((error) => {
@@ -122,10 +121,14 @@ export class SanctionTypeService {
 
   updateSanctionType(sanctionType: SanctionType): Observable<SanctionType> {
     return this.http
-      .put<SanctionType>(
-        `${this.apiUrl}/sanction-type/${sanctionType.id}`,
-        {description:sanctionType.description, amount: sanctionType.amount, charge_type: sanctionType.charge_type }
-      )
+      .put<SanctionType>(`${this.apiUrl}/sanction-type/${sanctionType.id}`, {
+        description: sanctionType.description,
+        amount: sanctionType.amount,
+        charge_type: sanctionType.charge_type,
+        infraction_days_to_expire: sanctionType.infraction_days_to_expire,
+        amount_of_infractions_for_fine:
+          sanctionType.amount_of_infractions_for_fine,
+      })
       .pipe(
         map((newItem) => {
           return newItem;

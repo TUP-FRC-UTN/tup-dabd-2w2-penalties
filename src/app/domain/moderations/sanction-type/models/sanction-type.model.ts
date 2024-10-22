@@ -6,7 +6,9 @@ export interface SanctionTypeRequestDTO {
   name: string;
   description: string;
   charge_type: ChargeTypeEnum;
-  amount: number; 
+  amount: number;
+  infraction_days_to_expire: number;
+  amount_of_infractions_for_fine: number;
 }
 
 export enum ChargeTypeEnum {

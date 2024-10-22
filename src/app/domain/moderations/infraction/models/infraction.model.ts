@@ -1,14 +1,23 @@
 import { Claim } from '../../claim/models/claim.model';
 import { EntityBase } from '../../../../shared/models/entity-base.model';
 
-export interface Infraction extends EntityBase {
-  userId: Number;
+export interface InfractionDto  {
+  plotId: number;
 
   description: string;
 
-  infractionState: string;
+  sanctionTypeId: number;
 
-  sanctionType: string;
-
-  claims: Claim[];
+  claimsId: number[];
 }
+
+export interface InfractionModel extends EntityBase {
+  plotId: number;
+
+  description: string;
+
+  sanctionTypeId: number;
+
+  claimsId: number[];
+}
+

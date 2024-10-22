@@ -1,4 +1,4 @@
-import { Infraction } from '../../domain/moderations/infraction/models/infraction.model';
+import { InfractionDto } from '../../domain/moderations/infraction/models/infraction.model';
 
 export interface EntityBase {
   id: number;

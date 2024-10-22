@@ -1,10 +1,11 @@
-import { Component, inject, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, inject, Input, TemplateRef } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-confirm-alert',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './confirm-alert.component.html',
   styleUrl: './confirm-alert.component.css',
 })
@@ -13,6 +14,9 @@ export class ConfirmAlertComponent {
   @Input() alertTitle: string = 'Confirm';
   @Input() alertType: 'success' | 'danger' | 'warning' | 'info' = 'warning';
   @Input() alertMessage: string = 'Are you sure you want to proceed?';
+  
+  @Input() contentPlacement: 'top' | 'bottom' = 'bottom';
+  @Input() content!: TemplateRef<any>;
 
   // Services:
   private activeModal = inject(NgbActiveModal);

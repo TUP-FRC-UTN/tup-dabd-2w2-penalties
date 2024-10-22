@@ -9,9 +9,15 @@
 </div>
 
 <div class="modal-body">
+  @if(contentPlacement === 'top' && content) {
+  <ng-container *ngTemplateOutlet="content"></ng-container>
+  }
   <div class="alert alert-{{ alertType }}" role="alert">
     {{ alertMessage }}
   </div>
+  @if(contentPlacement === 'bottom' && content) {
+  <ng-container *ngTemplateOutlet="content"></ng-container>
+  }
 </div>
 
 <div class="modal-footer">

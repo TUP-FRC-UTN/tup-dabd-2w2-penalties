@@ -6,9 +6,8 @@ import {
   ViewChild,
 } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { TableColumn } from '../../../../shared/components/table/table.models';
 import { ConstructionNotesFormComponent } from '../construction-notes-form/construction-notes-form.component';
-import { TableComponent } from '../../../../shared/components/table/table.component';
+import { TableColumn, TableComponent } from 'ngx-dabd-grupo01';
 
 @Component({
   selector: 'app-construction-notes-list',
@@ -34,12 +33,8 @@ export class ConstructionNotesListComponent {
     setTimeout(() => {
       this.columns = [
         { headerName: 'Id', accessorKey: 'id' },
-        { headerName: 'Description', accessorKey: 'description' },
-        {
-          headerName: 'Actions',
-          accessorKey: 'actions',
-          cellRenderer: this.actionsTemplate,
-        },
+        { headerName: 'Nota', accessorKey: 'description' },
+      
       ];
     });
   }

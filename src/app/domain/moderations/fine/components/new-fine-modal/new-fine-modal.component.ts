@@ -44,8 +44,6 @@ export class NewFineModalComponent {
     this.cadastreService.getPlots().subscribe({
       next: (response) => {
         this.plots = response.content;
-
-        console.log(this.plots);
       },
     });
 

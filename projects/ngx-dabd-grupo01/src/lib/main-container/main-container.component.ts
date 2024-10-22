@@ -9,6 +9,7 @@ import { Component, Input } from '@angular/core';
 })
 export class MainContainerComponent {
   @Input() title: string = '';
+  @Input() subTitle: string = '';
   @Input() onGoBack?: () => void;
 
   goBack() {

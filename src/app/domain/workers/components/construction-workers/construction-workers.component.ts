@@ -10,15 +10,17 @@ import {
 import { ConstructionService } from '../../../construction/services/construction.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { WorkerFormComponent } from '../worker-form/worker-form.component';
-import { TableComponent } from '../../../../shared/components/table/table.component';
-import { TableColumn } from '../../../../shared/components/table/table.models';
-import { WorkerService } from '../../services/worker.service';
-import { ConfirmAlertComponent } from '../../../../shared/components/confirm-alert/confirm-alert.component';
 import {
   Toast,
   ToastService,
-} from '../../../../shared/components/toast/toast-service';
-import { ToastsContainer } from '../../../../shared/components/toast/toasts-container.component';
+} from '../../../../../../projects/ngx-dabd-grupo01/src/lib/toast/toast-service';
+import { ToastsContainer } from '../../../../../../projects/ngx-dabd-grupo01/src/lib/toast/toasts-container.component';
+import {
+  ConfirmAlertComponent,
+  TableColumn,
+  TableComponent,
+} from 'ngx-dabd-grupo01';
+import { WorkerService } from '../../services/worker.service';
 
 @Component({
   selector: 'app-construction-workers',
@@ -50,18 +52,18 @@ export class ConstructionWorkersComponent implements AfterViewInit {
     setTimeout(() => {
       this.columns = [
         { headerName: 'Id', accessorKey: 'id' },
-        { headerName: 'Contact', accessorKey: 'contact' },
-        { headerName: 'Address', accessorKey: 'address' },
-        { headerName: 'Name', accessorKey: 'name' },
-        { headerName: 'Last Name', accessorKey: 'last_name' },
+        { headerName: 'Contacto', accessorKey: 'contact' },
+        { headerName: 'Dirección', accessorKey: 'address' },
+        { headerName: 'Nombre', accessorKey: 'name' },
+        { headerName: 'Apellido', accessorKey: 'last_name' },
         { headerName: 'Cuil', accessorKey: 'cuil' },
-        { headerName: 'Document', accessorKey: 'document' },
+        { headerName: 'DNI', accessorKey: 'document' },
         {
-          headerName: 'Worker Speciality',
+          headerName: 'Especialidad',
           accessorKey: 'worker_speciality_type',
         },
         {
-          headerName: 'Actions',
+          headerName: 'Acciones',
           accessorKey: 'actions',
           cellRenderer: this.actionsTemplate,
         },

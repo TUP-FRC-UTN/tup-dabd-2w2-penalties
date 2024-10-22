@@ -24,6 +24,7 @@
     }"
     [isLoading]="(isLoading$ | async) || false"
     (searchValueChange)="onSearchValueChange('partialName', $event)"
+    searchPlaceHolder="Nombre..."
   >
     <button class="btn btn-outline-primary" (click)="openFormModal()">
       Nuevo
