@@ -12,7 +12,7 @@
           type="text"
           class="form-control"
           id="inputModel"
-          [(ngModel)]="fine.plotId"
+          [(ngModel)]="fine.plot_id"
           #plot="ngModel"
           name="plotId"
           readonly
@@ -24,7 +24,7 @@
           type="text"
           class="form-control"
           id="inputModel"
-          [(ngModel)]="fine.sanctionType.name"
+          [(ngModel)]="fine.sanction_type.name"
           #sanctionType="ngModel"
           name="sanctionTypeName"
           readonly
@@ -38,7 +38,7 @@
         <input
           type="text"
           class="form-control"
-          [value]="fine.createdDate | date : 'dd/MM/yyyy'"
+          [value]="fine.created_date | date : 'dd/MM/yyyy'"
           readonly
         />
       </div>
@@ -47,12 +47,12 @@
         <select
           class="form-select"
           id="fineStateSelect"
-          [(ngModel)]="fine.fineState"
-          name="fineState"
-          #fineState="ngModel"
+          [(ngModel)]="fine.fine_state"
+          name="fine_state"
+          #fine_state="ngModel"
           [disabled]="
-            fine.fineState === FineStatusEnum.APPROVED ||
-            fine.fineState === FineStatusEnum.REJECTED
+            fine.fine_state === FineStatusEnum.APPROVED ||
+            fine.fine_state === FineStatusEnum.REJECTED
           "
         >
           @for (key of fineService.fineStatusKeys; track $index) {
@@ -64,7 +64,7 @@
       </div>
     </div>
 
-    @if (initialState !== fine.fineState) {
+    @if (initialState !== fine.fine_state) {
 
     <div
       class="row justify-content-left align-items-left g-2 d-flex flex-row-reverse"
@@ -96,9 +96,9 @@
           $index) {
           <tr>
             <th scope="row">{{ infraction.id }}</th>
-            <td>{{ infraction.createdBy | number }}</td>
+            <td>{{ infraction.created_by | number }}</td>
             <td>
-              {{ infraction.createdDate | date : "dd/MM/yyyy" }}
+              {{ infraction.created_date | date : "dd/MM/yyyy" }}
             </td>
             <td>
               <button

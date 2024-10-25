@@ -36,7 +36,7 @@ export class FineDetailComponent {
   private updateFine() {
     this.fineService.getFineById(this.fineId!).subscribe((data) => {
       this.fine = data;
-      this.initialState = data.fineState;
+      this.initialState = data.fine_state;
     });
   }
 
@@ -49,7 +49,7 @@ export class FineDetailComponent {
       id: this.fine?.id,
       //TODO: Tomar user de donde sea qe se guarde
       updatedBy: 0,
-      fineState: this.fine?.fineState!,
+      fineState: this.fine?.fine_state!,
     };
 
     this.fineService.updateState(fine).subscribe({

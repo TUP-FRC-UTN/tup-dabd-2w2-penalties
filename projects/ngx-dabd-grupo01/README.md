@@ -395,3 +395,248 @@ export interface TablePagination {
   onPageSizeChange: (itemsPerPage: number) => void; // Método que se llama al cambiar el tamaño de ítems por página
 }
 ```
+
+## Descripción
+
+El servicio de Toasts proporciona una forma sencilla de mostrar mensajes emergentes (toasts) en la aplicación. Los toasts pueden mostrar mensajes de éxito, error o cualquier otro mensaje personalizado utilizando plantillas.
+
+## Instalación
+
+Asegúrate de tener las dependencias necesarias instaladas en tu proyecto Angular:
+
+```bash
+npm install @ng-bootstrap/ng-bootstrap
+```
+
+## Uso
+
+### 1. Integración del Componente
+
+Para mostrar los toasts, primero debes agregar el componente `ToastsContainer` en tu `app.component.html` o en cualquier otro componente donde desees que aparezcan los toasts. Ejemplo:
+
+```html
+<app-custom-nav-bar />
+<router-outlet />
+<app-toasts aria-live="polite" aria-atomic="true"></app-toasts>
+```
+
+### 2. Uso del ToastService
+
+Inyecta el `ToastService` en el componente donde desees mostrar los toasts. Luego, puedes usar sus métodos para mostrar mensajes de éxito, error o mensajes personalizados.
+
+#### Ejemplo de Uso
+
+```typescript
+import { Component } from "@angular/core";
+import { ToastService } from "./toast-service";
+
+@Component({
+  selector: "app-example",
+  templateUrl: "./example.component.html",
+})
+export class ExampleComponent {
+  constructor(private toastService: ToastService) {}
+
+  showSuccess() {
+    this.toastService.sendSuccess("¡Operación exitosa!");
+  }
+
+  showError() {
+    this.toastService.sendError("¡Ocurrió un error!");
+  }
+
+  showCustomTemplate() {
+    const customTemplate = `
+      <div>Mensaje de plantilla personalizada</div>
+    `;
+    this.toastService.show({
+      template: customTemplate,
+      classname: "bg-info text-light",
+      delay: 5000,
+    });
+  }
+}
+```
+
+### 3. Métodos del ToastService
+
+- **`sendSuccess(message: string)`** : Muestra un mensaje de éxito.
+
+- **`sendError(message: string)`** : Muestra un mensaje de error.
+
+- **`show(toast: Toast)`** : Muestra un toast utilizando un objeto `Toast`.
+
+- **`remove(toast: Toast)`** : Elimina un toast específico.
+
+- **`clear()`** : Limpia todos los toasts.
+
+### 4. Uso de Mensajes
+
+- **Mensaje de Éxito:**
+
+```typescript
+this.toastService.sendSuccess("¡La operación fue exitosa!");
+```
+
+- **Mensaje de Error:**
+
+```typescript
+this.toastService.sendError("¡Ha ocurrido un error en la operación!");
+```
+
+- **Mensaje Personalizado:**
+  Si deseas mostrar un mensaje utilizando una plantilla personalizada:
+
+```typescript
+this.toastService.show({
+  template: customTemplate,
+  classname: "bg-warning text-dark",
+  delay: 7000,
+});
+```
+
+## Personalización
+
+Puedes personalizar el aspecto de los toasts mediante las clases de Bootstrap. Los parámetros `classname`, `delay`, y `context` permiten un control total sobre la apariencia y el comportamiento de los toasts.
+
+## Ejemplo Completo
+
+```typescript
+import { Component } from "@angular/core";
+import { ToastService } from "./toast-service";
+
+@Component({
+  selector: "app-example",
+  template: `
+    <button (click)="showSuccess()">Mostrar Éxito</button>
+    <button (click)="showError()">Mostrar Error</button>
+    <button (click)="showCustomTemplate()">Mostrar Plantilla Personalizada</button>
+  `,
+})
+export class ExampleComponent {
+  constructor(private toastService: ToastService) {}
+
+  showSuccess() {
+    this.toastService.sendSuccess("¡Operación exitosa!");
+  }
+
+  showError() {
+    this.toastService.sendError("¡Ocurrió un error!");
+  }
+
+  showCustomTemplate() {
+    const customTemplate = `
+      <div>Mensaje de plantilla personalizada</div>
+    `;
+    this.toastService.show({
+      template: customTemplate,
+      classname: "bg-info text-light",
+      delay: 5000,
+    });
+  }
+}
+```
+
+# ExcelExportService
+
+`ExcelExportService` es un servicio de Angular diseñado para exportar datos a archivos Excel (.xlsx). Utiliza la biblioteca [SheetJS (xlsx)](https://github.com/SheetJS/sheetjs) para facilitar la creación y descarga de archivos Excel desde datos estructurados en formato JSON.
+
+## Instalación
+
+Para utilizar este servicio, primero asegúrate de tener la biblioteca `xlsx` instalada en tu proyecto Angular:
+
+```bash
+npm install xlsx
+```
+
+## Uso
+
+### Importación
+
+Importa el `ExcelExportService` en el módulo de tu aplicación:
+
+```typescript
+import { ExcelExportService } from "./path/to/excel-export.service";
+```
+
+### Inyección de Dependencias
+
+Asegúrate de inyectar el servicio en el componente donde lo necesites:
+
+```typescript
+import { Component } from "@angular/core";
+import { ExcelExportService } from "./path/to/excel-export.service";
+
+@Component({
+  selector: "app-your-component",
+  templateUrl: "./your-component.component.html",
+})
+export class YourComponent {
+  constructor(private excelExportService: ExcelExportService) {}
+
+  // Ejemplo de uso...
+}
+```
+
+### Exportación de Datos
+
+Para exportar datos a Excel, llama al método `exportToExcel` con los parámetros necesarios:
+
+```typescript
+const data = [
+  { id: 1, name: "John Doe", age: 30 },
+  { id: 2, name: "Jane Smith", age: 25 },
+];
+
+const columns = [
+  { header: "ID", accessor: (item) => item.id },
+  { header: "Nombre", accessor: (item) => item.name },
+  { header: "Edad", accessor: (item) => item.age },
+];
+
+this.excelExportService.exportToExcel(data, columns, "mi_archivo", "Hoja1");
+```
+
+Parámetros del Método `exportToExcel`
+
+- **data** : Un arreglo de objetos que representan los datos que deseas exportar.
+
+- **columns** : Un arreglo de objetos que definen las columnas del archivo Excel, cada uno con:
+
+  - **header** : El nombre de la columna que aparecerá en el archivo Excel.
+
+  - **accessor** : Una función que toma un elemento de datos y devuelve el valor que se colocará en la celda correspondiente.
+
+- **fileName** : El nombre del archivo que se generará (sin la extensión `.xlsx`).
+
+- **sheetName** : El nombre de la hoja de cálculo dentro del archivo Excel.
+
+## Ejemplo Completo
+
+```typescript
+import { Component } from "@angular/core";
+import { ExcelExportService } from "./path/to/excel-export.service";
+
+@Component({
+  selector: "app-example",
+  template: `<button (click)="export()">Exportar a Excel</button>`,
+})
+export class ExampleComponent {
+  constructor(private excelExportService: ExcelExportService) {}
+
+  export(): void {
+    const data = [
+      { id: 1, name: "John Doe", age: 30 },
+      { id: 2, name: "Jane Smith", age: 25 },
+    ];
+
+    const columns = [
+      { header: "ID", accessor: (item) => item.id },
+      { header: "Nombre", accessor: (item) => item.name },
+      { header: "Edad", accessor: (item) => item.age },
+    ];
+
+    this.excelExportService.exportToExcel(data, columns, "mi_archivo", "Hoja1");
+  }
+}
+```

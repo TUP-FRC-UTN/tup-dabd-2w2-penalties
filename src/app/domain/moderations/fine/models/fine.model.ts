@@ -7,8 +7,8 @@ import {
 import { SanctionType } from '../../sanction-type/models/sanction-type.model';
 
 export interface Fine extends EntityBase {
-  plotId: number;
-  fineState: FineStatusEnum;
-  sanctionType: SanctionType;
+  plot_id: number;
+  fine_state: FineStatusEnum;
+  sanction_type: SanctionType;
   infractions: InfractionModel[];
 }

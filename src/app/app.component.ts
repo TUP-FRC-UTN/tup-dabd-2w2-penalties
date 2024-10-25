@@ -5,6 +5,8 @@ import { CustomNavBarComponent } from './shared/components/custom-nav-bar/custom
 import { HttpClientModule } from '@angular/common/http';
 import { RoleSelectorComponent } from './shared/components/role-selector/role-selector.component';
 import { ToastsContainer } from '../../projects/ngx-dabd-grupo01/src/lib/toast/toasts-container.component';
+import { BrowserModule } from '@angular/platform-browser';
+import { NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-root',
@@ -16,7 +18,8 @@ import { ToastsContainer } from '../../projects/ngx-dabd-grupo01/src/lib/toast/t
     RouterModule,
     HttpClientModule,
     ToastsContainer,
-    RoleSelectorComponent
+    RoleSelectorComponent,
+    NgbDatepickerModule,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
