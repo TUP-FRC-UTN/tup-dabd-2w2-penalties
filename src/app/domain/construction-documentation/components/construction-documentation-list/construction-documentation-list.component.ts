@@ -22,7 +22,6 @@ import {
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ConstructionDocumentationService } from '../../services/construction-documentation.service';
 import { ToastService } from '../../../../../../projects/ngx-dabd-grupo01/src/public-api';
-//import { ConfirmAlertComponent } from '../../../../../../projects/ngx-dabd-grupo01/src/public-api';
 
 @Component({
   selector: 'app-construction-documentation-list',
@@ -112,7 +111,6 @@ export class ConstructionDocumentationListComponent {
 
   rejectDocument(document: any) {
     const modalRef = this.modalService.open(ConfirmAlertComponent);
-    modalRef.componentInstance.alertTitle = 'Confirmación';
     modalRef.componentInstance.alertMessage = `¿Estás seguro de que desea rechazar el documento ${document.documentPath}?`;
 
     modalRef.result
@@ -144,23 +142,31 @@ export class ConstructionDocumentationListComponent {
 
   deleteDocument(document: any) {
     const modalRef = this.modalService.open(ConfirmAlertComponent);
-    modalRef.componentInstance.alertTitle = 'Confirmación';
     modalRef.componentInstance.alertMessage =
       '¿Está seguro de que desea eliminar el documento?';
+    modalRef.componentInstance.alertVariant = 'delete';
+
     modalRef.result
       .then((result) => {
         if (result) {
           this.constructionDocumentationService
             .deleteConstructionDoc(document.id)
-            .subscribe(() => {
-              this.constructionUpdated.emit();
-              this.toastService.sendSuccess('Documento eliminado correctamente');
+            .subscribe({
+              next: () => {
+                this.constructionUpdated.emit();
+                this.toastService.sendSuccess(
+                  'Documento eliminado correctamente'
+                );
+              },
+              error: () => {
+                this.toastService.sendError(
+                  'Ocurrio un error al eliminar el documento'
+                );
+              },
             });
         }
       })
-      .catch(() => {
-        this.toastService.sendError('Ocurrio un error al eliminar el documento');
-      });
+      .catch(() => {});
   }
 
   download(documentationId: number): void {

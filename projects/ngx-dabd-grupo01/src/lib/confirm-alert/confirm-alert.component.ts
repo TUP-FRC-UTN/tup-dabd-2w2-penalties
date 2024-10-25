@@ -11,10 +11,11 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class ConfirmAlertComponent {
   // Inputs:
-  @Input() alertTitle: string = 'Confirm';
+  @Input() alertTitle: string = 'Confirmación';
   @Input() alertType: 'success' | 'danger' | 'warning' | 'info' = 'warning';
-  @Input() alertMessage: string = 'Are you sure you want to proceed?';
-  
+  @Input() alertMessage: string = '¿Está seguro de que desea realizar esta accion?';
+  @Input() alertVariant: 'default' | 'delete' = 'default';
+
   @Input() contentPlacement: 'top' | 'bottom' = 'bottom';
   @Input() content!: TemplateRef<any>;
 
