@@ -229,6 +229,10 @@ export class ConstructionDetailComponent implements OnInit {
     }
   }
 
+  onConstructionUpdated(): void {
+    this.getConstructionById(this.construction?.construction_id || 0);
+  }
+
   isConstructionAbleToApprove() {
     if (this.construction?.construction_documentation) {
       return (

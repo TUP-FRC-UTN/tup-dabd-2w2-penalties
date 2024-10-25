@@ -24,13 +24,19 @@ export class TableComponent {
   @Input() height?: string = '580px';
   @Input() showSearchBar?: boolean = true;
   @Input() showExportOptions?: boolean = true;
-  @Input() searchPlaceHolder?: string = 'Search...';
-  @Input() exportToExcel?: () => void;
-  @Input() exportToPdf?: () => void;
+  @Input() showExportExcelButton?: boolean = true;
+  @Input() showExportPdfButton?: boolean = true;
+  @Input() showHeaderButton?: boolean = true;
+  @Input() headerButtonText?: string = 'Nuevo';
+  @Input() headerButtonIcon?: string = undefined;
+  @Input() searchPlaceHolder?: string = 'Buscar...';
 
   // Outputs:
 
   @Output() searchValueChange = new EventEmitter<string>();
+  @Output() headerButtonClick = new EventEmitter<void>();
+  @Output() excelButtonClick = new EventEmitter<void>();
+  @Output() pdfButtonClick = new EventEmitter<void>();
 
   // Properties:
 
@@ -56,15 +62,15 @@ export class TableComponent {
     this.searchValueChange.emit(this.searchValue);
   }
 
-  onExportToPdf(): void {
-    if (this.exportToPdf) {
-      this.exportToPdf();
-    }
+  onHeaderButtonClick(): void {
+    this.headerButtonClick.emit();
   }
 
-  onExportToExcel(): void {
-    if (this.exportToExcel) {
-      this.exportToExcel();
-    }
+  onExcelButtonClick(): void {
+    this.excelButtonClick.emit();
+  }
+
+  onPdfButtonClick(): void {
+    this.pdfButtonClick.emit();
   }
 }

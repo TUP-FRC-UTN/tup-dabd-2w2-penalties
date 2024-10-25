@@ -113,7 +113,9 @@
       class="alert m-0 me-2 py-1"
       role="alert"
       [ngClass]="{
-        'alert-success': isConstructionAbleToApprove() && construction?.construction_status !== 'REJECTED',
+        'alert-success':
+          isConstructionAbleToApprove() &&
+          construction?.construction_status !== 'REJECTED',
         'alert-danger': construction?.construction_status === 'REJECTED',
         'alert-warning': !isConstructionAbleToApprove()
       }"
@@ -201,6 +203,7 @@
     (constructionRejected)="
       onConstructionRejected(construction?.construction_id!, $event)
     "
+    (constructionUpdated)="onConstructionUpdated()"
   ></app-construction-documentation-list>
   }
   <!-- Workers -->

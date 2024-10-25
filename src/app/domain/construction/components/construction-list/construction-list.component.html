@@ -20,14 +20,52 @@
     }"
     [isLoading]="(isLoading$ | async) || false"
     (searchValueChange)="onSearchValueChange('search', $event)"
+    (headerButtonClick)="openFormModal()"
   >
-    <!-- <div class="d-flex gap-2">
-      <input type="text" class="form-control" placeholder="Filter 1" />
-      <input type="text" class="form-control" placeholder="Filter 2" />
-      <input type="text" class="form-control" placeholder="Filter 3" />
-    </div> -->
-    <button class="btn btn-outline-primary" (click)="openFormModal()">
-      Nuevo
-    </button>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="btn-group me-5" role="group">
+        <div class="d-flex align-items-center">
+          <div class="btn-group me-2">
+            <button type="button" class="btn btn-outline-danger">
+              <i class="bi bi-x-octagon-fill"></i> Limpiar
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-info dropdown-toggle"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <i class="bi bi-funnel-fill"></i> Filtros
+            </button>
+            <ul class="dropdown-menu">
+              <li>
+                <a class="dropdown-item">Manzana</a>
+              </li>
+              <li>
+                <a class="dropdown-item">Estado de Lote</a>
+              </li>
+              <li>
+                <a class="dropdown-item">Tipo de Lote</a>
+              </li>
+            </ul>
+          </div>
+
+          @if (true) {
+          <div class="d-flex">
+            @if (true) {
+            <input
+              type="number"
+              class="form-control me-2"
+              id="filter-number"
+              name="ngModel"
+              placeholder="Número de Lote"
+            />
+            }
+            <button class="btn btn-dark" type="button">Buscar</button>
+          </div>
+          }
+        </div>
+      </div>
+    </div>
   </app-table>
 </app-main-container>

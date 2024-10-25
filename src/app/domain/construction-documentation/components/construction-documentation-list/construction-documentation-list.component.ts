@@ -7,7 +7,11 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core';
-import { NgbDropdownModule, NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import {
+  NgbDropdownModule,
+  NgbModal,
+  NgbTooltipModule,
+} from '@ng-bootstrap/ng-bootstrap';
 import { ConstructionDocumentationFormComponent } from '../construction-documentation-form/construction-documentation-form.component';
 import { CommonModule } from '@angular/common';
 import {
@@ -15,12 +19,9 @@ import {
   TableComponent,
   ConfirmAlertComponent,
 } from 'ngx-dabd-grupo01';
-import {
-  ReactiveFormsModule,
-  FormsModule,
-} from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ConstructionDocumentationService } from '../../services/construction-documentation.service';
-//import { ConfirmAlertComponent } from '../../../../../../projects/ngx-dabd-grupo01/src/public-api';
+import { ToastService } from '../../../../../../projects/ngx-dabd-grupo01/src/public-api';
 
 @Component({
   selector: 'app-construction-documentation-list',
@@ -31,7 +32,7 @@ import { ConstructionDocumentationService } from '../../services/construction-do
     TableComponent,
     NgbTooltipModule,
     FormsModule,
-    NgbDropdownModule
+    NgbDropdownModule,
   ],
   templateUrl: './construction-documentation-list.component.html',
   styleUrl: './construction-documentation-list.component.scss',
@@ -44,10 +45,12 @@ export class ConstructionDocumentationListComponent {
   // Outputs:
   @Output() constructionApproved = new EventEmitter();
   @Output() constructionRejected = new EventEmitter();
+  @Output() constructionUpdated = new EventEmitter();
 
   // Services:
   private modalService = inject(NgbModal);
   constructionDocumentationService = inject(ConstructionDocumentationService);
+  toastService = inject(ToastService);
 
   // Properties:
   @ViewChild('revisionTemplate') revisionTemplate!: TemplateRef<any>;
@@ -85,7 +88,7 @@ export class ConstructionDocumentationListComponent {
           headerName: 'Acciones',
           accessorKey: 'actions',
           cellRenderer: this.actionsTemplate,
-        }
+        },
       ];
     });
   }
@@ -108,7 +111,6 @@ export class ConstructionDocumentationListComponent {
 
   rejectDocument(document: any) {
     const modalRef = this.modalService.open(ConfirmAlertComponent);
-    modalRef.componentInstance.alertTitle = 'Confirmación';
     modalRef.componentInstance.alertMessage = `¿Estás seguro de que desea rechazar el documento ${document.documentPath}?`;
 
     modalRef.result
@@ -136,6 +138,35 @@ export class ConstructionDocumentationListComponent {
       .subscribe(() => {
         document.state = 'APPROVED';
       });
+  }
+
+  deleteDocument(document: any) {
+    const modalRef = this.modalService.open(ConfirmAlertComponent);
+    modalRef.componentInstance.alertMessage =
+      '¿Está seguro de que desea eliminar el documento?';
+    modalRef.componentInstance.alertVariant = 'delete';
+
+    modalRef.result
+      .then((result) => {
+        if (result) {
+          this.constructionDocumentationService
+            .deleteConstructionDoc(document.id)
+            .subscribe({
+              next: () => {
+                this.constructionUpdated.emit();
+                this.toastService.sendSuccess(
+                  'Documento eliminado correctamente'
+                );
+              },
+              error: () => {
+                this.toastService.sendError(
+                  'Ocurrio un error al eliminar el documento'
+                );
+              },
+            });
+        }
+      })
+      .catch(() => {});
   }
 
   download(documentationId: number): void {

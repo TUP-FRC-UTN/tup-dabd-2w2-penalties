@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 import {
   MainContainerComponent,
   TableColumn,
-  TableComponent,
+  TableComponent
 } from 'ngx-dabd-grupo01';
 
 @Component({
