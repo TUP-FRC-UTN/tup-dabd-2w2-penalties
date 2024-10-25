@@ -13,6 +13,8 @@ import {
   SortColumn,
   SortDirection,
 } from '../components/fine-table/sortable.directive';
+import * as XLSX from 'xlsx';
+
 
 interface SearchResult {
   fines: Fine[];
@@ -26,6 +28,8 @@ interface State {
   searchState: string;
   sortColumn: SortColumn;
   sortDirection: SortDirection;
+  dateFrom: any;
+  dateTo: any;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -34,16 +38,19 @@ export class FineService {
   public _search$ = new Subject<void>();
   private _fines$ = new BehaviorSubject<Fine[]>([]);
   private _total$ = new BehaviorSubject<number>(0);
+  private fines: Fine[] = [];
 
   private apiUrl = 'http://localhost:8080';
 
   private _state: State = {
     page: 1,
-    pageSize: 5,
+    pageSize: 10,
     searchTerm: '',
     searchState: '',
     sortColumn: '',
     sortDirection: '',
+    dateFrom: null,
+    dateTo: null,
   };
 
   constructor(private http: HttpClient) {
@@ -64,6 +71,10 @@ export class FineService {
       });
 
     this._search$.next();
+
+    this.fines$.subscribe((fines) => {
+      this.fines = fines;
+    });
   }
 
   FineStatusEnum = FineStatusEnum;
@@ -91,6 +102,12 @@ export class FineService {
   get searchState() {
     return this._state.searchState;
   }
+  get dateFrom() {
+    return this._state.dateFrom;
+  }
+  get dateTo() {
+    return this._state.dateTo;
+  }
 
   set page(page: number) {
     this._set({ page });
@@ -111,11 +128,20 @@ export class FineService {
     this._set({ sortDirection });
   }
 
+  set dateFrom(dateFrom: any) {
+    this._set({ dateFrom });
+  }
+  set dateTo(dateTo: any) {
+    this._set({ dateTo });
+  }
+
   public clearFilters(): void {
     this.searchTerm = '';
     this.searchState = '';
     this.sortColumn = '';
     this.sortDirection = '';
+    this.dateFrom = null;
+    this.dateTo = null;
   }
 
   private _set(patch: Partial<State>) {
@@ -131,6 +157,8 @@ export class FineService {
       page,
       searchTerm,
       searchState,
+      dateFrom,
+      dateTo,
     } = this._state;
 
     let params = new HttpParams()
@@ -139,6 +167,20 @@ export class FineService {
 
     if (searchState !== '') {
       params = params.set('fineState', searchState);
+    }
+
+    if (this.dateFrom) {
+      const fromDate = `${this.dateFrom.year}-${this.dateFrom.month
+        .toString()
+        .padStart(2, '0')}-${this.dateFrom.day.toString().padStart(2, '0')}`;
+      params = params.set('startDate', fromDate);
+    }
+
+    if (this.dateTo) {
+      const toDate = `${this.dateTo.year}-${this.dateTo.month
+        .toString()
+        .padStart(2, '0')}-${this.dateTo.day.toString().padStart(2, '0')}`;
+      params = params.set('endDate', toDate);
     }
 
     return this.http
@@ -186,5 +228,41 @@ export class FineService {
     return Object.entries(FineStatusEnum).find(
       ([key, val]) => key === value
     )?.[1];
+  }
+
+  onExportToExcel(): void {
+    const fines = this.fineStatusKeys;
+    const data = this.fines.map((fine) => {
+      const sanctionType = fine.sanction_type;
+      const infractions = fine.infractions;
+
+      // Mapa la información para la exportación
+      return {
+        'ID Multa': fine.id,
+        'Fecha de Creación': fine.created_date,
+        'Estado de Multa': fine.fine_state,
+        'Nombre Sanción': sanctionType.name,
+        'Descripción Sanción': sanctionType.description,
+        'Monto Sanción': sanctionType.amount,
+        'ID Infracción':
+          infractions.length > 0
+            ? infractions.map((inf) => inf.id).join(', ')
+            : 'N/A',
+        'Descripción Infracción':
+          infractions.length > 0
+            ? infractions.map((inf) => inf.description).join(', ')
+            : 'N/A',
+      };
+    });
+
+    // Crea una hoja de trabajo de Excel
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+
+    // Agrega la hoja al libro
+    XLSX.utils.book_append_sheet(wb, ws, 'Fines');
+
+    // Genera el archivo Excel
+    XLSX.writeFile(wb, 'fines.xlsx');
   }
 }

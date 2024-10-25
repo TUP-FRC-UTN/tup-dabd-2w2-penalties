@@ -3,6 +3,8 @@ import {
   Component,
   inject,
   QueryList,
+  TemplateRef,
+  ViewChild,
   ViewChildren,
 } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -11,14 +13,20 @@ import { NgbdSortableHeader, SortEvent } from './sortable.directive';
 import { FormsModule } from '@angular/forms';
 import {
   NgbDatepicker,
+  NgbDatepickerModule,
   NgbHighlight,
+  NgbModal,
   NgbPaginationModule,
 } from '@ng-bootstrap/ng-bootstrap';
 import { Router } from '@angular/router';
-import { NewFineModalComponent } from '../new-fine-modal/new-fine-modal.component';
 import { FineService } from '../../services/fine.service';
 import { Fine } from '../../models/fine.model';
 import { MainContainerComponent } from 'ngx-dabd-grupo01';
+
+import { GetValueByKeyForEnumPipe } from '../../../../../shared/pipes/get-value-by-key-for-status.pipe';
+import { FineStatusEnum } from '../../models/fine-status.enum';
+import { TableComponent } from '../../../../../../../projects/ngx-dabd-grupo01/src/lib/table/table.component';
+import { TableColumn } from '../../../../../../../projects/ngx-dabd-grupo01/src/lib/table/table.models';
 
 @Component({
   selector: 'app-fine-table',
@@ -31,34 +39,61 @@ import { MainContainerComponent } from 'ngx-dabd-grupo01';
     NgbPaginationModule,
     CommonModule,
     NgbDatepicker,
-    NewFineModalComponent,
-    MainContainerComponent
-],
+    MainContainerComponent,
+    NgbDatepickerModule,
+    TableComponent,
+    GetValueByKeyForEnumPipe,
+  ],
   templateUrl: './fine-table.component.html',
   providers: [FineService],
 })
 export class FineTable {
-  successMessage: string | null = null;
+  @ViewChild('fineState') fineStateTemplate!: TemplateRef<any>;
+  @ViewChild('fineDate') fineDateTemplate!: TemplateRef<any>;
+  @ViewChild('actionsTemplate') actionsTemplate!: TemplateRef<any>;
 
   fines$: Observable<Fine[]>;
   total$: Observable<number>;
 
+  columns: TableColumn[] = [];
+
   @ViewChildren(NgbdSortableHeader)
   headers!: QueryList<NgbdSortableHeader>;
   router = inject(Router);
+  private modalService = inject(NgbModal);
+  FineStatusEnum = FineStatusEnum;
 
   constructor(public service: FineService) {
     this.fines$ = service.fines$;
     this.total$ = service.total$;
   }
-  onFineCreated(id: number) {
-    this.successMessage = `Se creó la multa ${id}`;
-    this.service._search$.next();
 
-    // Limpia el mensaje después de 3 segundos
+  ngAfterViewInit(): void {
     setTimeout(() => {
-      this.successMessage = null;
-    }, 3000);
+      this.columns = [
+        { headerName: 'Id', accessorKey: 'id' },
+        { headerName: 'Lote', accessorKey: 'plot_id' },
+        {
+          headerName: 'Tipo',
+          accessorKey: 'type',
+          cellRenderer: this.fineStateTemplate,
+        },
+        {
+          headerName: 'Alta',
+          accessorKey: 'type',
+          cellRenderer: this.fineDateTemplate,
+        },
+        {
+          headerName: 'Acciones',
+          accessorKey: 'type',
+          cellRenderer: this.actionsTemplate,
+        },
+      ];
+    });
+  }
+
+  onFineCreated(id: number) {
+    this.service._search$.next();
   }
 
   onSort({ column, direction }: SortEvent) {
@@ -76,4 +111,21 @@ export class FineTable {
   viewDetail(id: number) {
     this.router.navigate([`/fine/${id}`]);
   }
+
+  onPageChange = (page: number): void => {
+    this.service.page = page;
+  };
+
+  onPageSizeChange = (size: number): void => {
+    this.service.pageSize = size;
+  };
+
+  onSearchValueChange = (key: string, searchValue: any): void => {
+    this.service.searchTerm = searchValue;
+  };
+
+  onExportToExcel = (): void => {
+    this.service.onExportToExcel();
+  };
+  onExportToPdf = (): void => {};
 }

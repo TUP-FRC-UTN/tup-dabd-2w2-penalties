@@ -25,6 +25,8 @@ export class TableComponent {
   @Input() showSearchBar?: boolean = true;
   @Input() showExportOptions?: boolean = true;
   @Input() searchPlaceHolder?: string = 'Search...';
+  @Input() exportToExcel?: () => void;
+  @Input() exportToPdf?: () => void;
 
   // Outputs:
 
@@ -52,5 +54,17 @@ export class TableComponent {
 
   onSearchValueChange(): void {
     this.searchValueChange.emit(this.searchValue);
+  }
+
+  onExportToPdf(): void {
+    if (this.exportToPdf) {
+      this.exportToPdf();
+    }
+  }
+
+  onExportToExcel(): void {
+    if (this.exportToExcel) {
+      this.exportToExcel();
+    }
   }
 }
