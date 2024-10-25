@@ -12,7 +12,10 @@
   </button>
 </ng-template>
 
-<app-main-container title="Multas">
+
+
+
+<app-main-container title="Multas" id="pdf-template">
   <app-table
     [items]="(fines$ | async) || []"
     [columns]="columns"
@@ -26,65 +29,71 @@
     [isLoading]="(service.loading$ | async) || false"
     (searchValueChange)="onSearchValueChange('partialName', $event)"
     searchPlaceHolder="Lote..."
-    [exportToExcel]="onExportToExcel"
-    [exportToPdf]="onExportToPdf"
+    (excelButtonClick)="onExportToExcel()"
+    (pdfButtonClick)="onExportToPdf()"
+    [showHeaderButton]="false"
+    [showSearchBar]="false"
   >
-    <!-- Filtro de estado -->
-    <div class="col-2 d-flex align-items-center">
-      <label for="fineStateFilter" class="col-form-label me-2">Estado: </label>
-      <select
-        id="fineStateFilter"
-        class="form-select"
-        name="fineStateFilter"
-        [(ngModel)]="service.searchState"
-      >
-        <option [ngValue]="''">Todos</option>
-        @for (key of service.fineStatusKeys; track $index) {
-        <option [value]="key">
-          {{ service.getValueByKeyForStatusEnum(key) }}
-        </option>
-        }
-      </select>
-    </div>
-    <div class="col-2 d-flex align-items-center">
-      <label for="dateFrom" class="col-form-label me-2">Desde:</label>
-      <div class="input-group">
-        <input
-          class="form-control"
-          placeholder="yyyy-mm-dd"
-          [(ngModel)]="service.dateFrom"
-          ngbDatepicker
-          #dateFromPicker="ngbDatepicker"
-          placement="bottom"
-          name="dateFrom"
-          [maxDate]="service.dateTo"
-        />
-        <button
-          class="btn btn-outline-secondary bi bi-calendar3"
-          (click)="dateFromPicker.toggle()"
-          type="button"
-        ></button>
+    <div class="row mb-2 justify-content-between">
+      <!-- Filtro de estado -->
+      <div class="col-3 d-flex align-items-center">
+        <label for="fineStateFilter" class="col-form-label me-2"
+          >Estado:
+        </label>
+        <select
+          id="fineStateFilter"
+          class="form-select"
+          name="fineStateFilter"
+          [(ngModel)]="service.searchState"
+        >
+          <option [ngValue]="''">Todos</option>
+          @for (key of service.fineStatusKeys; track $index) {
+          <option [value]="key">
+            {{ service.getValueByKeyForStatusEnum(key) }}
+          </option>
+          }
+        </select>
       </div>
-    </div>
+      <div class="col-3 d-flex align-items-center">
+        <label for="dateFrom" class="col-form-label me-2">Desde:</label>
+        <div class="input-group">
+          <input
+            class="form-control"
+            placeholder="yyyy-mm-dd"
+            [(ngModel)]="service.dateFrom"
+            ngbDatepicker
+            #dateFromPicker="ngbDatepicker"
+            placement="bottom"
+            name="dateFrom"
+            [maxDate]="service.dateTo"
+          />
+          <button
+            class="btn btn-outline-secondary bi bi-calendar3"
+            (click)="dateFromPicker.toggle()"
+            type="button"
+          ></button>
+        </div>
+      </div>
 
-    <div class="col-2 d-flex align-items-center">
-      <label for="dateTo" class="col-form-label me-2">Hasta:</label>
-      <div class="input-group">
-        <input
-          class="form-control"
-          placeholder="yyyy-mm-dd"
-          [(ngModel)]="service.dateTo"
-          ngbDatepicker
-          #dateToPicker="ngbDatepicker"
-          placement="bottom"
-          name="dateTo"
-          [minDate]="service.dateFrom"
-        />
-        <button
-          class="btn btn-outline-secondary bi bi-calendar3"
-          (click)="dateToPicker.toggle()"
-          type="button"
-        ></button>
+      <div class="col-3 d-flex align-items-center">
+        <label for="dateTo" class="col-form-label me-2">Hasta:</label>
+        <div class="input-group">
+          <input
+            class="form-control"
+            placeholder="yyyy-mm-dd"
+            [(ngModel)]="service.dateTo"
+            ngbDatepicker
+            #dateToPicker="ngbDatepicker"
+            placement="bottom"
+            name="dateTo"
+            [minDate]="service.dateFrom"
+          />
+          <button
+            class="btn btn-outline-secondary bi bi-calendar3"
+            (click)="dateToPicker.toggle()"
+            type="button"
+          ></button>
+        </div>
       </div>
     </div>
   </app-table>

@@ -14,7 +14,9 @@ import {
   SortDirection,
 } from '../components/fine-table/sortable.directive';
 import * as XLSX from 'xlsx';
-
+import { environment } from '../../../../../environments/environment';
+import { ToastService } from 'ngx-dabd-grupo01';
+import { ExcelExportService } from '../../../../../../projects/ngx-dabd-grupo01/src/lib/excel-service/excel.service';
 
 interface SearchResult {
   fines: Fine[];
@@ -34,13 +36,15 @@ interface State {
 
 @Injectable({ providedIn: 'root' })
 export class FineService {
+  private excelService = inject(ExcelExportService);
+
   private _loading$ = new BehaviorSubject<boolean>(true);
   public _search$ = new Subject<void>();
   private _fines$ = new BehaviorSubject<Fine[]>([]);
   private _total$ = new BehaviorSubject<number>(0);
   private fines: Fine[] = [];
 
-  private apiUrl = 'http://localhost:8080';
+  private apiUrl = environment.moderationApiUrl;
 
   private _state: State = {
     page: 1,
@@ -150,6 +154,39 @@ export class FineService {
   }
 
   public _search(): Observable<SearchResult> {
+    let params = this.getParams();
+    return this.http
+      .get<Page<Fine>>(`${this.apiUrl}/fine/pageable`, { params })
+      .pipe(
+        map((data) => {
+          const result: SearchResult = {
+            fines: data.content,
+            total: data.totalElements,
+          };
+          return result;
+        }),
+        catchError((error) => {
+          console.error('Error en la solicitud:', error);
+          return of({ fines: [], total: 0 }); // Devuelve un objeto vacío en caso de error
+        })
+      );
+
+    // return of({ fines: [], total: 0 });
+  }
+
+  public findAll(): Observable<Fine[]> {
+    const params = this.getParams();
+    return this.http.get<Fine[]>(`${this.apiUrl}/fine`, { params }).pipe(
+      map((data) => data),
+      catchError((error) => {
+        return throwError(
+          () => new Error('Error fetching fines, please try again later.')
+        );
+      })
+    );
+  }
+
+  getParams() {
     const {
       sortColumn,
       sortDirection,
@@ -160,7 +197,6 @@ export class FineService {
       dateFrom,
       dateTo,
     } = this._state;
-
     let params = new HttpParams()
       .set('page', (page - 1).toString())
       .set('size', pageSize.toString());
@@ -183,23 +219,7 @@ export class FineService {
       params = params.set('endDate', toDate);
     }
 
-    return this.http
-      .get<Page<Fine>>(`${this.apiUrl}/fine/pageable`, { params })
-      .pipe(
-        map((data) => {
-          const result: SearchResult = {
-            fines: data.content,
-            total: data.totalElements,
-          };
-          return result;
-        }),
-        catchError((error) => {
-          console.error('Error en la solicitud:', error);
-          return of({ fines: [], total: 0 }); // Devuelve un objeto vacío en caso de error
-        })
-      );
-
-    // return of({ fines: [], total: 0 });
+    return params;
   }
 
   getFineById(id: number) {
@@ -231,38 +251,30 @@ export class FineService {
   }
 
   onExportToExcel(): void {
-    const fines = this.fineStatusKeys;
-    const data = this.fines.map((fine) => {
-      const sanctionType = fine.sanction_type;
-      const infractions = fine.infractions;
+    this.findAll().subscribe((fines) => {
+      const columns = [
+        { header: 'ID Multa', accessor: (fine: Fine) => fine.id },
+        {
+          header: 'Fecha de Creación',
+          accessor: (fine: Fine) => fine.created_date,
+        },
+        { header: 'Lote', accessor: (fine: Fine) => fine.plot_id },
+        { header: 'Tipo', accessor: (fine: Fine) => fine.sanction_type.name },
+        {
+          header: 'Estado de Multa',
+          accessor: (fine: Fine) =>
+            this.getValueByKeyForStatusEnum(fine.fine_state),
+        },
+        {
+          header: 'ID Infracción',
+          accessor: (fine: Fine) =>
+            fine.infractions.length > 0
+              ? fine.infractions.map((inf) => inf.id).join(', ')
+              : 'N/A',
+        },
+      ];
 
-      // Mapa la información para la exportación
-      return {
-        'ID Multa': fine.id,
-        'Fecha de Creación': fine.created_date,
-        'Estado de Multa': fine.fine_state,
-        'Nombre Sanción': sanctionType.name,
-        'Descripción Sanción': sanctionType.description,
-        'Monto Sanción': sanctionType.amount,
-        'ID Infracción':
-          infractions.length > 0
-            ? infractions.map((inf) => inf.id).join(', ')
-            : 'N/A',
-        'Descripción Infracción':
-          infractions.length > 0
-            ? infractions.map((inf) => inf.description).join(', ')
-            : 'N/A',
-      };
+      this.excelService.exportToExcel(fines, columns, 'multas', 'Multas');
     });
-
-    // Crea una hoja de trabajo de Excel
-    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
-    const wb: XLSX.WorkBook = XLSX.utils.book_new();
-
-    // Agrega la hoja al libro
-    XLSX.utils.book_append_sheet(wb, ws, 'Fines');
-
-    // Genera el archivo Excel
-    XLSX.writeFile(wb, 'fines.xlsx');
   }
 }

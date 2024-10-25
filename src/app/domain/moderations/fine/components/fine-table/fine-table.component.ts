@@ -21,12 +21,16 @@ import {
 import { Router } from '@angular/router';
 import { FineService } from '../../services/fine.service';
 import { Fine } from '../../models/fine.model';
-import { MainContainerComponent } from 'ngx-dabd-grupo01';
+import {
+  MainContainerComponent,
+  TableColumn,
+  TableComponent,
+  ToastService,
+} from 'ngx-dabd-grupo01';
 
 import { GetValueByKeyForEnumPipe } from '../../../../../shared/pipes/get-value-by-key-for-status.pipe';
 import { FineStatusEnum } from '../../models/fine-status.enum';
-import { TableComponent } from '../../../../../../../projects/ngx-dabd-grupo01/src/lib/table/table.component';
-import { TableColumn } from '../../../../../../../projects/ngx-dabd-grupo01/src/lib/table/table.models';
+import { PdfService } from '../../../../../shared/services/pdf.service';
 
 @Component({
   selector: 'app-fine-table',
@@ -51,6 +55,7 @@ export class FineTable {
   @ViewChild('fineState') fineStateTemplate!: TemplateRef<any>;
   @ViewChild('fineDate') fineDateTemplate!: TemplateRef<any>;
   @ViewChild('actionsTemplate') actionsTemplate!: TemplateRef<any>;
+  @ViewChild('pdfTemplate', { static: true }) pdfTemplate!: TemplateRef<any>;
 
   fines$: Observable<Fine[]>;
   total$: Observable<number>;
@@ -62,6 +67,8 @@ export class FineTable {
   router = inject(Router);
   private modalService = inject(NgbModal);
   FineStatusEnum = FineStatusEnum;
+  private toastService = inject(ToastService);
+  private pdfService = inject(PdfService);
 
   constructor(public service: FineService) {
     this.fines$ = service.fines$;
@@ -125,7 +132,15 @@ export class FineTable {
   };
 
   onExportToExcel = (): void => {
-    this.service.onExportToExcel();
+    try {
+      this.service.onExportToExcel();
+    } catch (error) {
+      this.toastService.sendError('Sucedió un error al generar el excel');
+    }
   };
-  onExportToPdf = (): void => {};
+
+  onExportToPdf(): void {
+    const data = document.getElementById('pdf-template');
+    if (data) this.pdfService.downloadPDF(data);
+  }
 }
