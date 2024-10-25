@@ -8,7 +8,7 @@
       <input
         type="text"
         class="form-control"
-        placeholder="{{searchPlaceHolder}}"
+        placeholder="{{ searchPlaceHolder }}"
         [(ngModel)]="searchValue"
         (ngModelChange)="onSearchValueChange()"
         aria-describedby="search-icon"
@@ -38,17 +38,23 @@
     <table class="table table-striped">
       <thead>
         <tr>
-          <th *ngFor="let column of columns">
+          @for (column of columns; track $index) {
+          <th>
             <div class="skeleton"></div>
           </th>
+          }
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let item of [1, 2, 3, 4]">
-          <td *ngFor="let column of columns">
+        @for(item of [1, 2, 3, 4]; track $index) {
+        <tr>
+          @for(column of columns; track $index) {
+          <td>
             <div class="skeleton"></div>
           </td>
+          }
         </tr>
+        }
       </tbody>
     </table>
   </ng-container>
