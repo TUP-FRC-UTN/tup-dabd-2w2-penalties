@@ -14,21 +14,37 @@
         aria-describedby="search-icon"
       />
     </div>
+    } @if(showAddItemButton) {
+    <button class="btn btn-outline-primary" (click)="onAddItemClick()">
+      Nuevo
+    </button>
     }
-
-    <ng-content></ng-content>
   </div>
   @if(showExportOptions) {
   <div class="d-flex gap-2 ms-3 ps-3" style="border-left: 2px solid #e0e0e0">
-    <button class="btn btn-success" placement="top" ngbTooltip="Exportar Excel">
+    @if(showExportExcelButton) {
+    <button
+      class="btn btn-success"
+      placement="top"
+      ngbTooltip="Exportar Excel"
+      (click)="onExcelButtonClick()"
+    >
       <i class="bi bi-file-earmark-excel"></i>
     </button>
-    <button class="btn btn-danger" placement="top" ngbTooltip="Exportar PDF">
+    } @if (showExportPdfButton) {
+    <button
+      class="btn btn-danger"
+      placement="top"
+      ngbTooltip="Exportar PDF"
+      (click)="onPdfButtonClick()"
+    >
       <i class="bi bi-file-earmark-pdf"></i>
     </button>
+    }
   </div>
   }
 </div>
+<ng-content></ng-content>
 <div
   class="table-responsive border overflow-auto"
   [ngStyle]="{ height: height }"
@@ -116,7 +132,7 @@
       (change)="onItemsPerPageChange(pagination.size)"
     >
       @for(option of sizeOptions; track $index) {
-      <option [value]="option">{{ option }} items per page</option>
+      <option [value]="option">{{ option }} Elementos</option>
       }
     </select>
   </div>
