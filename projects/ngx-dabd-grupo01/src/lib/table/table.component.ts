@@ -26,13 +26,15 @@ export class TableComponent {
   @Input() showExportOptions?: boolean = true;
   @Input() showExportExcelButton?: boolean = true;
   @Input() showExportPdfButton?: boolean = true;
-  @Input() showAddItemButton?: boolean = true;
+  @Input() showHeaderButton?: boolean = true;
+  @Input() headerButtonText?: string = 'Nuevo';
+  @Input() headerButtonIcon?: string = undefined;
   @Input() searchPlaceHolder?: string = 'Buscar...';
 
   // Outputs:
 
   @Output() searchValueChange = new EventEmitter<string>();
-  @Output() addItemClick = new EventEmitter<void>();
+  @Output() headerButtonClick = new EventEmitter<void>();
   @Output() excelButtonClick = new EventEmitter<void>();
   @Output() pdfButtonClick = new EventEmitter<void>();
 
@@ -60,8 +62,8 @@ export class TableComponent {
     this.searchValueChange.emit(this.searchValue);
   }
 
-  onAddItemClick(): void {
-    this.addItemClick.emit();
+  onHeaderButtonClick(): void {
+    this.headerButtonClick.emit();
   }
 
   onExcelButtonClick(): void {

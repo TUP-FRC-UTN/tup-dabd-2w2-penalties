@@ -20,7 +20,7 @@
     }"
     [isLoading]="(isLoading$ | async) || false"
     (searchValueChange)="onSearchValueChange('search', $event)"
-    (addItemClick)="openFormModal()"
+    (headerButtonClick)="openFormModal()"
   >
     <div class="d-flex justify-content-between align-items-center mb-3">
       <div class="btn-group me-5" role="group">

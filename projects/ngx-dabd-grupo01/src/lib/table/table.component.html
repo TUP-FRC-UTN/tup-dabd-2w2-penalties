@@ -14,9 +14,12 @@
         aria-describedby="search-icon"
       />
     </div>
-    } @if(showAddItemButton) {
-    <button class="btn btn-outline-primary" (click)="onAddItemClick()">
-      Nuevo
+    } @if(showHeaderButton) {
+    <button class="btn btn-outline-primary" (click)="onHeaderButtonClick()">
+      @if(headerButtonIcon) {
+      <i class="{{ headerButtonIcon }} me-1"></i>
+      }
+      {{ headerButtonText }}
     </button>
     }
   </div>

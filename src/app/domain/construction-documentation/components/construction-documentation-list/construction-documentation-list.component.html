@@ -62,12 +62,9 @@
     [items]="construction?.construction_documentation || []"
     [columns]="columns"
     [showExportOptions]="false"
+    [headerButtonIcon]="'bi bi-upload'"
+    [headerButtonText]="'Subir documento'"
+    (headerButtonClick)="openFormModal()"
   >
-    <div class="w-100 d-flex justify-content-end">
-      <button class="btn btn-outline-primary" (click)="openFormModal()">
-        <i class="bi bi-upload"></i>
-        Subir documento
-      </button>
-    </div>
   </app-table>
 </div>
