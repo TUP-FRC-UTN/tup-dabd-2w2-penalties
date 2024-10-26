@@ -64,6 +64,7 @@ export class ClaimListComponent {
   @ViewChild('sanctionType') sanctionType!: TemplateRef<any>;
   @ViewChild('date') date!: TemplateRef<any>;
   @ViewChild('claimStatus') claimStatus!: TemplateRef<any>;
+  @ViewChild('infraction') infraction!: TemplateRef<any>;
 
   @ViewChild('check') check!: TemplateRef<any>;
 
@@ -73,8 +74,8 @@ export class ClaimListComponent {
   ngOnInit(): void {
     this.searchSubject
       .pipe(
-        debounceTime(200), // Espera 200 ms después de la última emisión
-        distinctUntilChanged() // Solo emite si el valor es diferente al anterior
+        debounceTime(200),
+        distinctUntilChanged() 
       )
       .subscribe(({ key, value }) => {
         this.searchParams = { [key]: value };
@@ -125,6 +126,11 @@ export class ClaimListComponent {
           headerName: 'Estado',
           accessorKey: 'description',
           cellRenderer: this.claimStatus,
+        },
+        {
+          headerName: 'Infracción',
+          accessorKey: 'description',
+          cellRenderer: this.infraction,
         },
         {
           headerName: 'Acciones',
@@ -194,6 +200,4 @@ export class ClaimListComponent {
   includesClaimById(claim: ClaimDTO): boolean {
     return this.checkedClaims.some((c) => c.id === claim.id);
   }
-
-  
 }
