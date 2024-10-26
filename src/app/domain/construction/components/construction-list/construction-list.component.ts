@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, TemplateRef, ViewChild } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
 import { ConstructionResponseDto } from '../../models/construction.model';
 import { ConstructionFormComponent } from '../construction-form/construction-form.component';
@@ -9,13 +9,20 @@ import { Router } from '@angular/router';
 import {
   MainContainerComponent,
   TableColumn,
-  TableComponent
+  TableComponent,
 } from 'ngx-dabd-grupo01';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-construction-list',
   standalone: true,
-  imports: [CommonModule, TableComponent, MainContainerComponent],
+  imports: [
+    FormsModule,
+    CommonModule,
+    TableComponent,
+    MainContainerComponent,
+    NgbDropdownModule,
+  ],
   templateUrl: './construction-list.component.html',
   styleUrl: './construction-list.component.css',
 })
@@ -34,7 +41,13 @@ export class ConstructionListComponent {
 
   page: number = 1;
   size: number = 10;
-  searchParams: { [key: string]: string } = {};
+  searchParams: { [key: string]: string | string[] } = {};
+
+  // Filtro dinámico
+  filterType: string = '';
+  startDate: string = '';
+  endDate: string = '';
+  status: string = '';
 
   @ViewChild('actionsTemplate') actionsTemplate!: TemplateRef<any>;
 
@@ -87,8 +100,8 @@ export class ConstructionListComponent {
     this.loadItems();
   };
 
-  onSearchValueChange = (key: string, searchValue: any): void => {
-    this.searchParams = { [key]: searchValue };
+  onSearchValueChange = (searchValue: any): void => {
+    this.searchParams = { searchValue };
     this.page = 1;
     this.loadItems();
   };
@@ -101,4 +114,30 @@ export class ConstructionListComponent {
   goToDetails = (id: number): void => {
     this.router.navigate(['constructions', id]);
   };
+
+  setFilterType(type: string): void {
+    this.filterType = type;
+  }
+
+  applyFilters(): void {
+    if (this.filterType === 'fecha') {
+      this.searchParams = {
+        startDate: this.startDate,
+        endDate: this.endDate,
+      };
+    } else if (this.filterType === 'estado') {
+      this.searchParams = { constructionStatuses: [this.status] };
+    }
+    this.page = 1;
+    this.loadItems();
+  }
+
+  clearFilters(): void {
+    this.filterType = '';
+    this.startDate = '';
+    this.endDate = '';
+    this.status = '';
+    this.searchParams = {};
+    this.loadItems();
+  }
 }

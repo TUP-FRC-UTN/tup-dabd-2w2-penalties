@@ -103,7 +103,7 @@ export class ConstructionDocumentationListComponent {
     modalRef.result
       .then((result) => {
         if (result) {
-          this.construction = result;
+          this.constructionUpdated.emit();
         }
       })
       .catch(() => {});

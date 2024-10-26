@@ -19,51 +19,78 @@
       onPageSizeChange: onPageSizeChange
     }"
     [isLoading]="(isLoading$ | async) || false"
-    (searchValueChange)="onSearchValueChange('search', $event)"
+    (searchValueChange)="onSearchValueChange($event)"
     (headerButtonClick)="openFormModal()"
   >
     <div class="d-flex justify-content-between align-items-center mb-3">
       <div class="btn-group me-5" role="group">
         <div class="d-flex align-items-center">
           <div class="btn-group me-2">
-            <button type="button" class="btn btn-outline-danger">
-              <i class="bi bi-x-octagon-fill"></i> Limpiar
-            </button>
             <button
               type="button"
-              class="btn btn-outline-info dropdown-toggle"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
+              class="btn btn-outline-danger"
+              (click)="clearFilters()"
             >
-              <i class="bi bi-funnel-fill"></i> Filtros
+              <i class="bi bi-x-octagon-fill"></i> Limpiar
             </button>
-            <ul class="dropdown-menu">
-              <li>
-                <a class="dropdown-item">Manzana</a>
-              </li>
-              <li>
-                <a class="dropdown-item">Estado de Lote</a>
-              </li>
-              <li>
-                <a class="dropdown-item">Tipo de Lote</a>
-              </li>
-            </ul>
+            <div
+              class="btn-group"
+              ngbDropdown
+              role="group"
+              aria-label="Button group with nested dropdown"
+            >
+              <button
+                type="button"
+                class="btn btn-outline-info dropdown-toggle"
+                ngbDropdownToggle
+              >
+                <i class="bi bi-funnel-fill"></i> Filtros
+              </button>
+              <div class="dropdown-menu" ngbDropdownMenu>
+                <button ngbDropdownItem (click)="setFilterType('fecha')">
+                  Por fecha
+                </button>
+                <button ngbDropdownItem (click)="setFilterType('estado')">
+                  Por estado
+                </button>
+              </div>
+            </div>
           </div>
 
-          @if (true) {
-          <div class="d-flex">
-            @if (true) {
+          <div class="d-flex" *ngIf="filterType === 'fecha'">
             <input
-              type="number"
+              type="date"
               class="form-control me-2"
-              id="filter-number"
-              name="ngModel"
-              placeholder="Número de Lote"
+              [(ngModel)]="startDate"
+              placeholder="Fecha de inicio"
             />
-            }
-            <button class="btn btn-dark" type="button">Buscar</button>
+            <input
+              type="date"
+              class="form-control me-2"
+              [(ngModel)]="endDate"
+              placeholder="Fecha de fin"
+            />
+            <button class="btn btn-dark" type="button" (click)="applyFilters()">
+              Buscar
+            </button>
           </div>
-          }
+
+          <div class="d-flex" *ngIf="filterType === 'estado'">
+            <select class="form-select me-2" [(ngModel)]="status">
+              <option value="">Selecciona estado</option>
+              <option value="LOADING">En carga</option>
+              <option value="ON_REVISION">En revisión</option>
+              <option value="APPROVED">Aprobado</option>
+              <option value="REJECTED">Rechazado</option>
+              <option value="IN_PROGRESS">En proceso</option>
+              <option value="COMPLETED">Completado</option>
+              <option value="STOPPED">Parado</option>
+              <option value="CANCELLED">Cancelado</option>
+            </select>
+            <button class="btn btn-dark" type="button" (click)="applyFilters()">
+              Buscar
+            </button>
+          </div>
         </div>
       </div>
     </div>
