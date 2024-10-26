@@ -64,6 +64,15 @@
       </div>
     </div>
 
+    <button
+      class="btn btn-danger"
+      placement="top"
+      ngbTooltip="Exportar PDF"
+      (click)="onPdfButtonClick()"
+    >
+      <i class="bi bi-file-earmark-pdf"></i>
+    </button>
+
     @if (initialState !== fine.fine_state) {
 
     <div
@@ -127,3 +136,92 @@
   {{ error }}
 </div>
 }
+
+<div id="pdfTemplate" style="display: none">
+  <div style="height: 500px"></div>
+  <!-- Espacio adicional -->
+
+  <app-main-container title="Detalle Multa">
+    @if(fine != undefined) {
+    <form #form="ngForm" class="row g-3 needs-validation" novalidate>
+      <div class="row justify-content-around align-items-center g-2">
+        <div class="col-4">
+          <label for="inputModel" class="form-label">Lote</label>
+          <input
+            type="text"
+            class="form-control"
+            id="inputModel"
+            [(ngModel)]="fine.plot_id"
+            #plot="ngModel"
+            name="plotId"
+            readonly
+          />
+        </div>
+        <div class="col-4">
+          <label for="inputModel" class="form-label">Tipo</label>
+          <input
+            type="text"
+            class="form-control"
+            id="inputModel"
+            [(ngModel)]="fine.sanction_type.name"
+            #sanctionType="ngModel"
+            name="sanctionTypeName"
+            readonly
+          />
+        </div>
+      </div>
+
+      <div class="row justify-content-around align-items-center g-2">
+        <div class="col-4">
+          <label for="inputModel" class="form-label">Alta</label>
+          <input
+            type="text"
+            class="form-control"
+            [value]="fine.created_date | date : 'dd/MM/yyyy'"
+            readonly
+          />
+        </div>
+        <div class="col-4">
+          <label for="fineStateSelect" class="form-label">Estado</label>
+          <input
+            class="form-control"
+            id="fineStateSelect"
+            [(ngModel)]="fine.fine_state"
+            name="fine_state"
+            #fine_state="ngModel"
+            (value)="fineService.getValueByKeyForStatusEnum(fine.fine_state)"
+          />
+        </div>
+      </div>
+    </form>
+
+    <div class="row justify-content-center align-items-center g-2 mt-3">
+      <div class="col">
+        <h5>Infracciones</h5>
+
+        <table class="table table-striped justify-content-around">
+          <thead>
+            <tr>
+              <th scope="col">Infracción</th>
+              <th scope="col">Usuario</th>
+              <th scope="col">Alta</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (infraction of fine.infractions; track infraction.id; let i =
+            $index) {
+            <tr>
+              <th scope="row">{{ infraction.id }}</th>
+              <td>{{ infraction.created_by | number }}</td>
+              <td>
+                {{ infraction.created_date | date : "dd/MM/yyyy" }}
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+    }
+  </app-main-container>
+</div>

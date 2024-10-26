@@ -7,6 +7,7 @@ import { FineStatusEnum } from '../../models/fine-status.enum';
 import { FineService } from '../../services/fine.service';
 import { UpdateFineStateDTO } from '../../models/update-fine-status-dto';
 import { MainContainerComponent } from 'ngx-dabd-grupo01';
+import { PdfService } from '../../../../../shared/services/pdf.service';
 
 @Component({
   selector: 'app-fine-detail',
@@ -24,6 +25,8 @@ export class FineDetailComponent {
   fineService = inject(FineService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+
+  private pdfService = inject(PdfService);
 
   error: string | null = null;
   successMessage: string | null = null;
@@ -74,4 +77,11 @@ export class FineDetailComponent {
   goBack = (): void => {
     this.router.navigate(['fine']);
   };
+
+  onPdfButtonClick() {
+    // this.fineService.downloadPdfDetail(this.fine!);
+
+    const data = document.getElementById('pdfTemplate');
+    if (data) this.pdfService.downloadPDF2(data);
+  }
 }
