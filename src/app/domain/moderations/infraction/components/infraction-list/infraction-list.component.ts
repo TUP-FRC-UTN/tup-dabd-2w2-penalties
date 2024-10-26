@@ -50,17 +50,12 @@ export class InfractionListComponent {
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.columns = [
-        { headerName: 'Id', accessorKey: 'construction_id' },
-        { headerName: 'Descripción', accessorKey: 'project_description' },
+        { headerName: 'Id', accessorKey: 'id' },
+        { headerName: 'Alta', accessorKey: 'created_date' },
+        { headerName: 'Descripción', accessorKey: 'description' },
+        { headerName: "Multa", accessorKey: 'fine_id' },
+        { headerName: "Estado", accessorKey: 'infraction_state' },
         { headerName: 'Lote', accessorKey: 'plot_id' },
-        { headerName: 'Inicio', accessorKey: 'planned_start_date' },
-        { headerName: 'Finalización', accessorKey: 'planned_end_date' },
-        { headerName: 'Nombre', accessorKey: 'project_name' },
-        { headerName: 'Dirección', accessorKey: 'project_address' },
-        {
-          headerName: 'Estado',
-          accessorKey: 'construction_status',
-        },
         {
           headerName: 'Acciones',
           accessorKey: 'actions',

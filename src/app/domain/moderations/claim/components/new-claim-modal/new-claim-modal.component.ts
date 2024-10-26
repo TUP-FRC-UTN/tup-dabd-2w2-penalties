@@ -97,13 +97,20 @@ export class NewClaimModalComponent implements OnInit {
 
   // Método para enviar el formulario de reclamos
   submitClaim() {
-    if (this.plotId && this.sanctionTypeId && this.description) {
+    if (
+      this.plotId &&
+      this.sanctionTypeId &&
+      this.description &&
+      this.imageForm.valid
+    ) {
       const newClaim: ClaimNew = {
         plot_id: this.plotId,
         sanction_type_entity_id: this.sanctionTypeId,
         description: this.description,
         proofs_id: [], // vacío por ahora
       };
+
+      console.log({ cameraFile: this.imageForm.get('image')?.value });
 
       this.claimService.createClaim(newClaim).subscribe({
         next: (response) => {
@@ -185,12 +192,6 @@ export class NewClaimModalComponent implements OnInit {
       }
 
       this.stopCamera();
-    }
-  }
-
-  onSubmit(): void {
-    if (this.imageForm.valid) {
-      console.log('Imagen cargada:', this.imageForm.get('image')?.value);
     }
   }
 
