@@ -2,16 +2,17 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, TemplateRef, ViewChild } from '@angular/core';
 import { NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
-import { ConstructionResponseDto } from '../../models/construction.model';
+import {
+  CONSTRUCTION_STATUSES_ENUM,
+  ConstructionResponseDto,
+} from '../../models/construction.model';
 import { ConstructionFormComponent } from '../construction-form/construction-form.component';
 import { ConstructionService } from '../../services/construction.service';
 import { Router } from '@angular/router';
-import {
-  MainContainerComponent,
-  TableColumn,
-  TableComponent,
-} from 'ngx-dabd-grupo01';
+import { TableColumn, TableComponent } from 'ngx-dabd-grupo01';
 import { FormsModule } from '@angular/forms';
+import { MainContainerComponent } from '../../../../../../projects/ngx-dabd-grupo01/src/public-api';
+import { GetValueByKeyForEnumPipe } from '../../../../shared/pipes/get-value-by-key-for-status.pipe';
 
 @Component({
   selector: 'app-construction-list',
@@ -22,6 +23,7 @@ import { FormsModule } from '@angular/forms';
     TableComponent,
     MainContainerComponent,
     NgbDropdownModule,
+    GetValueByKeyForEnumPipe,
   ],
   templateUrl: './construction-list.component.html',
   styleUrl: './construction-list.component.css',
@@ -34,6 +36,8 @@ export class ConstructionListComponent {
   private modalService = inject(NgbModal);
 
   // Properties:
+  CONSTRUCTION_STATUSES_ENUM = CONSTRUCTION_STATUSES_ENUM;
+
   items$: Observable<ConstructionResponseDto[]> =
     this.constructionService.items$;
   totalItems$: Observable<number> = this.constructionService.totalItems$;
@@ -50,6 +54,7 @@ export class ConstructionListComponent {
   status: string = '';
 
   @ViewChild('actionsTemplate') actionsTemplate!: TemplateRef<any>;
+  @ViewChild('statusTemplate') statusTemplate!: TemplateRef<any>;
 
   columns: TableColumn[] = [];
 
@@ -61,7 +66,6 @@ export class ConstructionListComponent {
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.columns = [
-        { headerName: 'Id', accessorKey: 'construction_id' },
         { headerName: 'Descripción', accessorKey: 'project_description' },
         { headerName: 'Lote', accessorKey: 'plot_id' },
         { headerName: 'Inicio', accessorKey: 'planned_start_date' },
@@ -71,6 +75,7 @@ export class ConstructionListComponent {
         {
           headerName: 'Estado',
           accessorKey: 'construction_status',
+          cellRenderer: this.statusTemplate,
         },
         {
           headerName: 'Acciones',
@@ -111,8 +116,8 @@ export class ConstructionListComponent {
     modalRef.componentInstance.itemId = itemId;
   }
 
-  goToDetails = (id: number): void => {
-    this.router.navigate(['constructions', id]);
+  goToDetails = (id: number, mode: "detail" | "edit"): void => {
+    this.router.navigate(['constructions', id, mode]);
   };
 
   setFilterType(type: string): void {

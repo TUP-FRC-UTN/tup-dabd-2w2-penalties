@@ -1,150 +1,114 @@
-<ng-template #content let-modal>
-  <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">Nueva infraccion</h4>
-    <button
-      type="button"
-      class="btn-close"
-      aria-label="Close"
-      (click)="modal.dismiss('Cross click')"
-    ></button>
-  </div>
-  <div class="modal-body">
-    <form #infractionForm="ngForm" (ngSubmit)="submitInfraction()">
-      <div class="mb-3">
-        <label for="plotSelection" class="form-label">Lote*</label>
-        <select
-          #plotControl="ngModel"
-          [ngClass]="{
-            'is-invalid':
-              plotControl.invalid && (plotControl.dirty || plotControl.touched)
-          }"
-          class="form-select"
-          id="plotSelection"
-          [(ngModel)]="plotId"
-          name="plotIdName"
-          required
-        >
-          @if (plots) { @for (plot of plots; track plot.plot_number) {
-          <option value="{{ plot.plot_number }}">
-            {{ plot.plot_number }} - {{ plot.plot_type }}
-          </option>
-          } } @else {
-          <option value="1">1</option>
-          <option>2</option>
-          <option>3</option>
-          <option>4</option>
-          }
-        </select>
-        @if (plotControl.invalid && (plotControl.dirty || plotControl.touched))
-        { @if (plotControl.getError('required')) {
-        <div class="invalid-feedback">Este campo es obligatorio</div>
-        } }
-      </div>
-      <div class="mb-3">
-        <label for="SanctionTypeSelect" class="form-label"
-          >Tipo de infraccion *</label
-        >
-        <select
-          #sanctionControl="ngModel"
-          [ngClass]="{
-            'is-invalid':
-              sanctionControl.invalid &&
-              (sanctionControl.dirty || sanctionControl.touched)
-          }"
-          class="form-select"
-          id="SanctionTypeSelect"
-          [(ngModel)]="sanctionTypeNumber"
-          name="santionTypeName"
-          required
-        >
-          @if (sanctionTypes) { @for (sanction of sanctionTypes; track
-          sanction.id) {
-          <option value="{{ sanction.id }}">
-            {{ sanction.name }}
-          </option>
-          } } @else {
-          <option value="999">Ruidos molestos(mock)</option>
-          <option value="1000">Egreso tardío(mock)</option>
-          }
-        </select>
-        @if (sanctionControl.invalid && (sanctionControl.dirty ||
-        sanctionControl.touched)) { @if (sanctionControl.getError('required')) {
-        <div class="invalid-feedback">Este campo es obligatorio</div>
-        } }
-      </div>
-      <div class="mb-3">
-        <label for="InfractionDescription" class="form-label"
-          >Descripcion</label
-        >
-        <textarea
-          class="form-control"
-          id="InfractionDescription"
-          rows="3"
-          #descriptionControl="ngModel"
-          [ngClass]="{
-            'is-invalid':
-              descriptionControl.invalid &&
-              (descriptionControl.dirty || descriptionControl.touched)
-          }"
-          [(ngModel)]="description"
-          name="descriptionName"
-          required
-        ></textarea>
-        @if (descriptionControl.invalid && (descriptionControl.dirty ||
-        descriptionControl.touched)) { @if
-        (descriptionControl.getError('required')) {
-        <div class="invalid-feedback">Este campo es obligatorio</div>
-        } }
-      </div>
-      <div class="mb-3">
-        <h4>harcoded claims</h4>
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col">check</th>
-              <th scope="col">id</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!--          Harcodeado por ahora, cuando tenga el claims get esto tiene que arreglarse-->
-            <tr>
-              <th scope="row">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  value="43"
-                  (click)="addClaim(43)"
-                />
-              </th>
-              <td>43</td>
-            </tr>
-            <tr>
-              <th scope="row">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  value="45"
-                  (click)="addClaim(45)"
-                />
-              </th>
-              <td>45</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </form>
-  </div>
-  <div class="modal-footer">
-    <button
-      type="submit"
-      class="btn btn-primary"
-      [disabled]="infractionForm.invalid"
-    >
-      Crear
-    </button>
-  </div>
-</ng-template>
-
-<button class="btn btn-lg btn-outline-primary" (click)="open(content)">
-  Nueva Infraccion
-</button>
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">Nueva infraccion</h4>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="activeModal.dismiss('Cross click')"
+  ></button>
+</div>
+<div class="modal-body">
+  <form #infractionForm="ngForm" (ngSubmit)="submitInfraction()">
+    <div class="mb-3">
+      <label for="plotSelection" class="form-label">Lote</label>
+      <select
+        #plotControl="ngModel"
+        [ngClass]="{
+          'is-invalid':
+            plotControl.invalid && (plotControl.dirty || plotControl.touched)
+        }"
+        class="form-select"
+        id="plotSelection"
+        [(ngModel)]="plotId"
+        name="plotIdName"
+        required
+      >
+        @if (plots) { @for (plot of plots; track plot.plot_number) {
+        <option value="{{ plot.plot_number }}">
+          {{ plot.plot_number }} - {{ plot.plot_type }}
+        </option>
+        } } @else {
+        <option value="1">1</option>
+        <option>2</option>
+        <option>3</option>
+        <option>4</option>
+        }
+      </select>
+      @if (plotControl.invalid && (plotControl.dirty || plotControl.touched)) {
+      @if (plotControl.getError('required')) {
+      <div class="invalid-feedback">Este campo es obligatorio</div>
+      } }
+    </div>
+    <div class="mb-3">
+      <label for="SanctionTypeSelect" class="form-label"
+        >Tipo de infraccion</label
+      >
+      <select
+        #sanctionControl="ngModel"
+        [ngClass]="{
+          'is-invalid':
+            sanctionControl.invalid &&
+            (sanctionControl.dirty || sanctionControl.touched)
+        }"
+        class="form-select"
+        id="SanctionTypeSelect"
+        [(ngModel)]="sanctionTypeNumber"
+        name="santionTypeName"
+        required
+      >
+        @if (sanctionTypes) { @for (sanction of sanctionTypes; track
+        sanction.id) {
+        <option value="{{ sanction.id }}">
+          {{ sanction.name }}
+        </option>
+        } } @else {
+        <option value="999">Ruidos molestos</option>
+        <option value="1000">Egreso tardío</option>
+        }
+      </select>
+      @if (sanctionControl.invalid && (sanctionControl.dirty ||
+      sanctionControl.touched)) { @if (sanctionControl.getError('required')) {
+      <div class="invalid-feedback">Este campo es obligatorio</div>
+      } }
+    </div>
+    <div class="mb-3">
+      <label for="InfractionDescription" class="form-label">Descripcion</label>
+      <textarea
+        class="form-control"
+        id="InfractionDescription"
+        rows="3"
+        #descriptionControl="ngModel"
+        [ngClass]="{
+          'is-invalid':
+            descriptionControl.invalid &&
+            (descriptionControl.dirty || descriptionControl.touched)
+        }"
+        [(ngModel)]="description"
+        name="descriptionName"
+        required
+      ></textarea>
+      @if (descriptionControl.invalid && (descriptionControl.dirty ||
+      descriptionControl.touched)) { @if
+      (descriptionControl.getError('required')) {
+      <div class="invalid-feedback">Este campo es obligatorio</div>
+      } }
+    </div>
+  </form>
+</div>
+<div class="modal-footer">
+  <button
+    type="button"
+    class="btn btn-success"
+    [disabled]="infractionForm.invalid"
+    (click)="submitInfraction()"
+  >
+    Confirmar
+  </button>
+  <button
+    type="button"
+    class="btn btn-danger"
+    (click)="activeModal.dismiss('Cross click')"
+  >
+    Cancelar
+  </button>
+</div>

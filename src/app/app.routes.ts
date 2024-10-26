@@ -20,7 +20,7 @@ export const routes: Routes = [
     component: ConstructionListComponent,
   },
   {
-    path: 'constructions/:id',
+    path: 'constructions/:id/:mode',
     component: ConstructionDetailComponent,
   },
   {

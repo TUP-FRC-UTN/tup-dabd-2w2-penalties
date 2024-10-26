@@ -74,6 +74,7 @@ export class ConstructionDetailComponent implements OnInit {
   @ViewChild('confirmAlertContentTemplate')
   confirmAlertContentTemplate!: TemplateRef<any>;
   rejectForm: FormGroup;
+  mode: 'detail' | 'edit' = 'detail';
 
   constructor(private fb: FormBuilder) {
     this.rejectForm = this.fb.group({
@@ -88,7 +89,9 @@ export class ConstructionDetailComponent implements OnInit {
   ngOnInit(): void {
     this.activatedRoute.params.subscribe((params) => {
       const id = params['id'];
+      const mode = params['mode'];
       this.getConstructionById(id);
+      this.mode = mode === 'edit' ? 'edit' : 'detail';
     });
 
     this.workerService.message$.subscribe((message) => {
