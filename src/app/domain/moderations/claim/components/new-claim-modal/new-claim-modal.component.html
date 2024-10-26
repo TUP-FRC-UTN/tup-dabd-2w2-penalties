@@ -1,7 +1,7 @@
-<ng-template #claimModal let-modal>
+<div>
   <div class="modal-header">
     <h4 class="modal-title" id="modal-basic-title">Nuevo Reclamo</h4>
-    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
   </div>
   <div class="modal-body">
     <form #claimForm="ngForm" (ngSubmit)="submitClaim()">
@@ -75,6 +75,6 @@
       <button type="submit" class="btn btn-primary" [disabled]="claimForm.invalid">Crear</button>
     </form>
   </div>
-</ng-template>
+</div>
 
-<button class="btn btn-lg btn-outline-primary" (click)="openClaimModal(claimModal)">Nuevo Reclamo</button>
+
