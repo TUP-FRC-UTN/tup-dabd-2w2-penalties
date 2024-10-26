@@ -1,5 +1,17 @@
-import { Component, inject, OnInit, TemplateRef } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import {
+  Component,
+  ElementRef,
+  inject,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { Plot } from '../../../../cadastre/plot/models/plot.model';
 import {
   ModalDismissReasons,
@@ -10,13 +22,13 @@ import { ClaimService } from '../../service/claim.service';
 import { SanctionTypeService } from '../../../sanction-type/services/sanction-type.service';
 import { CadastreService } from '../../../../cadastre/services/cadastre.service';
 import { SanctionType } from '../../../sanction-type/models/sanction-type.model';
-import { NgClass } from '@angular/common';
+import { CommonModule, NgClass } from '@angular/common';
 import { ClaimNew } from '../../models/claim.model';
 
 @Component({
   selector: 'app-new-claim-modal',
   standalone: true,
-  imports: [FormsModule, NgClass],
+  imports: [FormsModule, NgClass, CommonModule, ReactiveFormsModule],
   templateUrl: './new-claim-modal.component.html',
   styleUrl: './new-claim-modal.component.scss',
 })
@@ -104,5 +116,96 @@ export class NewClaimModalComponent implements OnInit {
     } else {
       console.error('Faltan datos obligatorios en el formulario');
     }
+  }
+
+  @ViewChild('videoPreview') videoPreview!: ElementRef<HTMLVideoElement>;
+
+  private stream: MediaStream | null = null;
+
+  imageForm: FormGroup;
+  isCameraOpen = false;
+  isFrontCamera: boolean = true;
+  capturedImage: string | null = null;
+
+  constructor(private fb: FormBuilder) {
+    this.imageForm = this.fb.group({
+      image: [null],
+    });
+  }
+
+  onFileSelect(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.capturedImage = reader.result as string;
+        this.imageForm.patchValue({ image: file });
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  async startCamera(): Promise<void> {
+    try {
+      this.isCameraOpen = true;
+      const constraints = {
+        video: {
+          facingMode: this.isFrontCamera ? 'user' : 'environment',
+        },
+      };
+      this.stream = await navigator.mediaDevices.getUserMedia(constraints);
+      this.videoPreview.nativeElement.srcObject = this.stream;
+    } catch (error) {
+      console.error('Error al acceder a la cámara: ', error);
+    }
+  }
+
+  stopCamera(): void {
+    if (this.stream) {
+      this.stream.getTracks().forEach((track) => track.stop());
+      this.isCameraOpen = false;
+      this.stream = null;
+    }
+  }
+
+  capturePhoto(): void {
+    if (this.stream) {
+      const video = this.videoPreview.nativeElement;
+      const canvas = document.createElement('canvas');
+
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+
+      const context = canvas.getContext('2d');
+
+      if (context) {
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        this.capturedImage = canvas.toDataURL('image/png');
+        this.imageForm.patchValue({ image: this.capturedImage });
+      }
+
+      this.stopCamera();
+    }
+  }
+
+  onSubmit(): void {
+    if (this.imageForm.valid) {
+      console.log('Imagen cargada:', this.imageForm.get('image')?.value);
+    }
+  }
+
+  toggleCamera() {
+    this.isFrontCamera = !this.isFrontCamera;
+    this.stopCamera();
+    this.startCamera();
+  }
+
+  ngOnDestroy(): void {
+    this.stopCamera();
+  }
+
+  removeCapturedImage(): void {
+    this.capturedImage = null;
+    this.imageForm.patchValue({ image: null });
   }
 }

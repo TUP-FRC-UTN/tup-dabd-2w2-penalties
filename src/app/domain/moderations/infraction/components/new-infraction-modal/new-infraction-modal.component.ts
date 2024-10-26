@@ -1,4 +1,10 @@
-import { Component, inject, TemplateRef } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  inject,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import {
   ModalDismissReasons,
   NgbActiveModal,
@@ -7,18 +13,29 @@ import {
 } from '@ng-bootstrap/ng-bootstrap';
 import { CadastreService } from '../../../../cadastre/services/cadastre.service';
 import { Plot } from '../../../../cadastre/plot/models/plot.model';
-import { FormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { SanctionType } from '../../../sanction-type/models/sanction-type.model';
 import { SanctionTypeService } from '../../../sanction-type/services/sanction-type.service';
 import { InfractionServiceService } from '../../services/infraction-service.service';
 import { InfractionDto } from '../../models/infraction.model';
-import { NgClass } from '@angular/common';
+import { CommonModule, NgClass } from '@angular/common';
 import { ToastService } from '../../../../../../../projects/ngx-dabd-grupo01/src/public-api';
 
 @Component({
   selector: 'app-new-infraction-modal',
   standalone: true,
-  imports: [NgbInputDatepicker, FormsModule, NgClass],
+  imports: [
+    NgbInputDatepicker,
+    FormsModule,
+    NgClass,
+    CommonModule,
+    ReactiveFormsModule,
+  ],
   templateUrl: './new-infraction-modal.component.html',
   styleUrl: './new-infraction-modal.component.scss',
 })
