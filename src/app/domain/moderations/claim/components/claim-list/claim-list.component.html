@@ -11,23 +11,25 @@
 </ng-template>
 
 <ng-template #claimStatus let-item>
-
-  {{item.claim_state | getValueByKeyForEnum: ClaimStatusEnum}}
-
-  
+  {{ item.claim_state | getValueByKeyForEnum : ClaimStatusEnum }}
 </ng-template>
-
 
 <ng-template #check let-item>
+  @if (item.claim_state ==='SENT') {
 
   <div class="form-check">
-    <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
-
+    <input
+      class="form-check-input"
+      type="checkbox"
+      value=""
+      id="flexCheckChecked"
+      [checked]="includesClaimById(item)"
+      (click)="checkClaim(item)"
+      [disabled]="disbledCheck(item)"
+    />
   </div>
-  
-  
+  }
 </ng-template>
-
 
 <ng-template #description let-item>
   {{ item.description | truncate : 60 }}
@@ -50,5 +52,15 @@
     [headerButtonText]="'Nuevo'"
     (headerButtonClick)="openFormModal()"
   >
+    @if(checkedClaims.length!=0){
+    <div class="row justify-content-end align-items-center g-2 mb-2">
+      <div class="col-2">
+        <button class="btn btn-outline-primary" (click)="createInfraction()">
+          Crear Infracción
+        </button>
+      </div>
+    </div>
+
+    }
   </app-table>
 </app-main-container>

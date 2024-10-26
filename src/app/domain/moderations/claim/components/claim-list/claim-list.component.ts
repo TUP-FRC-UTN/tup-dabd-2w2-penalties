@@ -19,6 +19,7 @@ import { GetValueByKeyForEnumPipe } from '../../../../../shared/pipes/get-value-
 import { TruncatePipe } from '../../../../../shared/pipes/truncate.pipe';
 import { ClaimService } from '../../service/claim.service';
 import { ClaimDTO, ClaimStatusEnum } from '../../models/claim.model';
+import { RoleService } from '../../../../../shared/services/role.service';
 
 @Component({
   selector: 'app-claim-list',
@@ -35,10 +36,15 @@ import { ClaimDTO, ClaimStatusEnum } from '../../models/claim.model';
   styleUrl: './claim-list.component.scss',
 })
 export class ClaimListComponent {
+  createInfraction() {
+    throw new Error('Method not implemented.');
+  }
   // Services:
   private readonly router = inject(Router);
   private claimService = inject(ClaimService);
   private modalService = inject(NgbModal);
+
+  private roleService = inject(RoleService);
   ClaimStatusEnum = ClaimStatusEnum;
 
   // Properties:
@@ -46,7 +52,8 @@ export class ClaimListComponent {
   totalItems$: Observable<number> = this.claimService.totalItems$;
   isLoading$: Observable<boolean> = this.claimService.isLoading$;
   searchSubject: Subject<{ key: string; value: any }> = new Subject();
-  checkedClaims: number[] = []
+  checkedClaims: ClaimDTO[] = [];
+  isAdmin: boolean = false;
 
   page: number = 1;
   size: number = 10;
@@ -76,16 +83,26 @@ export class ClaimListComponent {
       });
 
     this.loadItems();
+
+    this.roleService.currentRole$.subscribe((role: string) => {
+      this.isAdmin = role === 'ADMIN';
+      if (this.isAdmin) {
+        this.columns.unshift({
+          headerName: '',
+          accessorKey: 'sanction_type.created_date',
+          cellRenderer: this.check,
+        });
+      } else {
+        if (this.columns[0]?.headerName === '') {
+          this.columns.shift();
+        }
+      }
+    });
   }
 
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.columns = [
-        {
-          headerName: '',
-          accessorKey: 'sanction_type.created_date',
-          cellRenderer: this.check,
-        },
         { headerName: 'Id', accessorKey: 'id' },
         {
           headerName: 'Alta',
@@ -149,4 +166,34 @@ export class ClaimListComponent {
     const modalRef = this.modalService.open(NewClaimModalComponent);
     modalRef.componentInstance.sanctionTypeToEdit = sanctionTypeToEdit;
   }
+
+  checkClaim(claim: ClaimDTO): void {
+    const index = this.checkedClaims.indexOf(claim);
+
+    if (index !== -1) {
+      this.checkedClaims.splice(index, 1);
+    } else {
+      this.checkedClaims.push(claim);
+    }
+  }
+
+  disbledCheck(claim: ClaimDTO): boolean {
+    if (this.checkedClaims.length == 0) {
+      return false;
+    }
+    if (this.checkedClaims[0].sanction_type.id != claim.sanction_type.id) {
+      return true;
+    }
+    if (this.checkedClaims[0].plot_id !== claim.plot_id) {
+      return true;
+    }
+
+    return false;
+  }
+
+  includesClaimById(claim: ClaimDTO): boolean {
+    return this.checkedClaims.some((c) => c.id === claim.id);
+  }
+
+  
 }
