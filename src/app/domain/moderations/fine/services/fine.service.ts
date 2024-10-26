@@ -17,6 +17,8 @@ import * as XLSX from 'xlsx';
 import { environment } from '../../../../../environments/environment';
 import { ToastService } from 'ngx-dabd-grupo01';
 import { ExcelExportService } from '../../../../../../projects/ngx-dabd-grupo01/src/lib/excel-service/excel.service';
+import jsPDF from 'jspdf';
+import { DatePipe } from '@angular/common';
 
 interface SearchResult {
   fines: Fine[];
@@ -37,12 +39,12 @@ interface State {
 @Injectable({ providedIn: 'root' })
 export class FineService {
   private excelService = inject(ExcelExportService);
+  datePipe = inject(DatePipe)
 
   private _loading$ = new BehaviorSubject<boolean>(true);
   public _search$ = new Subject<void>();
   private _fines$ = new BehaviorSubject<Fine[]>([]);
   private _total$ = new BehaviorSubject<number>(0);
-  private fines: Fine[] = [];
 
   private apiUrl = environment.moderationApiUrl;
 
@@ -75,10 +77,6 @@ export class FineService {
       });
 
     this._search$.next();
-
-    this.fines$.subscribe((fines) => {
-      this.fines = fines;
-    });
   }
 
   FineStatusEnum = FineStatusEnum;
@@ -248,6 +246,76 @@ export class FineService {
     return Object.entries(FineStatusEnum).find(
       ([key, val]) => key === value
     )?.[1];
+  }
+
+  downloadPdfDetail(fine: Fine) {
+    const doc = new jsPDF();
+
+    // Datos del formulario
+    const formLabels = ['Lote:', 'Tipo:', 'Alta:', 'Estado:'];
+    const formValues = [
+      fine.plot_id.toString(),
+      fine.sanction_type.name,
+      this.datePipe.transform(fine.created_date, 'dd/MM/yyyy HH:mm'),
+      this.getValueByKeyForStatusEnum(fine.fine_state),
+    ];
+
+    // Estilo del formulario
+    const startX = 10;
+    const startY = 20;
+    const rowHeight = 10;
+    const colWidth = 80;
+
+    // Dibujar formulario
+    formLabels.forEach((label, index) => {
+      const x = startX + (index % 2) * colWidth;
+      const y = startY + Math.floor(index / 2) * rowHeight;
+      doc.text(label, x, y);
+      if (formValues[index]) doc.text(formValues[index], x + 40, y); // Desplazamiento para el valor
+    });
+
+    // Separador
+    doc.setLineWidth(0.5);
+    doc.line(startX, startY + 30, 200, startY + 30); // Línea horizontal
+
+    // Datos de la tabla de infracciones
+    const headers = ['ID', 'Usuario', 'Fecha de Alta'];
+    const infractions = [
+      { id: 1, user: 'Juan', date: '01/01/2023' },
+      { id: 2, user: 'Ana', date: '02/01/2023' },
+      { id: 3, user: 'Luis', date: '03/01/2023' },
+    ];
+
+    // Estilo de la tabla
+    const tableStartY = startY + 40;
+    const tableRowHeight = 10;
+
+    // Dibujar encabezados de la tabla
+    headers.forEach((header, index) => {
+      doc.text(header, startX + index * 60, tableStartY);
+    });
+
+    // Dibujar datos de infracciones
+    infractions.forEach((infraction, rowIndex) => {
+      doc.text(
+        infraction.id.toString(),
+        startX,
+        tableStartY + (rowIndex + 1) * tableRowHeight
+      );
+      doc.text(
+        infraction.user,
+        startX + 60,
+        tableStartY + (rowIndex + 1) * tableRowHeight
+      );
+      doc.text(
+        infraction.date,
+        startX + 120,
+        tableStartY + (rowIndex + 1) * tableRowHeight
+      );
+    });
+
+    // Guardar el PDF
+    doc.save('infracciones.pdf');
   }
 
   onExportToExcel(): void {
