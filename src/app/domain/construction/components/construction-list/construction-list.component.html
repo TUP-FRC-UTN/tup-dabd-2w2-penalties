@@ -1,10 +1,28 @@
+<ng-template #statusTemplate let-item>
+  <span class="badge text-secondary border border-secondary p-2">{{
+    item.construction_status | getValueByKeyForEnum : CONSTRUCTION_STATUSES_ENUM
+  }}</span>
+</ng-template>
+
 <ng-template #actionsTemplate let-item>
-  <button
-    class="btn btn-primary btn-sm me-2"
-    (click)="goToDetails(item.construction_id)"
-  >
-    Ver más
-  </button>
+  <div class="col">
+    <div ngbDropdown class="d-inline-block">
+      <button
+        type="button"
+        class="btn btn-sm btn-secondary"
+        id="dropdownBasic1"
+        ngbDropdownToggle
+      >
+        <i class="bi bi-three-dots-vertical"></i>
+      </button>
+      <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+        <button ngbDropdownItem (click)="goToDetails(item.construction_id, 'detail')">
+          Ver detalle
+        </button>
+        <button ngbDropdownItem (click)="goToDetails(item.construction_id, 'edit')">Editar</button>
+      </div>
+    </div>
+  </div>
 </ng-template>
 
 <app-main-container title="Obras">
@@ -31,7 +49,7 @@
               class="btn btn-outline-danger"
               (click)="clearFilters()"
             >
-              <i class="bi bi-x-octagon-fill"></i> Limpiar
+              <i class="bi bi-trash-fill"></i> Limpiar
             </button>
             <div
               class="btn-group"
@@ -56,8 +74,9 @@
               </div>
             </div>
           </div>
-
-          <div class="d-flex" *ngIf="filterType === 'fecha'">
+          <!-- Fecha -->
+          @if(filterType === 'fecha'){
+          <div class="d-flex">
             <input
               type="date"
               class="form-control me-2"
@@ -74,8 +93,10 @@
               Buscar
             </button>
           </div>
-
-          <div class="d-flex" *ngIf="filterType === 'estado'">
+          }
+          <!-- Estado -->
+          @if(filterType === 'estado'){
+          <div class="d-flex">
             <select class="form-select me-2" [(ngModel)]="status">
               <option value="">Selecciona estado</option>
               <option value="LOADING">En carga</option>
@@ -91,6 +112,7 @@
               Buscar
             </button>
           </div>
+          }
         </div>
       </div>
     </div>

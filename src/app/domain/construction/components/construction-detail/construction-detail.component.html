@@ -17,10 +17,7 @@
   </form>
 </ng-template>
 
-<app-main-container
-  title="Construcción {{ construction?.construction_id }}"
-  [onGoBack]="goBack"
->
+<app-main-container title="Construcción {{ construction?.construction_id }}">
   <div class="row">
     <div class="mb-3 col-6">
       <label for="name" class="form-label">Nombre</label>
@@ -109,6 +106,7 @@
   </div>
   <hr style="color: #808080" />
   <div class="d-grid gap-2 d-md-flex justify-content-between">
+    @if(mode === "detail") {
     <div
       class="alert m-0 me-2 py-1"
       role="alert"
@@ -137,7 +135,11 @@
       <i class="bi bi-exclamation-circle"></i>
       No podrá aprobar la obra hasta que todos los documentos estén aprobados}
     </div>
+    } @if(mode === "edit") {
+    <div></div>
+    }
     <div>
+      @if(mode === "detail") {
       <button
         class="btn btn-primary me-2"
         (click)="approveConstruction()"
@@ -156,11 +158,15 @@
       >
         <i class="bi bi-clipboard-x"></i> Rechazar obra
       </button>
-      <button class="btn btn-warning" (click)="openEditModal()">
-        <i class="bi bi-pencil me-2"></i>Editar
-      </button>
+      }
+      @if(mode === "edit") {
+        <button class="btn btn-success me-2">Confirmar</button>
+      }
+      <button class="btn btn-secondary" (click)="goBack()">Volver</button>
     </div>
   </div>
+  @if(mode === "detail") {
+
   <hr style="color: #808080" />
   <ul class="nav nav-tabs">
     <li class="nav-item">
@@ -225,7 +231,7 @@
   <div class="alert alert-success" role="alert">
     {{ successMessage }}
   </div>
-  }
+  } }
 
   <!-- Forulario para editar la obra -->
   <ng-template #editModal let-modal>

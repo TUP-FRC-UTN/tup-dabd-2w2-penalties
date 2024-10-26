@@ -120,13 +120,6 @@
 
 @if(pagination) {
 <div class="d-flex justify-content-between align-items-center mt-3">
-  <ngb-pagination
-    [collectionSize]="pagination.totalItems"
-    [(page)]="pagination.page"
-    [pageSize]="pagination.size"
-    (pageChange)="onPageChange($event)"
-  ></ngb-pagination>
-
   <div class="form-group mb-3">
     <select
       id="itemsPerPage"
@@ -139,5 +132,11 @@
       }
     </select>
   </div>
+  <ngb-pagination
+    [collectionSize]="pagination.totalItems"
+    [(page)]="pagination.page"
+    [pageSize]="pagination.size"
+    (pageChange)="onPageChange($event)"
+  ></ngb-pagination>
 </div>
 }

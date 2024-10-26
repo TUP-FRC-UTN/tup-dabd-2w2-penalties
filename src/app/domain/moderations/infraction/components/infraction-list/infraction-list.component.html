@@ -1,9 +1,60 @@
+<ng-template #actionsTemplate let-item>
+  <button
+    class="btn btn-primary btn-sm me-2"
+    (click)="goToDetails(item.id)"
+  >
+    Ver más
+  </button>
+</ng-template>
 
-
-<div class="container">
-  <div class="d-flex justify-content-end">
-    <app-new-infraction-modal></app-new-infraction-modal>
-
-  </div>
-  <p>infraction-list works!</p>
-</div>
+<app-main-container title="Infracciones" (infoButtonClick)="onInfoButtonClick()">
+  <app-table
+    [items]="(items$ | async) || []"
+    [columns]="columns"
+    [pagination]="{
+      totalItems: (totalItems$ | async) || 0,
+      page: page,
+      size: size,
+      onPageChange: onPageChange,
+      onPageSizeChange: onPageSizeChange
+    }"
+    [isLoading]="(isLoading$ | async) || false"
+    (searchValueChange)="onSearchValueChange($event)"
+    (headerButtonClick)="openFormModal()"
+  >
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="btn-group me-5" role="group">
+        <div class="d-flex align-items-center">
+          <div class="btn-group me-2">
+            <button
+              type="button"
+              class="btn btn-outline-danger"
+              (click)="clearFilters()"
+            >
+              <i class="bi bi-trash-fill"></i> Limpiar
+            </button>
+            <div
+              class="btn-group"
+              ngbDropdown
+              role="group"
+              aria-label="Button group with nested dropdown"
+            >
+              <button
+                type="button"
+                class="btn btn-outline-info dropdown-toggle"
+                ngbDropdownToggle
+              >
+                <i class="bi bi-funnel-fill"></i> Filtros
+              </button>
+              <div class="dropdown-menu" ngbDropdownMenu>
+                <button ngbDropdownItem>
+                  Filtro 1
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </app-table>
+</app-main-container>
