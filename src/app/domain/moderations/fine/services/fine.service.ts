@@ -13,7 +13,6 @@ import {
   SortColumn,
   SortDirection,
 } from '../components/fine-table/sortable.directive';
-import * as XLSX from 'xlsx';
 import { environment } from '../../../../../environments/environment';
 import jsPDF from 'jspdf';
 import { DatePipe } from '@angular/common';
