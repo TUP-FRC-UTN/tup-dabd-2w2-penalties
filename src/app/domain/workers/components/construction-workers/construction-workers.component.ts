@@ -21,6 +21,7 @@ import {
   TableComponent,
 } from 'ngx-dabd-grupo01';
 import { WorkerService } from '../../services/worker.service';
+import { RoleService } from '../../../../shared/services/role.service';
 
 @Component({
   selector: 'app-construction-workers',
@@ -33,7 +34,7 @@ export class ConstructionWorkersComponent implements AfterViewInit {
   // Inputs:
   @Input() workers: any[] = [];
   @Input() constructionId: number | undefined;
-
+  @Input() isOwner: boolean = false; 
   // Services:
 
   private modalService = inject(NgbModal);
@@ -48,10 +49,12 @@ export class ConstructionWorkersComponent implements AfterViewInit {
 
   // Methods:
 
+  constructor(private roleService: RoleService) {}
+
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.columns = [
-        { headerName: 'Id', accessorKey: 'id' },
+        { headerName: 'N° Multa', accessorKey: 'id' },
         { headerName: 'Contacto', accessorKey: 'contact' },
         { headerName: 'Dirección', accessorKey: 'address' },
         { headerName: 'Nombre', accessorKey: 'name' },
@@ -107,5 +110,11 @@ export class ConstructionWorkersComponent implements AfterViewInit {
       .catch(() => {
         console.log('Desasignación cancelada');
       });
+  }
+
+  ngOnInit() {
+    this.roleService.currentRole$.subscribe(role => {
+      this.isOwner = (role === 'OWNER');
+    });
   }
 }

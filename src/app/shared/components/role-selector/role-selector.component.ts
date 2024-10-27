@@ -19,6 +19,7 @@ export class RoleSelectorComponent {
   
   userIds: number[] = [1, 2, 3, 4, 5];  
   selectedUserId: number = 0;  
+  isOwner: boolean = false;
 
   constructor(private roleService: RoleService) {}
 
@@ -26,6 +27,8 @@ export class RoleSelectorComponent {
     const target = event.target as HTMLSelectElement; 
     const selectedValue = target.value;
     this.roleService.changeRole(selectedValue);
+    this.selectedRole = selectedValue;
+    this.isOwner = selectedValue === 'OWNER'; 
     console.log(`Selected role: ${selectedValue}`);
   }
 
