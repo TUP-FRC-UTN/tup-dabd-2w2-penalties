@@ -15,6 +15,7 @@ import { ClaimService } from '../../service/claim.service';
 import { ClaimDTO, ClaimStatusEnum } from '../../models/claim.model';
 import { RoleService } from '../../../../../shared/services/role.service';
 import { NewInfractionModalComponent } from '../../../infraction/components/new-infraction-modal/new-infraction-modal.component';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-claim-list',
@@ -27,6 +28,7 @@ import { NewInfractionModalComponent } from '../../../infraction/components/new-
     GetValueByKeyForEnumPipe,
     TruncatePipe,
     NgbDropdownModule,
+    FormsModule,
   ],
   templateUrl: './claim-list.component.html',
   styleUrl: './claim-list.component.scss',
@@ -46,11 +48,16 @@ export class ClaimListComponent {
   isLoading$: Observable<boolean> = this.claimService.isLoading$;
   searchSubject: Subject<{ key: string; value: any }> = new Subject();
   checkedClaims: ClaimDTO[] = [];
+  claimStatusKeys: string[] = [];
   isAdmin: boolean = false;
 
   page: number = 1;
   size: number = 10;
-  searchParams: { [key: string]: string } = {};
+  filterType: string = '';
+  status: string = '';
+  startDate: string = '';
+  endDate: string = '';
+  searchParams: { [key: string]: string | string[] } = {};
 
   @ViewChild('actionsTemplate') actionsTemplate!: TemplateRef<any>;
   @ViewChild('description') description!: TemplateRef<any>;
@@ -65,6 +72,9 @@ export class ClaimListComponent {
 
   // Methods:
   ngOnInit(): void {
+    this.claimStatusKeys = Object.keys(ClaimStatusEnum) as Array<
+      keyof typeof ClaimStatusEnum
+    >;
     this.searchSubject
       .pipe(debounceTime(200), distinctUntilChanged())
       .subscribe(({ key, value }) => {
@@ -94,7 +104,7 @@ export class ClaimListComponent {
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.columns = [
-        { headerName: 'Id', accessorKey: 'id' },
+        { headerName: 'Nº de Multa', accessorKey: 'id' },
         {
           headerName: 'Alta',
           accessorKey: 'sanction_type.created_date',
@@ -206,5 +216,31 @@ export class ClaimListComponent {
         }
       })
       .catch(() => {});
+  }
+
+  setFilterType(type: string): void {
+    this.filterType = type;
+  }
+
+  clearFilters(): void {
+    this.filterType = '';
+    this.startDate = '';
+    this.endDate = '';
+    this.status = '';
+    this.searchParams = {};
+    this.loadItems();
+  }
+
+  applyFilters(): void {
+    if (this.filterType === 'fecha') {
+      this.searchParams = {
+        startDate: this.startDate,
+        endDate: this.endDate,
+      };
+    } else if (this.filterType === 'estado') {
+      this.searchParams = { claimStatus: [this.status] };
+    }
+    this.page = 1;
+    this.loadItems();
   }
 }
