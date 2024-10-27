@@ -16,7 +16,7 @@ import {
 import { environment } from '../../../../../environments/environment';
 import jsPDF from 'jspdf';
 import { DatePipe } from '@angular/common';
-import { ExcelExportService } from '../../../../../../projects/ngx-dabd-grupo01/src/lib/excel-service/excel.service';
+import { ExcelExportService } from 'ngx-dabd-grupo01';
 
 interface SearchResult {
   fines: Fine[];
@@ -37,7 +37,7 @@ interface State {
 @Injectable({ providedIn: 'root' })
 export class FineService {
   private excelService = inject(ExcelExportService);
-  datePipe = inject(DatePipe)
+  datePipe = inject(DatePipe);
 
   private _loading$ = new BehaviorSubject<boolean>(true);
   public _search$ = new Subject<void>();
