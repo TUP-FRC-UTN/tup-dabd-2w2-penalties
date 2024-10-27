@@ -15,10 +15,9 @@ import {
 } from '../components/fine-table/sortable.directive';
 import * as XLSX from 'xlsx';
 import { environment } from '../../../../../environments/environment';
-import { ToastService } from 'ngx-dabd-grupo01';
-import { ExcelExportService } from '../../../../../../projects/ngx-dabd-grupo01/src/lib/excel-service/excel.service';
 import jsPDF from 'jspdf';
 import { DatePipe } from '@angular/common';
+import { ExcelExportService } from '../../../../../../projects/ngx-dabd-grupo01/src/lib/excel-service/excel.service';
 
 interface SearchResult {
   fines: Fine[];
