@@ -41,5 +41,5 @@ export const routes: Routes = [
     path: 'claim',
     component: ClaimListComponent,
   },
-  { path: 'claim/:id', component: ClaimDetailComponent },
+  { path: 'claim/:id/:mode', component: ClaimDetailComponent },
 ];

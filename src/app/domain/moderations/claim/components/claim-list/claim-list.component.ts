@@ -1,4 +1,10 @@
-import { Component, inject, TemplateRef, ViewChild } from '@angular/core';
+import {
+  Component,
+  inject,
+  TemplateRef,
+  ViewChild,
+  ɵɵsetComponentScope,
+} from '@angular/core';
 import { NewClaimModalComponent } from '../new-claim-modal/new-claim-modal.component';
 import { Router } from '@angular/router';
 import { NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -49,7 +55,10 @@ export class ClaimListComponent {
   searchSubject: Subject<{ key: string; value: any }> = new Subject();
   checkedClaims: ClaimDTO[] = [];
   claimStatusKeys: string[] = [];
-  isAdmin: boolean = false;
+
+  role: string = '';
+  userId: number | undefined;
+  userPlotsIds: number[] = [];
 
   page: number = 1;
   size: number = 10;
@@ -57,7 +66,7 @@ export class ClaimListComponent {
   status: string = '';
   startDate: string = '';
   endDate: string = '';
-  searchParams: { [key: string]: string | string[] } = {};
+  searchParams: { [key: string]: string | string[] | number[] | number } = {};
 
   @ViewChild('actionsTemplate') actionsTemplate!: TemplateRef<any>;
   @ViewChild('description') description!: TemplateRef<any>;
@@ -72,6 +81,32 @@ export class ClaimListComponent {
 
   // Methods:
   ngOnInit(): void {
+    this.roleService.currentUserId$.subscribe((userId: number) => {
+      this.userId = userId;
+      this.loadItems();
+    });
+
+    this.roleService.currentLotes$.subscribe((plots: number[]) => {
+      this.userPlotsIds = plots;
+      this.loadItems();
+    });
+
+    this.roleService.currentRole$.subscribe((role: string) => {
+      this.role = role;
+      if (this.role === 'ADMIN') {
+        this.columns.unshift({
+          headerName: '',
+          accessorKey: 'sanction_type.created_date',
+          cellRenderer: this.check,
+        });
+      } else {
+        if (this.columns[0]?.headerName === '') {
+          this.columns.shift();
+        }
+      }
+      this.loadItems();
+    });
+
     this.claimStatusKeys = Object.keys(ClaimStatusEnum) as Array<
       keyof typeof ClaimStatusEnum
     >;
@@ -84,21 +119,6 @@ export class ClaimListComponent {
       });
 
     this.loadItems();
-
-    this.roleService.currentRole$.subscribe((role: string) => {
-      this.isAdmin = role === 'ADMIN';
-      if (this.isAdmin) {
-        this.columns.unshift({
-          headerName: '',
-          accessorKey: 'sanction_type.created_date',
-          cellRenderer: this.check,
-        });
-      } else {
-        if (this.columns[0]?.headerName === '') {
-          this.columns.shift();
-        }
-      }
-    });
   }
 
   ngAfterViewInit(): void {
@@ -142,6 +162,21 @@ export class ClaimListComponent {
   }
 
   loadItems(): void {
+    if (this.role !== 'ADMIN') {
+      this.searchParams = {
+        ...this.searchParams,
+        plotsIds: this.userPlotsIds,
+        userId: this.userId!,
+      };
+    } else {
+      if (this.searchParams['userId']) {
+        delete this.searchParams['userId'];
+      }
+      if (this.searchParams['plotsIds']) {
+        delete this.searchParams['plotsIds'];
+      }
+    }
+
     this.claimService
       .getPaginatedClaims(this.page, this.size, this.searchParams)
       .subscribe((response) => {
@@ -242,5 +277,9 @@ export class ClaimListComponent {
     }
     this.page = 1;
     this.loadItems();
+  }
+
+  disapproveClaim(id: number) {
+    throw new Error('Method not implemented.');
   }
 }

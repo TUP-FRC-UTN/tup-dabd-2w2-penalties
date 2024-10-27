@@ -8,37 +8,47 @@ import { RoleService } from '../../services/role.service';
   standalone: true,
   imports: [FormsModule, CommonModule],
   templateUrl: './role-selector.component.html',
-  styleUrl: './role-selector.component.scss'
+  styleUrl: './role-selector.component.scss',
 })
 export class RoleSelectorComponent {
   roles: string[] = ['OWNER', 'ADMIN', 'USER'];
   selectedRole: string = '';
 
-  lotes: number[] = [1, 2, 3, 4, 5];  
-  selectedLotes: number[] = []; 
-  
-  userIds: number[] = [1, 2, 3, 4, 5];  
-  selectedUserId: number = 0;  
+  lotes: number[] = [1, 2, 3, 4, 5];
+  selectedLotes: number[] = [];
+
+  userIds: number[] = [1, 2, 3, 4, 5];
+  selectedUserId: number = 0;
 
   constructor(private roleService: RoleService) {}
 
   onRoleChange(event: Event) {
-    const target = event.target as HTMLSelectElement; 
+    const target = event.target as HTMLSelectElement;
     const selectedValue = target.value;
     this.roleService.changeRole(selectedValue);
     console.log(`Selected role: ${selectedValue}`);
   }
 
   onLotesChange(event: any) {
-    this.selectedLotes = Array.from(event.target.selectedOptions, (option: any) => option.value);
+    // Convertir a un array de números extrayendo solo el segundo valor de cada opción
+    this.selectedLotes = Array.from(
+      event.target.selectedOptions,
+      (option: any) => {
+        const value = option.value.split(': ')[1]; // Suponiendo que el formato es "0: 1"
+        return Number(value); // Convertir a número
+      }
+    );
+
+    // Cambiar los lotes en el roleService
     this.roleService.changeLotes(this.selectedLotes);
+
     console.log(`Selected lotes: ${this.selectedLotes}`);
   }
 
   onUserIdChange(event: Event) {
     const target = event.target as HTMLSelectElement;
     const selectedValue = target.value;
-    this.selectedUserId = +selectedValue;  
+    this.selectedUserId = +selectedValue;
     this.roleService.changeUserId(this.selectedUserId);
     console.log(`Selected User ID: ${this.selectedUserId}`);
   }
