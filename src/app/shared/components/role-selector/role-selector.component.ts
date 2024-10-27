@@ -9,7 +9,7 @@ import {DeleteLaterService} from "../../../delete-later.service";
   standalone: true,
   imports: [FormsModule, CommonModule],
   templateUrl: './role-selector.component.html',
-  styleUrl: './role-selector.component.scss'
+  styleUrl: './role-selector.component.scss',
 })
 export class RoleSelectorComponent {
   roles: string[] = ['OWNER', 'ADMIN', 'USER'];
@@ -33,8 +33,18 @@ export class RoleSelectorComponent {
   }
 
   onLotesChange(event: any) {
-    this.selectedLotes = Array.from(event.target.selectedOptions, (option: any) => option.value);
+    // Convertir a un array de números extrayendo solo el segundo valor de cada opción
+    this.selectedLotes = Array.from(
+      event.target.selectedOptions,
+      (option: any) => {
+        const value = option.value.split(': ')[1]; // Suponiendo que el formato es "0: 1"
+        return Number(value); // Convertir a número
+      }
+    );
+
+    // Cambiar los lotes en el roleService
     this.roleService.changeLotes(this.selectedLotes);
+
     console.log(`Selected lotes: ${this.selectedLotes}`);
   }
 

@@ -24,6 +24,7 @@ import { CadastreService } from '../../../../cadastre/services/cadastre.service'
 import { SanctionType } from '../../../sanction-type/models/sanction-type.model';
 import { CommonModule, NgClass } from '@angular/common';
 import { ClaimNew } from '../../models/claim.model';
+import { RoleService } from '../../../../../shared/services/role.service';
 
 @Component({
   selector: 'app-new-claim-modal',
@@ -36,7 +37,8 @@ export class NewClaimModalComponent implements OnInit {
   //services
   private cadastreService = inject(CadastreService);
   private sanctionService = inject(SanctionTypeService);
-  private claimService = inject(ClaimService); // nuevo servicio para los reclamos
+  private claimService = inject(ClaimService);
+  private roleService = inject(RoleService);
 
   //variables
   plots: Plot[] | undefined;
@@ -44,6 +46,8 @@ export class NewClaimModalComponent implements OnInit {
   plotId: number | undefined;
   sanctionTypeId: number | undefined;
   description: string | undefined;
+
+  userId: number | undefined;
 
   //variable para los archivos
   selectedFiles: File[] = [];
@@ -54,6 +58,10 @@ export class NewClaimModalComponent implements OnInit {
   activeModal = inject(NgbActiveModal);
 
   ngOnInit() {
+    this.roleService.currentUserId$.subscribe((userId: number) => {
+      this.userId = userId;
+    });
+
     // Obtener lotes
     this.cadastreService.getPlots().subscribe({
       next: (response) => {
@@ -75,17 +83,6 @@ export class NewClaimModalComponent implements OnInit {
     });
   }
 
-  private getDismissReason(reason: any): string {
-    switch (reason) {
-      case ModalDismissReasons.ESC:
-        return 'by pressing ESC';
-      case ModalDismissReasons.BACKDROP_CLICK:
-        return 'by clicking on a backdrop';
-      default:
-        return `with: ${reason}`;
-    }
-  }
-
   //medotod de agregar archivos
   onFilesSelected(event: any) {
     const files = event.target.files;
@@ -104,6 +101,7 @@ export class NewClaimModalComponent implements OnInit {
       this.imageForm.valid
     ) {
       const newClaim: ClaimNew = {
+        // user_id: this.userId!,
         plot_id: this.plotId,
         sanction_type_entity_id: this.sanctionTypeId,
         description: this.description,

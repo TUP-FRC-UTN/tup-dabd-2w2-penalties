@@ -4,7 +4,8 @@ import { RouterModule, RouterOutlet } from '@angular/router';
 import { CustomNavBarComponent } from './shared/components/custom-nav-bar/custom-nav-bar.component';
 import { HttpClientModule } from '@angular/common/http';
 import { RoleSelectorComponent } from './shared/components/role-selector/role-selector.component';
-import { ToastsContainer } from '../../projects/ngx-dabd-grupo01/src/lib/toast/toasts-container.component';
+import { ToastsContainer } from 'ngx-dabd-grupo01';
+
 import { BrowserModule } from '@angular/platform-browser';
 import { NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import {BlackNavbarComponent} from "./shared/components/black-navbar/black-navbar.component";

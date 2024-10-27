@@ -13,16 +13,14 @@
         <button ngbDropdownItem (click)="goToDetails(item.id, 'detail')">
           Ver detalle
         </button>
+        @if((this.role === 'ADMIN' || userId === item.created_by) &&
+        item.claim_status === 'SENT') {
         <button ngbDropdownItem (click)="goToDetails(item.id, 'edit')">
           Editar
         </button>
-        @if(isAdmin && item.claim_state === 'SENT') {
-        <button
-          class="text-danger"
-          ngbDropdownItem
-          (click)="goToDetails(item.id, 'edit')"
-        >
-          Eliminar<i class="bi bi-x-circle me-2"></i>
+        } @if((this.role === 'ADMIN' ) && item.claim_status === 'SENT') {
+        <button ngbDropdownItem (click)="disapproveClaim(item.id)">
+          Desaprobar
         </button>
         }
       </div>
@@ -47,33 +45,41 @@
 </ng-template>
 
 <ng-template #claimStatus let-item>
-  <span
-    class="badge p-2"
-    [ngClass]="{
-      'text-bg-warning': item.claim_state === 'SENT',
-      'text-bg-success': item.claim_state === 'APPROVED',
-      'text-bg-danger': item.claim_state === 'REJECTED'
-    }"
-  >
-    {{ item.claim_state | getValueByKeyForEnum : ClaimStatusEnum }}
-  </span>
+  @if(item.claim_status === 'APPROVED') {
+  <span class="badge border border-success text-success p-2">{{
+    item.claim_status | getValueByKeyForEnum : ClaimStatusEnum
+  }}</span>
+  } @else if(item.claim_status === 'REJECTED') {
+  <span class="badge border border-danger text-danger p-2">{{
+    item.claim_status | getValueByKeyForEnum : ClaimStatusEnum
+  }}</span>
+  } @else if (item.claim_status === 'SENT') {
+  <span class="badge text-secondary border border-secondary p-2">{{
+    item.claim_status | getValueByKeyForEnum : ClaimStatusEnum
+  }}</span>
+  }
 </ng-template>
 
 <ng-template #check let-item>
-  @if (item.claim_state ==='SENT') {
-
-  <div class="form-check">
-    <input
-      class="form-check-input"
-      type="checkbox"
-      value=""
-      id="flexCheckChecked"
-      [checked]="includesClaimById(item)"
-      (click)="checkClaim(item)"
-      [disabled]="disbledCheck(item)"
-    />
+  <div class="d-inline-flex align-items-center">
+    <div
+      class="form-check me-2"
+      [ngClass]="{
+        invisible: !(item.claim_status === 'SENT' && role === 'ADMIN')
+      }"
+    >
+      <input
+        class="form-check-input"
+        type="checkbox"
+        value=""
+        id="flexCheckChecked"
+        [checked]="includesClaimById(item)"
+        (click)="checkClaim(item)"
+        [disabled]="disbledCheck(item)"
+      />
+    </div>
+    <span>{{ item.id }}</span>
   </div>
-  }
 </ng-template>
 
 <ng-template #description let-item>

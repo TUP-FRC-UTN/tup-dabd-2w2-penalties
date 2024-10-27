@@ -18,10 +18,10 @@ import {
   TableColumn,
   TableComponent,
   ConfirmAlertComponent,
+  ToastService,
 } from 'ngx-dabd-grupo01';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ConstructionDocumentationService } from '../../services/construction-documentation.service';
-import { ToastService } from '../../../../../../projects/ngx-dabd-grupo01/src/public-api';
 
 @Component({
   selector: 'app-construction-documentation-list',

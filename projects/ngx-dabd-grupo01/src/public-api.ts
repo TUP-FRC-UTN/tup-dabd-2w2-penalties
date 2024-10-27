@@ -14,3 +14,6 @@ export * from './lib/main-container/main-container.component';
 
 export * from './lib/toast/toast-service';
 export * from './lib/toast/toasts-container.component';
+
+export * from './lib/excel-service/excel.service';
+

@@ -33,9 +33,9 @@ import {
   ConfirmAlertComponent,
   MainContainerComponent,
   TableComponent,
+  ToastService,
 } from 'ngx-dabd-grupo01';
 import { GetValueByKeyForEnumPipe } from '../../../../shared/pipes/get-value-by-key-for-status.pipe';
-import { ToastService } from '../../../../../../projects/ngx-dabd-grupo01/src/public-api';
 
 @Component({
   selector: 'app-construction-detail',

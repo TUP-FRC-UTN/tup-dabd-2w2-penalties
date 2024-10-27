@@ -13,12 +13,10 @@ import {
   SortColumn,
   SortDirection,
 } from '../components/fine-table/sortable.directive';
-import * as XLSX from 'xlsx';
 import { environment } from '../../../../../environments/environment';
-import { ToastService } from 'ngx-dabd-grupo01';
-import { ExcelExportService } from '../../../../../../projects/ngx-dabd-grupo01/src/lib/excel-service/excel.service';
 import jsPDF from 'jspdf';
 import { DatePipe } from '@angular/common';
+import { ExcelExportService } from 'ngx-dabd-grupo01';
 
 interface SearchResult {
   fines: Fine[];
@@ -39,7 +37,7 @@ interface State {
 @Injectable({ providedIn: 'root' })
 export class FineService {
   private excelService = inject(ExcelExportService);
-  datePipe = inject(DatePipe)
+  datePipe = inject(DatePipe);
 
   private _loading$ = new BehaviorSubject<boolean>(true);
   public _search$ = new Subject<void>();

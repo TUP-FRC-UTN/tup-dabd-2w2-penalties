@@ -1,8 +1,15 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { InfractionDto } from '../../infraction/models/infraction.model';
-import { BehaviorSubject, finalize, map, Observable } from 'rxjs';
-import { ClaimDTO, ClaimNew } from '../models/claim.model';
+import {
+  BehaviorSubject,
+  catchError,
+  finalize,
+  map,
+  Observable,
+  throwError,
+} from 'rxjs';
+import { ClaimDTO, ClaimNew, UpdateClaimDTO } from '../models/claim.model';
 import { environment } from '../../../../../environments/environment';
 
 @Injectable({
@@ -43,6 +50,38 @@ export class ClaimService {
     });
   }
 
+  updateClaim(claimDTO: ClaimDTO, userId: number): Observable<ClaimDTO> {
+    return this.http
+      .put<ClaimDTO>(`${this.apiUrl}/claims/${claimDTO.id}`, {
+        description: claimDTO.description,
+        plot_id: claimDTO.plot_id,
+        sanction_type_entity_id: claimDTO.sanction_type.id,
+        user_id: userId,
+      })
+      .pipe(
+        map((newItem) => {
+          return newItem;
+        }),
+        catchError((error) => {
+          return throwError(() => new Error('Error en actualización de multa'));
+        })
+      );
+  }
+
+  disapproveClaim(claimId: number, userId: number): Observable<ClaimDTO> {
+    return this.http
+      .put<ClaimDTO>(`${this.apiUrl}/claims/${claimId}/disapprove`, {
+        user_id: userId,
+      })
+      .pipe(
+        map((newItem) => {
+          return newItem;
+        }),
+        catchError((error) => {
+          return throwError(() => new Error('Error en actualización de multa'));
+        })
+      );
+  }
   getPaginatedClaims(
     page: number,
     limit: number,
@@ -55,7 +94,15 @@ export class ClaimService {
 
     Object.keys(searchParams).forEach((key) => {
       if (searchParams[key]) {
-        params = params.set(key, searchParams[key]);
+        if (Array.isArray(searchParams[key])) {
+          // Si es un array, usar append para cada valor
+          searchParams[key].forEach((value) => {
+            params = params.append(key, value.toString());
+          });
+        } else {
+          // Si no es un array, usar set
+          params = params.set(key, searchParams[key].toString());
+        }
       }
     });
 

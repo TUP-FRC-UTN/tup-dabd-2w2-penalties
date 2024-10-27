@@ -25,9 +25,9 @@ import { SanctionTypeService } from '../../../sanction-type/services/sanction-ty
 import { InfractionServiceService } from '../../services/infraction-service.service';
 import { InfractionDto } from '../../models/infraction.model';
 import { CommonModule, NgClass } from '@angular/common';
-import { ToastService } from '../../../../../../../projects/ngx-dabd-grupo01/src/public-api';
 import { ClaimDTO } from '../../../claim/models/claim.model';
 import { TruncatePipe } from '../../../../../shared/pipes/truncate.pipe';
+import { ToastService } from 'ngx-dabd-grupo01';
 
 @Component({
   selector: 'app-new-infraction-modal',

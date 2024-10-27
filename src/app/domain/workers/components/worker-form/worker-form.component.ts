@@ -9,8 +9,11 @@ import {
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { WorkerService } from '../../services/worker.service';
 import { WorkerRequestDto } from '../../models/worker.model';
-import { ToastService } from '../../../../../../projects/ngx-dabd-grupo01/src/lib/toast/toast-service';
-import { FormConfig, FormFieldsComponent } from 'ngx-dabd-grupo01';
+import {
+  FormConfig,
+  FormFieldsComponent,
+  ToastService,
+} from 'ngx-dabd-grupo01';
 
 @Component({
   selector: 'app-worker-form',
@@ -84,7 +87,6 @@ export class WorkerFormComponent {
   };
 
   onSubmit = (formValue: any): void => {
-
     const worker: WorkerRequestDto = {
       construction_id: this.constructionId!,
       address: formValue.address,
