@@ -2,6 +2,7 @@ import {
   Component,
   ElementRef,
   inject,
+  Input,
   TemplateRef,
   ViewChild,
 } from '@angular/core';
@@ -25,6 +26,8 @@ import { InfractionServiceService } from '../../services/infraction-service.serv
 import { InfractionDto } from '../../models/infraction.model';
 import { CommonModule, NgClass } from '@angular/common';
 import { ToastService } from '../../../../../../../projects/ngx-dabd-grupo01/src/public-api';
+import { ClaimDTO } from '../../../claim/models/claim.model';
+import { TruncatePipe } from '../../../../../shared/pipes/truncate.pipe';
 
 @Component({
   selector: 'app-new-infraction-modal',
@@ -35,6 +38,7 @@ import { ToastService } from '../../../../../../../projects/ngx-dabd-grupo01/src
     NgClass,
     CommonModule,
     ReactiveFormsModule,
+    TruncatePipe,
   ],
   templateUrl: './new-infraction-modal.component.html',
   styleUrl: './new-infraction-modal.component.scss',
@@ -52,10 +56,11 @@ export class NewInfractionModalComponent {
   plots: Plot[] | undefined;
   sanctionTypes: SanctionType[] | undefined;
 
-  claims: number[] = [];
-  sanctionTypeNumber: number | undefined;
+  @Input() claims: ClaimDTO[] = [];
+  @Input() sanctionTypeNumber: number | undefined;
+  @Input() plotId: number | undefined;
+
   description: string | undefined;
-  plotId: number | undefined;
 
   // Modal logic
   private modalService = inject(NgbModal);
@@ -75,16 +80,7 @@ export class NewInfractionModalComponent {
       error: (error) => {},
     });
 
-    this.modalService
-      .open(content, { ariaLabelledBy: 'modal-basic-title' })
-      .result.then(
-        (result) => {
-          this.closeResult = `Closed with: ${result}`;
-        },
-        (reason) => {
-          this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-        }
-      );
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' });
   }
 
   private getDismissReason(reason: any): string {
@@ -98,29 +94,26 @@ export class NewInfractionModalComponent {
     }
   }
 
-  addClaim(id: number) {
-    const index = this.claims.indexOf(id);
-
-    if (index !== -1) {
-      this.claims.splice(index, 1);
-    } else {
-      this.claims.push(id);
-    }
-  }
-
   submitInfraction() {
     if (this.plotId && this.sanctionTypeNumber && this.description) {
       const newInfraction: InfractionDto = {
         plotId: this.plotId,
         description: this.description,
         sanctionTypeId: this.sanctionTypeNumber,
-        claimsId: this.claims,
+        claimsId: this.claims.map((claim) => claim.id),
       };
 
       this.infractionService.createInfraction(newInfraction).subscribe({
         next: (response) => {
-          this.toastService.sendSuccess('Infracción creada exitosamente');
-          this.activeModal.close();
+          this.toastService.sendSuccess(
+            'Infracción ' + response.id + ' creada exitosamente'
+          );
+          if (response.fine_id !== null) {
+            this.toastService.sendSuccess(
+              'Multa ' + response.fine_id + ' creada exitosamente'
+            );
+          }
+          this.activeModal.close(response);
         },
         error: (error) => {
           this.toastService.sendError('Error al crear la infracción');

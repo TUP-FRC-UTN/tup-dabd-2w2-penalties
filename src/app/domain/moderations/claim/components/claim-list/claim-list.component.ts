@@ -1,24 +1,20 @@
 import { Component, inject, TemplateRef, ViewChild } from '@angular/core';
 import { NewClaimModalComponent } from '../new-claim-modal/new-claim-modal.component';
 import { Router } from '@angular/router';
-import { SanctionTypeService } from '../../../sanction-type/services/sanction-type.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import {
-  ChargeTypeEnum,
-  SanctionType,
-} from '../../../sanction-type/models/sanction-type.model';
+import { NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { debounceTime, distinctUntilChanged, Observable, Subject } from 'rxjs';
 import {
   MainContainerComponent,
   TableColumn,
   TableComponent,
 } from 'ngx-dabd-grupo01';
-import { SanctionTypeFormComponent } from '../../../sanction-type/components/sanction-type-form/sanction-type-form.component';
 import { CommonModule } from '@angular/common';
 import { GetValueByKeyForEnumPipe } from '../../../../../shared/pipes/get-value-by-key-for-status.pipe';
 import { TruncatePipe } from '../../../../../shared/pipes/truncate.pipe';
 import { ClaimService } from '../../service/claim.service';
 import { ClaimDTO, ClaimStatusEnum } from '../../models/claim.model';
+import { RoleService } from '../../../../../shared/services/role.service';
+import { NewInfractionModalComponent } from '../../../infraction/components/new-infraction-modal/new-infraction-modal.component';
 
 @Component({
   selector: 'app-claim-list',
@@ -30,6 +26,7 @@ import { ClaimDTO, ClaimStatusEnum } from '../../models/claim.model';
     MainContainerComponent,
     GetValueByKeyForEnumPipe,
     TruncatePipe,
+    NgbDropdownModule,
   ],
   templateUrl: './claim-list.component.html',
   styleUrl: './claim-list.component.scss',
@@ -39,6 +36,8 @@ export class ClaimListComponent {
   private readonly router = inject(Router);
   private claimService = inject(ClaimService);
   private modalService = inject(NgbModal);
+
+  private roleService = inject(RoleService);
   ClaimStatusEnum = ClaimStatusEnum;
 
   // Properties:
@@ -46,7 +45,8 @@ export class ClaimListComponent {
   totalItems$: Observable<number> = this.claimService.totalItems$;
   isLoading$: Observable<boolean> = this.claimService.isLoading$;
   searchSubject: Subject<{ key: string; value: any }> = new Subject();
-  checkedClaims: number[] = []
+  checkedClaims: ClaimDTO[] = [];
+  isAdmin: boolean = false;
 
   page: number = 1;
   size: number = 10;
@@ -57,6 +57,7 @@ export class ClaimListComponent {
   @ViewChild('sanctionType') sanctionType!: TemplateRef<any>;
   @ViewChild('date') date!: TemplateRef<any>;
   @ViewChild('claimStatus') claimStatus!: TemplateRef<any>;
+  @ViewChild('infraction') infraction!: TemplateRef<any>;
 
   @ViewChild('check') check!: TemplateRef<any>;
 
@@ -65,10 +66,7 @@ export class ClaimListComponent {
   // Methods:
   ngOnInit(): void {
     this.searchSubject
-      .pipe(
-        debounceTime(200), // Espera 200 ms después de la última emisión
-        distinctUntilChanged() // Solo emite si el valor es diferente al anterior
-      )
+      .pipe(debounceTime(200), distinctUntilChanged())
       .subscribe(({ key, value }) => {
         this.searchParams = { [key]: value };
         this.page = 1;
@@ -76,16 +74,26 @@ export class ClaimListComponent {
       });
 
     this.loadItems();
+
+    this.roleService.currentRole$.subscribe((role: string) => {
+      this.isAdmin = role === 'ADMIN';
+      if (this.isAdmin) {
+        this.columns.unshift({
+          headerName: '',
+          accessorKey: 'sanction_type.created_date',
+          cellRenderer: this.check,
+        });
+      } else {
+        if (this.columns[0]?.headerName === '') {
+          this.columns.shift();
+        }
+      }
+    });
   }
 
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.columns = [
-        {
-          headerName: '',
-          accessorKey: 'sanction_type.created_date',
-          cellRenderer: this.check,
-        },
         { headerName: 'Id', accessorKey: 'id' },
         {
           headerName: 'Alta',
@@ -108,6 +116,11 @@ export class ClaimListComponent {
           headerName: 'Estado',
           accessorKey: 'description',
           cellRenderer: this.claimStatus,
+        },
+        {
+          headerName: 'Infracción',
+          accessorKey: 'description',
+          cellRenderer: this.infraction,
         },
         {
           headerName: 'Acciones',
@@ -141,12 +154,57 @@ export class ClaimListComponent {
     this.searchSubject.next({ key, value: searchValue });
   };
 
-  goToDetails = (id: number): void => {
-    this.router.navigate(['claim', id]);
+  goToDetails = (id: number, mode: 'detail' | 'edit'): void => {
+    this.router.navigate(['claim', id, mode]);
   };
 
   openFormModal(sanctionTypeToEdit: number | null = null): void {
     const modalRef = this.modalService.open(NewClaimModalComponent);
     modalRef.componentInstance.sanctionTypeToEdit = sanctionTypeToEdit;
+  }
+
+  checkClaim(claim: ClaimDTO): void {
+    const index = this.checkedClaims.indexOf(claim);
+
+    if (index !== -1) {
+      this.checkedClaims.splice(index, 1);
+    } else {
+      this.checkedClaims.push(claim);
+    }
+  }
+
+  disbledCheck(claim: ClaimDTO): boolean {
+    if (this.checkedClaims.length == 0) {
+      return false;
+    }
+    if (this.checkedClaims[0].sanction_type.id != claim.sanction_type.id) {
+      return true;
+    }
+    if (this.checkedClaims[0].plot_id !== claim.plot_id) {
+      return true;
+    }
+
+    return false;
+  }
+
+  includesClaimById(claim: ClaimDTO): boolean {
+    return this.checkedClaims.some((c) => c.id === claim.id);
+  }
+
+  openCreateInfractionModal(): void {
+    const modalRef = this.modalService.open(NewInfractionModalComponent);
+    modalRef.componentInstance.claims = this.checkedClaims;
+    modalRef.componentInstance.sanctionTypeNumber =
+      this.checkedClaims[0].sanction_type.id;
+    modalRef.componentInstance.plotId = this.checkedClaims[0].plot_id;
+
+    modalRef.result
+      .then((result) => {
+        if (result) {
+          this.loadItems();
+          this.checkedClaims = [];
+        }
+      })
+      .catch(() => {});
   }
 }
