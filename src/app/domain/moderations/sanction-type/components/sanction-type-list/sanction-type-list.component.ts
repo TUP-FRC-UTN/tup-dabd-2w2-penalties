@@ -68,7 +68,7 @@ export class SanctionTypeListComponent {
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.columns = [
-        { headerName: 'Id', accessorKey: 'id' },
+        { headerName: 'N°', accessorKey: 'id' },
         { headerName: 'Nombre', accessorKey: 'name' },
         {
           headerName: 'Descripción',
