@@ -209,6 +209,21 @@ export class ConstructionDetailComponent implements OnInit {
     }
   }
 
+  onConstructionReview(constructionId: number): void {
+    if (this.construction) {
+      this.constructionService
+        .onReviewConstruction(constructionId)
+        .subscribe(() => {
+          if (this.construction) {
+            this.construction.construction_status = 'ON_REVISION';
+            this.toastService.sendSuccess(
+              'Se envio a revisión la construcción correctamente'
+            );
+          }
+        });
+    }
+  }
+
   onConstructionRejected(constructionId: number, reason: string): void {
     if (this.construction) {
       this.constructionService
@@ -244,6 +259,20 @@ export class ConstructionDetailComponent implements OnInit {
         ) &&
         !this.construction.construction_documentation.some(
           (doc: { state: string }) => doc.state === 'REJECTED'
+        ) || 
+        !(this.CONSTRUCTION_STATUSES_ENUM.ON_REVISION === this.construction?.construction_status)
+      );
+    } else {
+      return false;
+    }
+  }
+
+  isConstructionAbleToReview() {
+    if (this.construction?.construction_documentation &&
+      this.construction.construction_documentation.length > 0) {
+      return (
+        !this.construction.construction_documentation.some(
+          (doc: { state: string }) => doc.state === 'ON_REVISION'
         )
       );
     } else {
@@ -288,5 +317,20 @@ export class ConstructionDetailComponent implements OnInit {
         this.rejectForm.markAllAsTouched();
       }
     };
+  }
+
+  onReviewConstruction() {
+    const modalRef = this.modalService.open(ConfirmAlertComponent);
+    modalRef.componentInstance.alertTitle = 'Confirmación';
+    modalRef.componentInstance.alertMessage = `¿Está seguro de que desea enviar a revisión esta obra?`;
+    modalRef.componentInstance.alertType = 'info';
+
+    modalRef.result
+    .then((result) => {
+      if (result) {
+        this.onConstructionReview(this.construction?.construction_id || 0);
+      }
+    })
+    .catch(() => {});
   }
 }

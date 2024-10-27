@@ -126,6 +126,10 @@
       @else if(construction?.construction_status === 'REJECTED') {
       <i class="bi bi-exclamation-circle"></i>
       La obra ya fue rechazada }
+      <!-- REVIEW -->
+      @else if(construction?.construction_status === 'ON_REVISION') {
+        <i class="bi bi-exclamation-circle"></i>
+        La obra fue enviada a revisión }
       <!-- ALL APPROVED -->
       @else if(isConstructionAbleToApprove()) {
       <i class="bi bi-check-circle"></i>
@@ -140,6 +144,14 @@
     }
     <div>
       @if(mode === "detail") {
+      <button
+        class="btn btn-success me-2"
+        (click)="onReviewConstruction()"
+        [disabled]=" !isConstructionAbleToReview() || construction?.construction_status === 'ON_REVISION'"
+      >
+        <i class="bi bi-clipboard-check"></i>
+        Enviar a revisión
+      </button>
       <button
         class="btn btn-primary me-2"
         (click)="approveConstruction()"
@@ -205,6 +217,9 @@
     [currentConstructionStatus]="construction?.construction_status!"
     (constructionApproved)="
       onConstructionApproved(construction?.construction_id!)
+    "
+      (constructionReview)="
+      onConstructionReview(construction?.construction_id!)
     "
     (constructionRejected)="
       onConstructionRejected(construction?.construction_id!, $event)
