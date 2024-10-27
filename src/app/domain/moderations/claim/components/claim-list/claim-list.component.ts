@@ -1,25 +1,20 @@
 import { Component, inject, TemplateRef, ViewChild } from '@angular/core';
 import { NewClaimModalComponent } from '../new-claim-modal/new-claim-modal.component';
 import { Router } from '@angular/router';
-import { SanctionTypeService } from '../../../sanction-type/services/sanction-type.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import {
-  ChargeTypeEnum,
-  SanctionType,
-} from '../../../sanction-type/models/sanction-type.model';
+import { NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { debounceTime, distinctUntilChanged, Observable, Subject } from 'rxjs';
 import {
   MainContainerComponent,
   TableColumn,
   TableComponent,
 } from 'ngx-dabd-grupo01';
-import { SanctionTypeFormComponent } from '../../../sanction-type/components/sanction-type-form/sanction-type-form.component';
 import { CommonModule } from '@angular/common';
 import { GetValueByKeyForEnumPipe } from '../../../../../shared/pipes/get-value-by-key-for-status.pipe';
 import { TruncatePipe } from '../../../../../shared/pipes/truncate.pipe';
 import { ClaimService } from '../../service/claim.service';
 import { ClaimDTO, ClaimStatusEnum } from '../../models/claim.model';
 import { RoleService } from '../../../../../shared/services/role.service';
+import { NewInfractionModalComponent } from '../../../infraction/components/new-infraction-modal/new-infraction-modal.component';
 
 @Component({
   selector: 'app-claim-list',
@@ -31,14 +26,12 @@ import { RoleService } from '../../../../../shared/services/role.service';
     MainContainerComponent,
     GetValueByKeyForEnumPipe,
     TruncatePipe,
+    NgbDropdownModule,
   ],
   templateUrl: './claim-list.component.html',
   styleUrl: './claim-list.component.scss',
 })
 export class ClaimListComponent {
-  createInfraction() {
-    throw new Error('Method not implemented.');
-  }
   // Services:
   private readonly router = inject(Router);
   private claimService = inject(ClaimService);
@@ -73,10 +66,7 @@ export class ClaimListComponent {
   // Methods:
   ngOnInit(): void {
     this.searchSubject
-      .pipe(
-        debounceTime(200),
-        distinctUntilChanged() 
-      )
+      .pipe(debounceTime(200), distinctUntilChanged())
       .subscribe(({ key, value }) => {
         this.searchParams = { [key]: value };
         this.page = 1;
@@ -164,8 +154,8 @@ export class ClaimListComponent {
     this.searchSubject.next({ key, value: searchValue });
   };
 
-  goToDetails = (id: number): void => {
-    this.router.navigate(['claim', id]);
+  goToDetails = (id: number, mode: 'detail' | 'edit'): void => {
+    this.router.navigate(['claim', id, mode]);
   };
 
   openFormModal(sanctionTypeToEdit: number | null = null): void {
@@ -199,5 +189,22 @@ export class ClaimListComponent {
 
   includesClaimById(claim: ClaimDTO): boolean {
     return this.checkedClaims.some((c) => c.id === claim.id);
+  }
+
+  openCreateInfractionModal(): void {
+    const modalRef = this.modalService.open(NewInfractionModalComponent);
+    modalRef.componentInstance.claims = this.checkedClaims;
+    modalRef.componentInstance.sanctionTypeNumber =
+      this.checkedClaims[0].sanction_type.id;
+    modalRef.componentInstance.plotId = this.checkedClaims[0].plot_id;
+
+    modalRef.result
+      .then((result) => {
+        if (result) {
+          this.loadItems();
+          this.checkedClaims = [];
+        }
+      })
+      .catch(() => {});
   }
 }

@@ -1,25 +1,46 @@
 <ng-template #actionsTemplate let-item>
-  <button class="btn btn-primary btn-sm me-2" (click)="goToDetails(item.id)">
-    Ver más
-  </button>
+  <div class="col">
+    <div ngbDropdown class="d-inline-block">
+      <button
+        type="button"
+        class="btn btn-sm btn-secondary"
+        id="dropdownBasic1"
+        ngbDropdownToggle
+      >
+        <i class="bi bi-three-dots-vertical"></i>
+      </button>
+      <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+        <button ngbDropdownItem (click)="goToDetails(item.id, 'detail')">
+          Ver detalle
+        </button>
+        <button ngbDropdownItem (click)="goToDetails(item.id, 'edit')">
+          Editar
+        </button>
+        @if(isAdmin && item.claim_state === 'SENT') {
+        <button
+          class="text-danger"
+          ngbDropdownItem
+          (click)="goToDetails(item.id, 'edit')"
+        >
+          Eliminar<i class="bi bi-x-circle me-2"></i>
+        </button>
+        }
+      </div>
+    </div>
+  </div>
 </ng-template>
+
 <ng-template #sanctionType let-item>
   {{ item.sanction_type.name }}
 </ng-template>
 
 <ng-template #infraction let-item>
   @if (item.infraction_id) {
-    <a [href]="['/infraction/'+item.infraction_id]">
-      {{  item.infraction_id }}
-
-    </a>
-  }@else {
-    N/A
-  }
+  <a [href]="['/infraction/' + item.infraction_id]">
+    {{ item.infraction_id }}
+  </a>
+  }@else { N/A }
 </ng-template>
-
-
-
 
 <ng-template #date let-item>
   {{ item.created_date | date : "dd/MM/yyyy HH:mm" }}
@@ -70,7 +91,7 @@
     @if(checkedClaims.length!=0){
     <div class="row justify-content-end align-items-center g-2 mb-2">
       <div class="col-2">
-        <button class="btn btn-outline-primary" (click)="createInfraction()">
+        <button class="btn btn-outline-primary" (click)="openCreateInfractionModal()">
           Crear Infracción
         </button>
       </div>

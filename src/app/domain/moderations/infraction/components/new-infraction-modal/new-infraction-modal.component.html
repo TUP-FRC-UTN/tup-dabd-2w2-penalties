@@ -22,6 +22,7 @@
         [(ngModel)]="plotId"
         name="plotIdName"
         required
+        [disabled]="claims.length !== 0"
       >
         @if (plots) { @for (plot of plots; track plot.plot_number) {
         <option value="{{ plot.plot_number }}">
@@ -55,6 +56,7 @@
         [(ngModel)]="sanctionTypeNumber"
         name="santionTypeName"
         required
+        [disabled]="claims.length !== 0"
       >
         @if (sanctionTypes) { @for (sanction of sanctionTypes; track
         sanction.id) {
@@ -93,6 +95,21 @@
       <div class="invalid-feedback">Este campo es obligatorio</div>
       } }
     </div>
+
+    @if (claims.length!=0) {
+
+    <div class="mb-3">
+      <label for="InfractionDescription" class="form-label">Reclamos</label>
+      <ul class="list-group">
+        @for (claim of claims; track $index) {
+        <li class="list-group-item">
+          {{ claim.created_date | date : "dd/MM/yyyy HH:mm" }} -
+          {{ claim.description | truncate : 30 }}
+        </li>
+        }
+      </ul>
+    </div>
+    }
   </form>
 </div>
 <div class="modal-footer">

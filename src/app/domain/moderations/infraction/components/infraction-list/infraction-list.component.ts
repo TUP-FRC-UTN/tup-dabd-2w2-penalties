@@ -6,7 +6,10 @@ import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { InfractionDto } from '../../models/infraction.model';
 import { InfractionServiceService } from '../../services/infraction-service.service';
-import { MainContainerComponent, TableComponent } from '../../../../../../../projects/ngx-dabd-grupo01/src/public-api';
+import {
+  MainContainerComponent,
+  TableComponent,
+} from '../../../../../../../projects/ngx-dabd-grupo01/src/public-api';
 import { TableColumn } from 'ngx-dabd-grupo01';
 
 @Component({
@@ -53,8 +56,8 @@ export class InfractionListComponent {
         { headerName: 'Id', accessorKey: 'id' },
         { headerName: 'Alta', accessorKey: 'created_date' },
         { headerName: 'Descripción', accessorKey: 'description' },
-        { headerName: "Multa", accessorKey: 'fine_id' },
-        { headerName: "Estado", accessorKey: 'infraction_state' },
+        { headerName: 'Multa', accessorKey: 'fine_id' },
+        { headerName: 'Estado', accessorKey: 'infraction_state' },
         { headerName: 'Lote', accessorKey: 'plot_id' },
         {
           headerName: 'Acciones',
@@ -93,6 +96,13 @@ export class InfractionListComponent {
   openFormModal(itemId: number | null = null): void {
     const modalRef = this.modalService.open(NewInfractionModalComponent);
     modalRef.componentInstance.itemId = itemId;
+    modalRef.result
+      .then((result) => {
+        if (result) {
+          this.loadItems();
+        }
+      })
+      .catch(() => {});
   }
 
   setFilterType(type: string): void {
@@ -110,11 +120,9 @@ export class InfractionListComponent {
     this.loadItems();
   }
 
-  onInfoButtonClick() { 
-    console.log("Info button clicked");
+  onInfoButtonClick() {
+    console.log('Info button clicked');
   }
 
-  goToDetails(id: number) {
-
-  }
+  goToDetails(id: number) {}
 }
