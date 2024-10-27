@@ -1,3 +1,10 @@
-<app-custom-nav-bar />
-<router-outlet />
-<app-toasts aria-live="polite" aria-atomic="true"></app-toasts>
+<!--todo: change this back to  true-->
+@if (!changeService.getBlack()) {
+  <app-black-navbar></app-black-navbar>
+  <app-toasts aria-live="polite" aria-atomic="true"></app-toasts>
+} @else {
+  <app-custom-nav-bar/>
+  <router-outlet/>
+  <app-toasts aria-live="polite" aria-atomic="true"></app-toasts>
+}
+

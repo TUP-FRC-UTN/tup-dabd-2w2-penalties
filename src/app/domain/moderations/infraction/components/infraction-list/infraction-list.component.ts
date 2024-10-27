@@ -1,6 +1,5 @@
 import { Component, inject, TemplateRef, ViewChild } from '@angular/core';
 import { NewInfractionModalComponent } from '../new-infraction-modal/new-infraction-modal.component';
-import { TableColumn } from 'ngx-dabd-grup01';
 import { FineService } from '../../../fine/services/fine.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
@@ -8,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { InfractionDto } from '../../models/infraction.model';
 import { InfractionServiceService } from '../../services/infraction-service.service';
 import { MainContainerComponent, TableComponent } from '../../../../../../../projects/ngx-dabd-grupo01/src/public-api';
+import {TableColumn} from "ngx-dabd-grupo01";
 
 @Component({
   selector: 'app-infraction-list',
@@ -115,7 +115,7 @@ export class InfractionListComponent {
     this.loadItems();
   }
 
-  onInfoButtonClick() { 
+  onInfoButtonClick() {
     console.log("Info button clicked");
   }
 
