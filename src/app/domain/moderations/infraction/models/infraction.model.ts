@@ -1,4 +1,4 @@
-import { Claim } from '../../claim/models/claim.model';
+import { ClaimDTO } from '../../claim/models/claim.model';
 import { EntityBase } from '../../../../shared/models/entity-base.model';
 
 export interface InfractionDto {
@@ -9,8 +9,9 @@ export interface InfractionDto {
 }
 
 export interface InfractionModel extends EntityBase {
-  plotId: number;
+  plot_id: number;
   description: string;
   sanctionTypeId: number;
-  claimsId: number[];
+  claims: ClaimDTO[];
+  fine_id: number;
 }

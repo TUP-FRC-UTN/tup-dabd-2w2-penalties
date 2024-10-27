@@ -20,7 +20,6 @@ import { ConfirmAlertComponent } from '../../../../../../../projects/ngx-dabd-gr
     CommonModule,
     FormsModule,
     MainContainerComponent,
-    TableComponent,
     NgbTooltipModule,
     GetValueByKeyForEnumPipe,
   ],

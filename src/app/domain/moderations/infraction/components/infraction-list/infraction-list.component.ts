@@ -6,8 +6,11 @@ import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { InfractionDto } from '../../models/infraction.model';
 import { InfractionServiceService } from '../../services/infraction-service.service';
-import { MainContainerComponent, TableComponent } from '../../../../../../../projects/ngx-dabd-grupo01/src/public-api';
-import {TableColumn} from "ngx-dabd-grupo01";
+import {
+  MainContainerComponent,
+  TableComponent,
+} from '../../../../../../../projects/ngx-dabd-grupo01/src/public-api';
+import { TableColumn } from 'ngx-dabd-grupo01';
 
 @Component({
   selector: 'app-infraction-list',
@@ -50,17 +53,12 @@ export class InfractionListComponent {
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.columns = [
-        { headerName: 'Id', accessorKey: 'construction_id' },
-        { headerName: 'Descripción', accessorKey: 'project_description' },
+        { headerName: 'Id', accessorKey: 'id' },
+        { headerName: 'Alta', accessorKey: 'created_date' },
+        { headerName: 'Descripción', accessorKey: 'description' },
+        { headerName: 'Multa', accessorKey: 'fine_id' },
+        { headerName: 'Estado', accessorKey: 'infraction_state' },
         { headerName: 'Lote', accessorKey: 'plot_id' },
-        { headerName: 'Inicio', accessorKey: 'planned_start_date' },
-        { headerName: 'Finalización', accessorKey: 'planned_end_date' },
-        { headerName: 'Nombre', accessorKey: 'project_name' },
-        { headerName: 'Dirección', accessorKey: 'project_address' },
-        {
-          headerName: 'Estado',
-          accessorKey: 'construction_status',
-        },
         {
           headerName: 'Acciones',
           accessorKey: 'actions',
@@ -98,6 +96,13 @@ export class InfractionListComponent {
   openFormModal(itemId: number | null = null): void {
     const modalRef = this.modalService.open(NewInfractionModalComponent);
     modalRef.componentInstance.itemId = itemId;
+    modalRef.result
+      .then((result) => {
+        if (result) {
+          this.loadItems();
+        }
+      })
+      .catch(() => {});
   }
 
   setFilterType(type: string): void {
@@ -116,10 +121,8 @@ export class InfractionListComponent {
   }
 
   onInfoButtonClick() {
-    console.log("Info button clicked");
+    console.log('Info button clicked');
   }
 
-  goToDetails(id: number) {
-
-  }
+  goToDetails(id: number) {}
 }

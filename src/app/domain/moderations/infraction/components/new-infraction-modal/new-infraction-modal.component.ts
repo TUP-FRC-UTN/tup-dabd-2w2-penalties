@@ -1,4 +1,11 @@
-import { Component, inject, TemplateRef } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  inject,
+  Input,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import {
   ModalDismissReasons,
   NgbActiveModal,
@@ -7,18 +14,32 @@ import {
 } from '@ng-bootstrap/ng-bootstrap';
 import { CadastreService } from '../../../../cadastre/services/cadastre.service';
 import { Plot } from '../../../../cadastre/plot/models/plot.model';
-import { FormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { SanctionType } from '../../../sanction-type/models/sanction-type.model';
 import { SanctionTypeService } from '../../../sanction-type/services/sanction-type.service';
 import { InfractionServiceService } from '../../services/infraction-service.service';
 import { InfractionDto } from '../../models/infraction.model';
-import { NgClass } from '@angular/common';
+import { CommonModule, NgClass } from '@angular/common';
 import { ToastService } from '../../../../../../../projects/ngx-dabd-grupo01/src/public-api';
+import { ClaimDTO } from '../../../claim/models/claim.model';
+import { TruncatePipe } from '../../../../../shared/pipes/truncate.pipe';
 
 @Component({
   selector: 'app-new-infraction-modal',
   standalone: true,
-  imports: [NgbInputDatepicker, FormsModule, NgClass],
+  imports: [
+    NgbInputDatepicker,
+    FormsModule,
+    NgClass,
+    CommonModule,
+    ReactiveFormsModule,
+    TruncatePipe,
+  ],
   templateUrl: './new-infraction-modal.component.html',
   styleUrl: './new-infraction-modal.component.scss',
 })
@@ -35,10 +56,11 @@ export class NewInfractionModalComponent {
   plots: Plot[] | undefined;
   sanctionTypes: SanctionType[] | undefined;
 
-  claims: number[] = [];
-  sanctionTypeNumber: number | undefined;
+  @Input() claims: ClaimDTO[] = [];
+  @Input() sanctionTypeNumber: number | undefined;
+  @Input() plotId: number | undefined;
+
   description: string | undefined;
-  plotId: number | undefined;
 
   // Modal logic
   private modalService = inject(NgbModal);
@@ -58,16 +80,7 @@ export class NewInfractionModalComponent {
       error: (error) => {},
     });
 
-    this.modalService
-      .open(content, { ariaLabelledBy: 'modal-basic-title' })
-      .result.then(
-        (result) => {
-          this.closeResult = `Closed with: ${result}`;
-        },
-        (reason) => {
-          this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-        }
-      );
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' });
   }
 
   private getDismissReason(reason: any): string {
@@ -81,29 +94,26 @@ export class NewInfractionModalComponent {
     }
   }
 
-  addClaim(id: number) {
-    const index = this.claims.indexOf(id);
-
-    if (index !== -1) {
-      this.claims.splice(index, 1);
-    } else {
-      this.claims.push(id);
-    }
-  }
-
   submitInfraction() {
     if (this.plotId && this.sanctionTypeNumber && this.description) {
       const newInfraction: InfractionDto = {
         plotId: this.plotId,
         description: this.description,
         sanctionTypeId: this.sanctionTypeNumber,
-        claimsId: this.claims,
+        claimsId: this.claims.map((claim) => claim.id),
       };
 
       this.infractionService.createInfraction(newInfraction).subscribe({
         next: (response) => {
-          this.toastService.sendSuccess('Infracción creada exitosamente');
-          this.activeModal.close();
+          this.toastService.sendSuccess(
+            'Infracción ' + response.id + ' creada exitosamente'
+          );
+          if (response.fine_id !== null) {
+            this.toastService.sendSuccess(
+              'Multa ' + response.fine_id + ' creada exitosamente'
+            );
+          }
+          this.activeModal.close(response);
         },
         error: (error) => {
           this.toastService.sendError('Error al crear la infracción');

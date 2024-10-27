@@ -46,6 +46,7 @@ export class ConstructionDocumentationListComponent {
   @Output() constructionApproved = new EventEmitter();
   @Output() constructionRejected = new EventEmitter();
   @Output() constructionUpdated = new EventEmitter();
+  @Output() constructionReview = new EventEmitter();
 
   // Services:
   private modalService = inject(NgbModal);
