@@ -24,7 +24,7 @@ export class ClaimService {
   private isLoadingSubject = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoadingSubject.asObservable();
 
-  private oneClaim = new BehaviorSubject<ClaimDTO|undefined>(undefined);
+  private oneClaim = new BehaviorSubject<ClaimDTO | undefined>(undefined);
   oneClaim$ = this.oneClaim.asObservable();
 
   setItems(items: ClaimDTO[]): void {
@@ -48,7 +48,7 @@ export class ClaimService {
     limit: number,
     searchParams: any = {}
   ): Observable<{ items: ClaimDTO[]; total: number }> {
-    this.isLoadingSubject.next(true); // Iniciar loading
+    this.isLoadingSubject.next(true);
     let params = new HttpParams()
       .set('page', (page - 1).toString())
       .set('size', limit.toString());
@@ -60,7 +60,7 @@ export class ClaimService {
     });
 
     return this.http
-      .get<any>(`${this.apiUrl}/claims/all`, { params })
+      .get<any>(`${this.apiUrl}/claims/pageable`, { params })
       .pipe(
         map((data) => {
           const items = data.content || [];
@@ -79,5 +79,4 @@ export class ClaimService {
       })
     );
   }
-
 }

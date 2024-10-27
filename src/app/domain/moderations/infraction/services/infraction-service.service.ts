@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { InfractionDto } from '../models/infraction.model';
+import { InfractionDto, InfractionModel } from '../models/infraction.model';
 import { BehaviorSubject, finalize, map, Observable } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 
@@ -55,8 +55,8 @@ export class InfractionServiceService {
     );
   }
 
-  createInfraction(infraction: InfractionDto): Observable<any> {
-    return this.http.post(this.apiUrl, infraction, {
+  createInfraction(infraction: InfractionDto): Observable<InfractionModel> {
+    return this.http.post<InfractionModel>(this.apiUrl, infraction, {
       headers: {
         'Content-Type': 'application/json',
       },
