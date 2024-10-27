@@ -61,20 +61,25 @@
 </ng-template>
 
 <ng-template #check let-item>
-  @if (item.claim_status ==='SENT') {
-
-  <div class="form-check">
-    <input
-      class="form-check-input"
-      type="checkbox"
-      value=""
-      id="flexCheckChecked"
-      [checked]="includesClaimById(item)"
-      (click)="checkClaim(item)"
-      [disabled]="disbledCheck(item)"
-    />
+  <div class="d-inline-flex align-items-center">
+    <div
+      class="form-check me-2"
+      [ngClass]="{
+        invisible: !(item.claim_status === 'SENT' && role === 'ADMIN')
+      }"
+    >
+      <input
+        class="form-check-input"
+        type="checkbox"
+        value=""
+        id="flexCheckChecked"
+        [checked]="includesClaimById(item)"
+        (click)="checkClaim(item)"
+        [disabled]="disbledCheck(item)"
+      />
+    </div>
+    <span>{{ item.id }}</span>
   </div>
-  }
 </ng-template>
 
 <ng-template #description let-item>

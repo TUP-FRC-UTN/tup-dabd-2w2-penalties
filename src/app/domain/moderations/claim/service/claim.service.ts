@@ -67,6 +67,21 @@ export class ClaimService {
         })
       );
   }
+
+  disapproveClaim(claimId: number, userId: number): Observable<ClaimDTO> {
+    return this.http
+      .put<ClaimDTO>(`${this.apiUrl}/claims/${claimId}/disapprove`, {
+        user_id: userId,
+      })
+      .pipe(
+        map((newItem) => {
+          return newItem;
+        }),
+        catchError((error) => {
+          return throwError(() => new Error('Error en actualización de multa'));
+        })
+      );
+  }
   getPaginatedClaims(
     page: number,
     limit: number,

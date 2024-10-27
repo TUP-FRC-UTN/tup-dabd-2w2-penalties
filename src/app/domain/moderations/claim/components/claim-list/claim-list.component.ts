@@ -10,9 +10,11 @@ import { Router } from '@angular/router';
 import { NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { debounceTime, distinctUntilChanged, Observable, Subject } from 'rxjs';
 import {
+  ConfirmAlertComponent,
   MainContainerComponent,
   TableColumn,
   TableComponent,
+  ToastService,
 } from 'ngx-dabd-grupo01';
 import { CommonModule } from '@angular/common';
 import { GetValueByKeyForEnumPipe } from '../../../../../shared/pipes/get-value-by-key-for-status.pipe';
@@ -44,6 +46,7 @@ export class ClaimListComponent {
   private readonly router = inject(Router);
   private claimService = inject(ClaimService);
   private modalService = inject(NgbModal);
+  private readonly toastService = inject(ToastService);
 
   private roleService = inject(RoleService);
   ClaimStatusEnum = ClaimStatusEnum;
@@ -93,17 +96,7 @@ export class ClaimListComponent {
 
     this.roleService.currentRole$.subscribe((role: string) => {
       this.role = role;
-      if (this.role === 'ADMIN') {
-        this.columns.unshift({
-          headerName: '',
-          accessorKey: 'sanction_type.created_date',
-          cellRenderer: this.check,
-        });
-      } else {
-        if (this.columns[0]?.headerName === '') {
-          this.columns.shift();
-        }
-      }
+
       this.loadItems();
     });
 
@@ -124,7 +117,11 @@ export class ClaimListComponent {
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.columns = [
-        { headerName: 'Nº de Multa', accessorKey: 'id' },
+        {
+          headerName: 'Nº de Multa',
+          accessorKey: 'id',
+          cellRenderer: this.check,
+        },
         {
           headerName: 'Alta',
           accessorKey: 'sanction_type.created_date',
@@ -161,7 +158,7 @@ export class ClaimListComponent {
     });
   }
 
-  loadItems(): void {
+  updateFiltersAccordingToUser() {
     if (this.role !== 'ADMIN') {
       this.searchParams = {
         ...this.searchParams,
@@ -176,7 +173,10 @@ export class ClaimListComponent {
         delete this.searchParams['plotsIds'];
       }
     }
+  }
 
+  loadItems(): void {
+    this.updateFiltersAccordingToUser();
     this.claimService
       .getPaginatedClaims(this.page, this.size, this.searchParams)
       .subscribe((response) => {
@@ -279,7 +279,23 @@ export class ClaimListComponent {
     this.loadItems();
   }
 
-  disapproveClaim(id: number) {
-    throw new Error('Method not implemented.');
+  disapproveClaim(claimId: number) {
+    const modalRef = this.modalService.open(ConfirmAlertComponent);
+    modalRef.componentInstance.alertTitle = 'Confirmación';
+    modalRef.componentInstance.alertMessage = `¿Estás seguro de que desea desaprobar el reclamo?`;
+
+    modalRef.result.then((result) => {
+      if (result) {
+        this.claimService.disapproveClaim(claimId, this.userId!).subscribe({
+          next: () => {
+            this.toastService.sendSuccess(`Reclamo desaprobado exitosamente.`);
+            this.loadItems();
+          },
+          error: () => {
+            this.toastService.sendError(`Error desaprobando reclamo.`);
+          },
+        });
+      }
+    });
   }
 }

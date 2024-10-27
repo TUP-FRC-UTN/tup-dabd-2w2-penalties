@@ -138,7 +138,7 @@ export class ClaimDetailComponent implements OnInit {
   saveEdit() {
     const modalRef = this.modalService.open(ConfirmAlertComponent);
     modalRef.componentInstance.alertTitle = 'Confirmación';
-    modalRef.componentInstance.alertMessage = `¿Estás seguro de que desea modificar el tipo?`;
+    modalRef.componentInstance.alertMessage = `¿Estás seguro de que desea modificar el reclamo?`;
 
     console.log(this.claim);
 
@@ -146,13 +146,12 @@ export class ClaimDetailComponent implements OnInit {
       if (result) {
         this.claimService.updateClaim(this.claim!, this.userId!).subscribe({
           next: () => {
-            this.toastService.sendSuccess(`Tipo actualizado exitosamente.`);
+            this.toastService.sendSuccess(`Reclamo actualizado exitosamente.`);
             this.editing = false;
           },
           error: () => {
-            this.toastService.sendError(`Error actualizando tipo.`);
+            this.toastService.sendError(`Error actualizando reclamo.`);
 
-            console.error('Error al actualizar el tipo');
           },
         });
       }
