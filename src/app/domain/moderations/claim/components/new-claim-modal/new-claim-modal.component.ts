@@ -115,7 +115,6 @@ export class NewClaimModalComponent implements OnInit {
       this.selectedFiles.forEach((file, index) => {
         formData.append(`files`, file, file.name);
       });
-      
 
       // Agregar imagen capturada si existe
       const capturedImage = this.imageForm.get('image')?.value;
@@ -127,14 +126,15 @@ export class NewClaimModalComponent implements OnInit {
       this.claimService.createClaim(formData).subscribe({
         next: (response) => {
           this.activeModal.close(response);
-          this.toastService.sendSuccess("Se creó el reclamo " + response.id+".")
-
+          this.toastService.sendSuccess(
+            'Se creó el reclamo ' + response.id + '.'
+          );
 
           console.log('Reclamo creado con éxito', response);
         },
         error: (error) => {
-          this.toastService.sendError("Error creando el reclamo.")
-          
+          this.toastService.sendError('Error creando el reclamo.');
+
           console.error('Error al crear el reclamo:', error);
         },
       });

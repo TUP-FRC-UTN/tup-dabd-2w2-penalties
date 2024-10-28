@@ -7,7 +7,6 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core';
-import { TableColumn } from 'ngx-dabd-grup01';
 import { TableComponent } from '../../../../../../../projects/ngx-dabd-grupo01/src/lib/table/table.component';
 import { ClaimService } from '../../../claim/service/claim.service';
 import { Router } from '@angular/router';
@@ -15,6 +14,7 @@ import { GetValueByKeyForEnumPipe } from '../../../../../shared/pipes/get-value-
 import { CommonModule, DatePipe } from '@angular/common';
 import { ClaimStatusEnum } from '../../../claim/models/claim.model';
 import { FormsModule } from '@angular/forms';
+import { TableColumn } from 'ngx-dabd-grupo01';
 
 @Component({
   selector: 'app-infraction-claim-list',
@@ -46,9 +46,11 @@ export class InfractionClaimListComponent implements AfterViewInit, OnInit {
 
   // Methods:
   ngOnInit(): void {
-    this.claimService.getClaimByInfractionId(this.infractionId!).subscribe((claims) => {
-      this.claims = claims;
-    });
+    this.claimService
+      .getClaimByInfractionId(this.infractionId!)
+      .subscribe((claims) => {
+        this.claims = claims;
+      });
   }
 
   ngAfterViewInit(): void {

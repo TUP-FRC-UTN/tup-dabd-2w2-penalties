@@ -141,7 +141,6 @@ export class ClaimDetailComponent implements OnInit {
     modalRef.componentInstance.alertTitle = 'Confirmación';
     modalRef.componentInstance.alertMessage = `¿Estás seguro de que desea modificar el reclamo?`;
 
-    console.log(this.claim);
 
     modalRef.result.then((result) => {
       if (result) {
