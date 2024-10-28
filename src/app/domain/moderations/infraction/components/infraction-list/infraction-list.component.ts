@@ -1,25 +1,37 @@
 import { Component, inject, TemplateRef, ViewChild } from '@angular/core';
 import { NewInfractionModalComponent } from '../new-infraction-modal/new-infraction-modal.component';
 import { FineService } from '../../../fine/services/fine.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { InfractionDto } from '../../models/infraction.model';
+import {
+  InfractionDto,
+  InfractionResponseDTO,
+  InfractionStatusEnum,
+} from '../../models/infraction.model';
 import { InfractionServiceService } from '../../services/infraction-service.service';
 import {
   MainContainerComponent,
   TableComponent,
 } from '../../../../../../../projects/ngx-dabd-grupo01/src/public-api';
 import { TableColumn } from 'ngx-dabd-grupo01';
+import { InfractionListInfoComponent } from '../infraction-list-info/infraction-list-info.component';
+import { FormsModule } from '@angular/forms';
+import { GetValueByKeyForEnumPipe } from '../../../../../shared/pipes/get-value-by-key-for-status.pipe';
+import { RoleService } from '../../../../../shared/services/role.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-infraction-list',
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     NewInfractionModalComponent,
     MainContainerComponent,
     TableComponent,
+    NgbDropdownModule,
+    GetValueByKeyForEnumPipe,
   ],
   templateUrl: './infraction-list.component.html',
   styleUrl: './infraction-list.component.scss',
@@ -28,36 +40,78 @@ export class InfractionListComponent {
   // Services:
   private infractionService = inject(InfractionServiceService);
   private modalService = inject(NgbModal);
+  private router = inject(Router); 
+  private roleService = inject(RoleService);
 
   // Properties:
-  items$: Observable<InfractionDto[]> = this.infractionService.items$;
+  items$: Observable<InfractionResponseDTO[]> = this.infractionService.items$;
   totalItems$: Observable<number> = this.infractionService.totalItems$;
   isLoading$: Observable<boolean> = this.infractionService.isLoading$;
+
+  InfractionStatusEnum = InfractionStatusEnum;
 
   page: number = 1;
   size: number = 10;
   searchParams: { [key: string]: string | string[] } = {};
 
+  // Role
+  role: string = '';
+  userId: number | undefined;
+  userPlotsIds: number[] = [];
+
   // Filtro dinámico
   filterType: string = '';
+  startDate: string = '';
+  endDate: string = '';
+  status: string = '';
 
   @ViewChild('actionsTemplate') actionsTemplate!: TemplateRef<any>;
+  @ViewChild('statusTemplate') statusTemplate!: TemplateRef<any>;
+  @ViewChild('dateTemplate') dateTemplate!: TemplateRef<any>;
+  @ViewChild('fineTemplate') fineTemplate!: TemplateRef<any>;
 
   columns: TableColumn[] = [];
 
   // Methods:
   ngOnInit(): void {
+    this.roleService.currentUserId$.subscribe((userId: number) => {
+      this.userId = userId;
+      this.loadItems();
+    });
+
+    this.roleService.currentLotes$.subscribe((plots: number[]) => {
+      this.userPlotsIds = plots;
+      this.loadItems();
+    });
+
+    this.roleService.currentRole$.subscribe((role: string) => {
+      this.role = role;
+      this.loadItems();
+    });
+
     this.loadItems();
   }
 
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.columns = [
-        { headerName: 'Id', accessorKey: 'id' },
-        { headerName: 'Alta', accessorKey: 'created_date' },
+        { headerName: 'N.° Infracción', accessorKey: 'id' },
+        {
+          headerName: 'Alta',
+          accessorKey: 'created_date',
+          cellRenderer: this.dateTemplate,
+        },
         { headerName: 'Descripción', accessorKey: 'description' },
-        { headerName: 'Multa', accessorKey: 'fine_id' },
-        { headerName: 'Estado', accessorKey: 'infraction_state' },
+        {
+          headerName: 'N.° Multa',
+          accessorKey: 'fine_id',
+          cellRenderer: this.fineTemplate,
+        },
+        {
+          headerName: 'Estado',
+          accessorKey: 'infraction_state',
+          cellRenderer: this.statusTemplate,
+        },
         { headerName: 'Lote', accessorKey: 'plot_id' },
         {
           headerName: 'Acciones',
@@ -110,19 +164,32 @@ export class InfractionListComponent {
   }
 
   applyFilters(): void {
+    if (this.filterType === 'fecha') {
+      this.searchParams = {
+        startDate: this.startDate,
+        endDate: this.endDate,
+      };
+    } else if (this.filterType === 'estado') {
+      this.searchParams = { claimStatus: [this.status] };
+    }
     this.page = 1;
     this.loadItems();
   }
 
   clearFilters(): void {
     this.filterType = '';
+    this.startDate = '';
+    this.endDate = '';
+    this.status = '';
     this.searchParams = {};
     this.loadItems();
   }
 
   onInfoButtonClick() {
-    console.log('Info button clicked');
+    this.modalService.open(InfractionListInfoComponent);
   }
 
-  goToDetails(id: number) {}
+  goToDetails(id: number) {
+    this.router.navigate(['/infraction', id]);
+  }
 }

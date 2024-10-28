@@ -18,6 +18,7 @@ import { CadastreService } from '../../../../cadastre/services/cadastre.service'
 import { Plot } from '../../../../cadastre/plot/models/plot.model';
 import { RoleService } from '../../../../../shared/services/role.service';
 import { firstValueFrom } from 'rxjs';
+import { ClaimDocumentsComponent } from "../claim-documents/claim-documents.component";
 
 @Component({
   selector: 'app-claim-detail',
@@ -29,7 +30,8 @@ import { firstValueFrom } from 'rxjs';
     NgbTooltipModule,
     GetValueByKeyForEnumPipe,
     SanctionTypeSelectComponent,
-  ],
+    ClaimDocumentsComponent
+],
   templateUrl: './claim-detail.component.html',
   styleUrl: './claim-detail.component.scss',
 })
@@ -93,7 +95,6 @@ export class ClaimDetailComponent implements OnInit {
           this.editing &&
           claim?.claim_status !== ('SENT' as ClaimStatusEnum)
         ) {
-          console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
           this.router.navigate(['claim', claim?.id, 'detail']);
         }
       } catch (error) {

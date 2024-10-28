@@ -15,3 +15,20 @@ export interface InfractionModel extends EntityBase {
   claims: ClaimDTO[];
   fine_id: number;
 }
+
+export interface InfractionResponseDTO {
+  id: number;
+  fine_id: number;
+  createdBy: number;
+  created_date: Date;
+  description: string;
+  infraction_state: InfractionStatusEnum;
+  plot_id: number;
+}
+
+export enum InfractionStatusEnum {
+  ON_APPEALING = 'En apelación',
+  APPROVED = 'Aprobado',
+  REJECTED = 'Desestimado',
+  CREATED = 'Creado',
+}

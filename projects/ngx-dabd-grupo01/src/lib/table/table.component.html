@@ -93,7 +93,7 @@
         <td>
           @if(!column.cellRenderer) {
           <ng-container>
-            {{ item[column.accessorKey] }}
+            {{ getNestedValue(item, column.accessorKey) }}
           </ng-container>
           } @else {
           <ng-container
@@ -120,7 +120,7 @@
 
 @if(pagination) {
 <div class="d-flex justify-content-between align-items-center mt-3">
-  <div class="form-group mb-3">
+  <div class="form-group">
     <select
       id="itemsPerPage"
       class="form-select"
@@ -132,11 +132,16 @@
       }
     </select>
   </div>
-  <ngb-pagination
-    [collectionSize]="pagination.totalItems"
-    [(page)]="pagination.page"
-    [pageSize]="pagination.size"
-    (pageChange)="onPageChange($event)"
-  ></ngb-pagination>
+  <div class="d-flex">
+    <ngb-pagination
+      [collectionSize]="pagination.totalItems"
+      [(page)]="pagination.page"
+      [pageSize]="pagination.size"
+      (pageChange)="onPageChange($event)"
+    ></ngb-pagination>
+    <button class="btn btn-secondary ms-3 mb-3" (click)="onInfoButtonClick()">
+      <i class="bi bi-info-circle"></i>
+    </button>
+  </div>
 </div>
 }
