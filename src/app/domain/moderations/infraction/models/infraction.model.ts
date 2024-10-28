@@ -24,6 +24,7 @@ export interface InfractionResponseDTO {
   description: string;
   infraction_state: InfractionStatusEnum;
   plot_id: number;
+  claims: ClaimDTO[];
 }
 
 export enum InfractionStatusEnum {

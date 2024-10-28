@@ -56,18 +56,11 @@ export class WorkerFormComponent {
         validations: { required: true },
       },
       {
-        name: 'contact',
-        label: 'Contact',
-        type: 'text',
-        validations: { required: true },
-        fieldSpan: 1,
-      },
-      {
         name: 'address',
         label: 'Address',
         type: 'text',
         validations: { required: true },
-        fieldSpan: 1,
+        fieldSpan: 2,
       },
       {
         name: 'cuil',

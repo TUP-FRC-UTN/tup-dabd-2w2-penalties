@@ -32,22 +32,22 @@ export class ConstructionWorkersComponent implements AfterViewInit {
   // Inputs:
   @Input() workers: any[] = [];
   @Input() constructionId: number | undefined;
-  @Input() isOwner: boolean = false; 
-  // Services:
 
+  // Services:
   private modalService = inject(NgbModal);
   private workerService = inject(WorkerService);
   private constructionService = inject(ConstructionService);
   toastService = inject(ToastService);
+  roleService = inject(RoleService);
 
   // Properties:
   @ViewChild('actionsTemplate') actionsTemplate!: TemplateRef<any>;
 
   columns: TableColumn[] = [];
 
-  // Methods:
+  role = '';
 
-  constructor(private roleService: RoleService) {}
+  // Methods:
 
   ngAfterViewInit(): void {
     setTimeout(() => {
@@ -106,8 +106,8 @@ export class ConstructionWorkersComponent implements AfterViewInit {
   }
 
   ngOnInit() {
-    this.roleService.currentRole$.subscribe(role => {
-      this.isOwner = (role === 'OWNER');
+    this.roleService.currentRole$.subscribe((role) => {
+      this.role = role;
     });
   }
 }

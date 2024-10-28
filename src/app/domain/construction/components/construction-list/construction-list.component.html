@@ -16,10 +16,20 @@
         <i class="bi bi-three-dots-vertical"></i>
       </button>
       <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-        <button ngbDropdownItem (click)="goToDetails(item.construction_id, 'detail')">
+        <button
+          ngbDropdownItem
+          (click)="goToDetails(item.construction_id, 'detail')"
+        >
           Ver detalle
         </button>
-        <button ngbDropdownItem (click)="goToDetails(item.construction_id, 'edit')">Editar</button>
+        @if(role !== "ADMIN") {
+        <button
+          ngbDropdownItem
+          (click)="goToDetails(item.construction_id, 'edit')"
+        >
+          Editar
+        </button>
+        }
       </div>
     </div>
   </div>
@@ -39,6 +49,7 @@
     [isLoading]="(isLoading$ | async) || false"
     (searchValueChange)="onSearchValueChange($event)"
     (headerButtonClick)="openFormModal()"
+    [showHeaderButton]="role === 'OWNER'"
   >
     <div class="d-flex justify-content-between align-items-center mb-3">
       <div class="btn-group me-5" role="group">

@@ -23,10 +23,9 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './infraction-claim-list.component.html',
   styleUrl: './infraction-claim-list.component.scss',
 })
-export class InfractionClaimListComponent implements AfterViewInit, OnInit {
+export class InfractionClaimListComponent implements AfterViewInit {
   // Inputs:
   @Input() claims: any[] = [];
-  @Input() infractionId: number | undefined;
 
   // Services:
   claimService = inject(ClaimService);
@@ -45,12 +44,6 @@ export class InfractionClaimListComponent implements AfterViewInit, OnInit {
   ClaimStatusEnum = ClaimStatusEnum;
 
   // Methods:
-  ngOnInit(): void {
-    this.claimService.getClaimByInfractionId(this.infractionId!).subscribe((claims) => {
-      this.claims = claims;
-    });
-  }
-
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.columns = [

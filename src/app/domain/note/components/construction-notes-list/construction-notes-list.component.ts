@@ -2,12 +2,14 @@ import {
   Component,
   inject,
   Input,
+  OnInit,
   TemplateRef,
   ViewChild,
 } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConstructionNotesFormComponent } from '../construction-notes-form/construction-notes-form.component';
 import { TableColumn, TableComponent } from 'ngx-dabd-grupo01';
+import { RoleService } from '../../../../shared/services/role.service';
 
 @Component({
   selector: 'app-construction-notes-list',
@@ -16,7 +18,7 @@ import { TableColumn, TableComponent } from 'ngx-dabd-grupo01';
   templateUrl: './construction-notes-list.component.html',
   styleUrl: './construction-notes-list.component.scss',
 })
-export class ConstructionNotesListComponent {
+export class ConstructionNotesListComponent implements OnInit {
   // Inputs:
   @Input() notes: any[] = [];
 
@@ -27,6 +29,16 @@ export class ConstructionNotesListComponent {
   @ViewChild('actionsTemplate') actionsTemplate!: TemplateRef<any>;
 
   columns: TableColumn[] = [];
+
+  roleService = inject(RoleService);
+
+  role = '';
+
+  ngOnInit(): void {
+    this.roleService.currentRole$.subscribe((role) => {
+      this.role = role;
+    });
+  }
 
   // Methods:
   ngAfterViewInit(): void {
