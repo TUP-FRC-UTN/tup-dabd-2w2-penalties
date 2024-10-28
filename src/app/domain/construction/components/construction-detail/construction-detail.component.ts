@@ -36,6 +36,7 @@ import {
   ToastService,
 } from 'ngx-dabd-grupo01';
 import { GetValueByKeyForEnumPipe } from '../../../../shared/pipes/get-value-by-key-for-status.pipe';
+import { RoleService } from '../../../../shared/services/role.service';
 
 @Component({
   selector: 'app-construction-detail',
@@ -63,8 +64,10 @@ export class ConstructionDetailComponent implements OnInit {
   private workerService = inject(WorkerService);
   private modalService = inject(NgbModal);
   private toastService = inject(ToastService);
+  private roleService = inject(RoleService);
 
   // Properties:
+  editConstruction!: ConstructionUpdateRequestDto;
   construction: ConstructionResponseDto | undefined;
   activeTab: ConstructionTab = 'documentation';
   selectedStatus!: ConstructionStatus;
@@ -75,6 +78,8 @@ export class ConstructionDetailComponent implements OnInit {
   confirmAlertContentTemplate!: TemplateRef<any>;
   rejectForm: FormGroup;
   mode: 'detail' | 'edit' = 'detail';
+
+  role = '';
 
   constructor(private fb: FormBuilder) {
     this.rejectForm = this.fb.group({
@@ -87,6 +92,10 @@ export class ConstructionDetailComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.roleService.currentRole$.subscribe((role) => {
+      this.role = role;
+    });
+
     this.activatedRoute.params.subscribe((params) => {
       const id = params['id'];
       const mode = params['mode'];
@@ -117,6 +126,28 @@ export class ConstructionDetailComponent implements OnInit {
         this.selectedStatus =
           (construction?.construction_status as ConstructionStatus) ||
           'PLANNED';
+        const splittedStartDate = construction?.planned_start_date?.split('/');
+        const planned_start_date =
+          splittedStartDate?.[2] +
+            '-' +
+            splittedStartDate?.[1] +
+            '-' +
+            splittedStartDate?.[0] || '';
+
+        const splittedEndDate = construction?.planned_end_date?.split('/');
+        const planned_end_date =
+          splittedEndDate?.[2] +
+            '-' +
+            splittedEndDate?.[1] +
+            '-' +
+            splittedEndDate?.[0] || '';
+
+        this.editConstruction = {
+          project_name: construction?.project_name || '',
+          description: construction?.project_description || '',
+          planned_start_date: planned_start_date,
+          planned_end_date: planned_end_date,
+        };
       });
   }
 
@@ -147,27 +178,6 @@ export class ConstructionDetailComponent implements OnInit {
     }
   }
 
-  editConstruction: ConstructionUpdateRequestDto = {
-    description: '',
-    planned_start_date: new Date(),
-    planned_end_date: new Date(),
-    project_name: '',
-  };
-
-  @ViewChild('editModal') editModal!: TemplateRef<any>;
-
-  openEditModal(): void {
-    if (this.construction) {
-      this.editConstruction = {
-        project_name: this.construction.project_name,
-        description: this.construction.project_description,
-        planned_start_date: new Date(this.construction.planned_start_date),
-        planned_end_date: new Date(this.construction.planned_end_date),
-      };
-      this.modalService.open(this.editModal);
-    }
-  }
-
   saveChanges(): void {
     if (this.construction) {
       this.constructionService
@@ -177,9 +187,7 @@ export class ConstructionDetailComponent implements OnInit {
         )
         .subscribe({
           next: (updatedConstruction) => {
-            this.construction = updatedConstruction;
-
-            this.modalService.dismissAll();
+            this.getConstructionById(updatedConstruction.construction_id);
             this.toastService.sendSuccess(
               'Los datos se actualizaron correctamente'
             );
@@ -253,28 +261,28 @@ export class ConstructionDetailComponent implements OnInit {
 
   isConstructionAbleToApprove() {
     if (this.construction?.construction_documentation) {
-      return (
-        !this.construction.construction_documentation.some(
+      const isSomeDocPending =
+        this.construction.construction_documentation.some(
           (doc: { state: string }) => doc.state === 'PENDING_APPROVAL'
-        ) &&
-        !this.construction.construction_documentation.some(
+        );
+      const isSomeDocRejected =
+        this.construction.construction_documentation.some(
           (doc: { state: string }) => doc.state === 'REJECTED'
-        ) || 
-        !(this.CONSTRUCTION_STATUSES_ENUM.ON_REVISION === this.construction?.construction_status)
-      );
+        );
+
+      return !isSomeDocPending && !isSomeDocRejected;
     } else {
       return false;
     }
   }
 
   isConstructionAbleToReview() {
-    if (this.construction?.construction_documentation &&
-      this.construction.construction_documentation.length > 0) {
-      return (
-        !this.construction.construction_documentation.some(
-          (doc: { state: string }) => doc.state === 'ON_REVISION'
-        )
-      );
+    if (
+      this.construction?.construction_documentation &&
+      this.construction.construction_documentation.length > 0 &&
+      this.construction?.construction_status === "LOADING"
+    ) {
+      return true;
     } else {
       return false;
     }
@@ -326,11 +334,11 @@ export class ConstructionDetailComponent implements OnInit {
     modalRef.componentInstance.alertType = 'info';
 
     modalRef.result
-    .then((result) => {
-      if (result) {
-        this.onConstructionReview(this.construction?.construction_id || 0);
-      }
-    })
-    .catch(() => {});
+      .then((result) => {
+        if (result) {
+          this.onConstructionReview(this.construction?.construction_id || 0);
+        }
+      })
+      .catch(() => {});
   }
 }

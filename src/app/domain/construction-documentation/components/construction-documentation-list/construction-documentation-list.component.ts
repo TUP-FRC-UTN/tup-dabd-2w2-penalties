@@ -1,8 +1,10 @@
 import {
+  AfterViewInit,
   Component,
   EventEmitter,
   inject,
   Input,
+  OnInit,
   Output,
   TemplateRef,
   ViewChild,
@@ -22,6 +24,7 @@ import {
 } from 'ngx-dabd-grupo01';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ConstructionDocumentationService } from '../../services/construction-documentation.service';
+import { RoleService } from '../../../../shared/services/role.service';
 
 @Component({
   selector: 'app-construction-documentation-list',
@@ -37,7 +40,7 @@ import { ConstructionDocumentationService } from '../../services/construction-do
   templateUrl: './construction-documentation-list.component.html',
   styleUrl: './construction-documentation-list.component.scss',
 })
-export class ConstructionDocumentationListComponent {
+export class ConstructionDocumentationListComponent implements AfterViewInit, OnInit {
   // Inputs:
   @Input() construction: any = undefined;
   @Input() currentConstructionStatus!: string;
@@ -52,6 +55,7 @@ export class ConstructionDocumentationListComponent {
   private modalService = inject(NgbModal);
   constructionDocumentationService = inject(ConstructionDocumentationService);
   toastService = inject(ToastService);
+  roleService = inject(RoleService);
 
   // Properties:
   @ViewChild('revisionTemplate') revisionTemplate!: TemplateRef<any>;
@@ -64,11 +68,19 @@ export class ConstructionDocumentationListComponent {
 
   columns: TableColumn[] = [];
 
+  role = "";
+
+  ngOnInit(): void {
+    this.roleService.currentRole$.subscribe((role) => {
+      this.role = role;
+    });
+  }
+
   // Methods:
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.columns = [
-        { headerName: 'Id', accessorKey: 'id' },
+        { headerName: 'N° de Documento', accessorKey: 'id' },
         {
           headerName: 'Estado',
           accessorKey: 'approved',

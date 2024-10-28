@@ -19,7 +19,7 @@
     ngbTooltip="Aprobar"
     (click)="approveDocument(item)"
     [disabled]="
-      item.state === 'APPROVED' || currentConstructionStatus !== 'LOADING'
+      item.state === 'APPROVED' || currentConstructionStatus !== 'ON_REVISION' || role !== 'ADMIN'
     "
   >
     <i class="bi bi-check-lg"></i>
@@ -30,7 +30,7 @@
     ngbTooltip="Rechazar"
     (click)="rejectDocument(item)"
     [disabled]="
-      item.state === 'REJECTED' || currentConstructionStatus !== 'LOADING'
+      item.state === 'REJECTED' || currentConstructionStatus !== 'ON_REVISION' || role !== 'ADMIN'
     "
   >
     <i class="bi bi-x"></i>
@@ -51,6 +51,7 @@
     placement="top"
     ngbTooltip="Eliminar"
     (click)="deleteDocument(item)"
+    [disabled]="role !== 'OWNER' || currentConstructionStatus !== 'LOADING'"
   >
     <i class="bi bi-trash"></i>
   </button>
@@ -64,7 +65,9 @@
     [showExportOptions]="false"
     [headerButtonIcon]="'bi bi-upload'"
     [headerButtonText]="'Subir documento'"
+    [showHeaderButton]="role === 'OWNER' && currentConstructionStatus === 'LOADING'"
     (headerButtonClick)="openFormModal()"
+    [showSearchBar]="false"
   >
   </app-table>
 </div>

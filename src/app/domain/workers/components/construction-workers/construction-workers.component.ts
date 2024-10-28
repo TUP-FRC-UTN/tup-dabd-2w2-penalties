@@ -19,6 +19,7 @@ import {
   ToastService,
 } from 'ngx-dabd-grupo01';
 import { WorkerService } from '../../services/worker.service';
+import { RoleService } from '../../../../shared/services/role.service';
 
 @Component({
   selector: 'app-construction-workers',
@@ -33,33 +34,30 @@ export class ConstructionWorkersComponent implements AfterViewInit {
   @Input() constructionId: number | undefined;
 
   // Services:
-
   private modalService = inject(NgbModal);
   private workerService = inject(WorkerService);
   private constructionService = inject(ConstructionService);
   toastService = inject(ToastService);
+  roleService = inject(RoleService);
 
   // Properties:
   @ViewChild('actionsTemplate') actionsTemplate!: TemplateRef<any>;
 
   columns: TableColumn[] = [];
 
+  role = '';
+
   // Methods:
 
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.columns = [
-        { headerName: 'Id', accessorKey: 'id' },
-        { headerName: 'Contacto', accessorKey: 'contact' },
+        { headerName: 'N° de Trabajador', accessorKey: 'id' },
         { headerName: 'Dirección', accessorKey: 'address' },
         { headerName: 'Nombre', accessorKey: 'name' },
         { headerName: 'Apellido', accessorKey: 'last_name' },
         { headerName: 'Cuil', accessorKey: 'cuil' },
         { headerName: 'DNI', accessorKey: 'document' },
-        {
-          headerName: 'Especialidad',
-          accessorKey: 'worker_speciality_type',
-        },
         {
           headerName: 'Acciones',
           accessorKey: 'actions',
@@ -105,5 +103,11 @@ export class ConstructionWorkersComponent implements AfterViewInit {
       .catch(() => {
         console.log('Desasignación cancelada');
       });
+  }
+
+  ngOnInit() {
+    this.roleService.currentRole$.subscribe((role) => {
+      this.role = role;
+    });
   }
 }

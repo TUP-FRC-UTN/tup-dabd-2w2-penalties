@@ -18,7 +18,7 @@ import { CadastreService } from '../../../../cadastre/services/cadastre.service'
 import { Plot } from '../../../../cadastre/plot/models/plot.model';
 import { RoleService } from '../../../../../shared/services/role.service';
 import { firstValueFrom } from 'rxjs';
-import { ClaimDocumentsComponent } from "../claim-documents/claim-documents.component";
+import { ClaimDocumentsComponent } from '../claim-documents/claim-documents.component';
 
 @Component({
   selector: 'app-claim-detail',
@@ -30,8 +30,8 @@ import { ClaimDocumentsComponent } from "../claim-documents/claim-documents.comp
     NgbTooltipModule,
     GetValueByKeyForEnumPipe,
     SanctionTypeSelectComponent,
-    ClaimDocumentsComponent
-],
+    ClaimDocumentsComponent,
+  ],
   templateUrl: './claim-detail.component.html',
   styleUrl: './claim-detail.component.scss',
 })
@@ -77,18 +77,18 @@ export class ClaimDetailComponent implements OnInit {
         const claim: ClaimDTO | undefined = await this.getClaimbyId(id);
 
         //siu no hay rol o user id lo devuelvo
-        if (this.role === '' || this.userId === undefined) {
+        /*         if (this.role === '' || this.userId === undefined) {
           this.router.navigate(['claim']);
-        }
+        } */
 
         //si el user no es admin y nbo es quien lo creo o el propietario del infractor, entonces no puede ver la claim
-        if (
+        /*  if (
           this.role !== 'ADMIN' &&
           this.userId !== claim!.created_by &&
           !this.userPlotsIds?.includes(claim!.plot_id)
         ) {
           this.router.navigate(['claim']);
-        }
+        } */
 
         //si esta editando y la claum no esta en sent, lo mando a detail (siendo que paso la validacion anterioir, asi que si puede ver)
         if (
@@ -152,7 +152,6 @@ export class ClaimDetailComponent implements OnInit {
           },
           error: () => {
             this.toastService.sendError(`Error actualizando reclamo.`);
-
           },
         });
       }

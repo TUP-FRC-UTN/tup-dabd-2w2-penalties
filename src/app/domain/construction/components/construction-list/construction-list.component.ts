@@ -13,6 +13,7 @@ import { TableColumn, TableComponent } from 'ngx-dabd-grupo01';
 import { FormsModule } from '@angular/forms';
 import { MainContainerComponent } from '../../../../../../projects/ngx-dabd-grupo01/src/public-api';
 import { GetValueByKeyForEnumPipe } from '../../../../shared/pipes/get-value-by-key-for-status.pipe';
+import { RoleService } from '../../../../shared/services/role.service';
 
 @Component({
   selector: 'app-construction-list',
@@ -45,7 +46,7 @@ export class ConstructionListComponent {
 
   page: number = 1;
   size: number = 10;
-  searchParams: { [key: string]: string | string[] } = {};
+  searchParams: { [key: string]: any } = {};
 
   // Filtro dinámico
   filterType: string = '';
@@ -58,14 +59,52 @@ export class ConstructionListComponent {
 
   columns: TableColumn[] = [];
 
+  role: string = '';
+  userId: number | undefined;
+  userPlotsIds: number[] = [];
+  roleService = inject(RoleService);
+
   // Methods:
+  updateFiltersAccordingToUser() {
+    if (this.role !== 'ADMIN') {
+      this.searchParams = {
+        ...this.searchParams,
+        plotsIds: this.userPlotsIds,
+        userId: this.userId!,
+      };
+    } else {
+      if (this.searchParams['userId']) {
+        delete this.searchParams['userId'];
+      }
+      if (this.searchParams['plotsIds']) {
+        delete this.searchParams['plotsIds'];
+      }
+    }
+  }
+
   ngOnInit(): void {
+    this.roleService.currentUserId$.subscribe((userId: number) => {
+      this.userId = userId;
+      this.loadItems();
+    });
+
+    this.roleService.currentLotes$.subscribe((plots: number[]) => {
+      this.userPlotsIds = plots;
+      this.loadItems();
+    });
+
+    this.roleService.currentRole$.subscribe((role: string) => {
+      this.role = role;
+      this.loadItems();
+    });
+
     this.loadItems();
   }
 
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.columns = [
+        { headerName: 'N.° Construcción', accessorKey: 'construction_id' },
         { headerName: 'Descripción', accessorKey: 'project_description' },
         { headerName: 'Lote', accessorKey: 'plot_id' },
         { headerName: 'Inicio', accessorKey: 'planned_start_date' },
@@ -87,6 +126,7 @@ export class ConstructionListComponent {
   }
 
   loadItems(): void {
+    this.updateFiltersAccordingToUser();
     this.constructionService
       .getAllConstructions(this.page, this.size, this.searchParams)
       .subscribe((response) => {
@@ -116,7 +156,7 @@ export class ConstructionListComponent {
     modalRef.componentInstance.itemId = itemId;
   }
 
-  goToDetails = (id: number, mode: "detail" | "edit"): void => {
+  goToDetails = (id: number, mode: 'detail' | 'edit'): void => {
     this.router.navigate(['constructions', id, mode]);
   };
 

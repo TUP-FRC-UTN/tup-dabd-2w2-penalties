@@ -8,8 +8,8 @@ export interface ConstructionRequestDto {
 
 export interface ConstructionUpdateRequestDto {
   description: string;
-  planned_start_date: Date;
-  planned_end_date: Date;
+  planned_start_date: string;
+  planned_end_date: string;
   project_name: string;
 }
 
