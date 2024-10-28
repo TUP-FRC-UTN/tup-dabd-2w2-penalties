@@ -25,6 +25,7 @@ import { SanctionType } from '../../../sanction-type/models/sanction-type.model'
 import { CommonModule, NgClass } from '@angular/common';
 import { ClaimNew } from '../../models/claim.model';
 import { RoleService } from '../../../../../shared/services/role.service';
+import { ToastService } from 'ngx-dabd-grupo01';
 
 @Component({
   selector: 'app-new-claim-modal',
@@ -39,6 +40,8 @@ export class NewClaimModalComponent implements OnInit {
   private sanctionService = inject(SanctionTypeService);
   private claimService = inject(ClaimService);
   private roleService = inject(RoleService);
+
+  private toastService = inject(ToastService);
 
   //variables
   plots: Plot[] | undefined;
@@ -100,27 +103,56 @@ export class NewClaimModalComponent implements OnInit {
       this.description &&
       this.imageForm.valid
     ) {
-      const newClaim: ClaimNew = {
-        // user_id: this.userId!,
-        plot_id: this.plotId,
-        sanction_type_entity_id: this.sanctionTypeId,
-        description: this.description,
-        proofs_id: [], // vacío por ahora
-      };
+      const formData = new FormData();
+      formData.append('plot_id', this.plotId.toString());
+      formData.append(
+        'sanction_type_entity_id',
+        this.sanctionTypeId.toString()
+      );
+      formData.append('description', this.description);
 
-      console.log({ cameraFile: this.imageForm.get('image')?.value });
+      // Agregar archivos seleccionados
+      this.selectedFiles.forEach((file, index) => {
+        formData.append(`files`, file, file.name);
+      });
+      
 
-      this.claimService.createClaim(newClaim).subscribe({
+      // Agregar imagen capturada si existe
+      const capturedImage = this.imageForm.get('image')?.value;
+      if (capturedImage) {
+        const imageBlob = this.dataURItoBlob(capturedImage);
+        formData.append('files', imageBlob, 'captured-image.png');
+      }
+
+      this.claimService.createClaim(formData).subscribe({
         next: (response) => {
+          this.activeModal.close(response);
+          this.toastService.sendSuccess("Se creó el reclamo " + response.id+".")
+
+
           console.log('Reclamo creado con éxito', response);
         },
         error: (error) => {
+          this.toastService.sendError("Error creando el reclamo.")
+          
           console.error('Error al crear el reclamo:', error);
         },
       });
     } else {
       console.error('Faltan datos obligatorios en el formulario');
     }
+  }
+
+  // Método para convertir data URI a Blob
+  dataURItoBlob(dataURI: string): Blob {
+    const byteString = atob(dataURI.split(',')[1]);
+    const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], { type: mimeString });
   }
 
   @ViewChild('videoPreview') videoPreview!: ElementRef<HTMLVideoElement>;
