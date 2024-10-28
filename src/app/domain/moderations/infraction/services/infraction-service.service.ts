@@ -80,4 +80,8 @@ export class InfractionServiceService {
       },
     });
   }
+
+  rejectInfraction(id: number, userId: number = 1): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${id}/disapprove`, { user_id: userId });
+  }
 }

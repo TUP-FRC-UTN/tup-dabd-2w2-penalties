@@ -20,6 +20,7 @@ import { FormsModule } from '@angular/forms';
 import { GetValueByKeyForEnumPipe } from '../../../../../shared/pipes/get-value-by-key-for-status.pipe';
 import { RoleService } from '../../../../../shared/services/role.service';
 import { Router } from '@angular/router';
+import { ConfirmAlertComponent } from 'ngx-dabd-grupo01';
 
 @Component({
   selector: 'app-infraction-list',
@@ -170,7 +171,7 @@ export class InfractionListComponent {
         endDate: this.endDate,
       };
     } else if (this.filterType === 'estado') {
-      this.searchParams = { claimStatus: [this.status] };
+      this.searchParams = { infractionState: [this.status] };
     }
     this.page = 1;
     this.loadItems();
@@ -187,6 +188,22 @@ export class InfractionListComponent {
 
   onInfoButtonClick() {
     this.modalService.open(InfractionListInfoComponent);
+  }
+
+  rejectInfraction(id: number) {
+    const modalRef = this.modalService.open(ConfirmAlertComponent);
+    modalRef.componentInstance.alertTitle = 'Confirmación';
+    modalRef.componentInstance.alertMessage = `¿Está seguro de que desea desestimar esta infracción?`;
+
+    modalRef.result
+      .then((result) => {
+        if (result) {
+          this.infractionService.rejectInfraction(id, this.userId).subscribe(() => {
+            this.loadItems();
+          });
+        }
+      })
+      .catch(() => {});
   }
 
   goToDetails(id: number) {
