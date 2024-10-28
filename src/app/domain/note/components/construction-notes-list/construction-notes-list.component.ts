@@ -32,9 +32,10 @@ export class ConstructionNotesListComponent {
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.columns = [
-        { headerName: 'Id', accessorKey: 'id' },
+        { headerName: 'N° de Nota', accessorKey: 'id' },
         { headerName: 'Nota', accessorKey: 'description' },
-      
+        /*         { headerName: 'Usuario', accessorKey: 'createdBy' },
+        { headerName: 'Fecha', accessorKey: 'createdDate' }, */
       ];
     });
   }

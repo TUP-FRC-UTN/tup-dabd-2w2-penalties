@@ -66,6 +66,7 @@ export class ConstructionListComponent {
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.columns = [
+        { headerName: 'N.° Construcción', accessorKey: 'construction_id' },
         { headerName: 'Descripción', accessorKey: 'project_description' },
         { headerName: 'Lote', accessorKey: 'plot_id' },
         { headerName: 'Inicio', accessorKey: 'planned_start_date' },
