@@ -52,17 +52,12 @@ export class ConstructionWorkersComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.columns = [
-        { headerName: 'N° Multa', accessorKey: 'id' },
-        { headerName: 'Contacto', accessorKey: 'contact' },
+        { headerName: 'N° de Trabajador', accessorKey: 'id' },
         { headerName: 'Dirección', accessorKey: 'address' },
         { headerName: 'Nombre', accessorKey: 'name' },
         { headerName: 'Apellido', accessorKey: 'last_name' },
         { headerName: 'Cuil', accessorKey: 'cuil' },
         { headerName: 'DNI', accessorKey: 'document' },
-        {
-          headerName: 'Especialidad',
-          accessorKey: 'worker_speciality_type',
-        },
         {
           headerName: 'Acciones',
           accessorKey: 'actions',

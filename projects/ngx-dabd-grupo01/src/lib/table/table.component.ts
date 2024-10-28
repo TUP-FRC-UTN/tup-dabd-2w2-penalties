@@ -29,7 +29,7 @@ export class TableComponent {
   @Input() showHeaderButton?: boolean = true;
   @Input() headerButtonText?: string = 'Nuevo';
   @Input() headerButtonIcon?: string = undefined;
-  @Input() searchPlaceHolder?: string = 'Descripción, Lote, Nombre...';
+  @Input() searchPlaceHolder?: string = 'Buscar...';
 
   // Outputs:
 
