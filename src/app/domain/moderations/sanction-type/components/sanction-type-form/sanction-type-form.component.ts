@@ -2,9 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { SanctionTypeService } from '../../services/sanction-type.service';
-import { ToastService } from '../../../../../../../projects/ngx-dabd-grupo01/src/lib/toast/toast-service';
 import { FormFieldsComponent } from '../../../../../../../projects/ngx-dabd-grupo01/src/lib/form-fields/form-fields.component';
 import { FormConfig } from '../../../../../../../projects/ngx-dabd-grupo01/src/lib/form-fields/form-fields.model';
+import { ToastService } from 'ngx-dabd-grupo01';
 @Component({
   selector: 'app-sanction-type-form',
   standalone: true,

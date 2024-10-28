@@ -1,8 +1,15 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { InfractionDto } from '../../infraction/models/infraction.model';
-import { BehaviorSubject, finalize, map, Observable } from 'rxjs';
-import { ClaimDTO, ClaimNew } from '../models/claim.model';
+import {
+  BehaviorSubject,
+  catchError,
+  finalize,
+  map,
+  Observable,
+  throwError,
+} from 'rxjs';
+import { ClaimDTO, ClaimNew, UpdateClaimDTO } from '../models/claim.model';
 import { environment } from '../../../../../environments/environment';
 
 @Injectable({
@@ -24,7 +31,7 @@ export class ClaimService {
   private isLoadingSubject = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoadingSubject.asObservable();
 
-  private oneClaim = new BehaviorSubject<ClaimDTO|undefined>(undefined);
+  private oneClaim = new BehaviorSubject<ClaimDTO | undefined>(undefined);
   oneClaim$ = this.oneClaim.asObservable();
 
   setItems(items: ClaimDTO[]): void {
@@ -35,32 +42,68 @@ export class ClaimService {
     this.totalItemsSubject.next(total);
   }
 
-  createClaim(claim: ClaimNew): Observable<any> {
-    return this.http.post(`${this.apiUrl}/claims`, claim, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+  createClaim(claimData: FormData): Observable<any> {
+    return this.http.post(`${this.apiUrl}/claims`, claimData);
   }
 
+  updateClaim(claimDTO: ClaimDTO, userId: number): Observable<ClaimDTO> {
+    return this.http
+      .put<ClaimDTO>(`${this.apiUrl}/claims/${claimDTO.id}`, {
+        description: claimDTO.description,
+        plot_id: claimDTO.plot_id,
+        sanction_type_entity_id: claimDTO.sanction_type.id,
+        user_id: userId,
+      })
+      .pipe(
+        map((newItem) => {
+          return newItem;
+        }),
+        catchError((error) => {
+          return throwError(() => new Error('Error en actualización de multa'));
+        })
+      );
+  }
+
+  disapproveClaim(claimId: number, userId: number): Observable<ClaimDTO> {
+    return this.http
+      .put<ClaimDTO>(`${this.apiUrl}/claims/${claimId}/disapprove`, {
+        user_id: userId,
+      })
+      .pipe(
+        map((newItem) => {
+          return newItem;
+        }),
+        catchError((error) => {
+          return throwError(() => new Error('Error en actualización de multa'));
+        })
+      );
+  }
   getPaginatedClaims(
     page: number,
     limit: number,
     searchParams: any = {}
   ): Observable<{ items: ClaimDTO[]; total: number }> {
-    this.isLoadingSubject.next(true); // Iniciar loading
+    this.isLoadingSubject.next(true);
     let params = new HttpParams()
       .set('page', (page - 1).toString())
       .set('size', limit.toString());
 
     Object.keys(searchParams).forEach((key) => {
       if (searchParams[key]) {
-        params = params.set(key, searchParams[key]);
+        if (Array.isArray(searchParams[key])) {
+          // Si es un array, usar append para cada valor
+          searchParams[key].forEach((value) => {
+            params = params.append(key, value.toString());
+          });
+        } else {
+          // Si no es un array, usar set
+          params = params.set(key, searchParams[key].toString());
+        }
       }
     });
 
     return this.http
-      .get<any>(`${this.apiUrl}/claims/all`, { params })
+      .get<any>(`${this.apiUrl}/claims/pageable`, { params })
       .pipe(
         map((data) => {
           const items = data.content || [];
@@ -80,4 +123,32 @@ export class ClaimService {
     );
   }
 
+  downloadDocumentation(documentationId: number, filename: string): void {
+    const url = `${this.apiUrl}/proof/documentation/${documentationId}`;
+    this.http.get(url, { responseType: 'blob' }).subscribe({
+      next: (response: Blob) => {
+        this.downloadFile(response, filename);
+      },
+      error: (error) => {
+        console.error('Download failed', error);
+      },
+    });
+  }
+
+  private downloadFile(blob: Blob, filename: string): void {
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  }
+
+  getClaimByInfractionId(id: number): Observable<ClaimDTO[]> {
+    return this.http.get<ClaimDTO[]>(
+      `${this.apiUrl}/claims/infraction/${id}`
+    );
+  }
 }

@@ -1,6 +1,10 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { InfractionDto } from '../models/infraction.model';
+import {
+  InfractionResponseDTO,
+  InfractionModel,
+  InfractionDto,
+} from '../models/infraction.model';
 import { BehaviorSubject, finalize, map, Observable } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 
@@ -10,7 +14,7 @@ import { environment } from '../../../../../environments/environment';
 export class InfractionServiceService {
   private apiUrl = `${environment.moderationApiUrl}/infractions`;
 
-  private itemsSubject = new BehaviorSubject<InfractionDto[]>([]);
+  private itemsSubject = new BehaviorSubject<InfractionResponseDTO[]>([]);
   items$ = this.itemsSubject.asObservable();
 
   private totalItemsSubject = new BehaviorSubject<number>(0);
@@ -19,9 +23,14 @@ export class InfractionServiceService {
   private isLoadingSubject = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoadingSubject.asObservable();
 
+  private oneInfraction = new BehaviorSubject<
+    InfractionResponseDTO | undefined
+  >(undefined);
+  oneInfraction$ = this.oneInfraction.asObservable();
+
   private readonly http = inject(HttpClient);
 
-  setItems(items: InfractionDto[]): void {
+  setItems(items: InfractionResponseDTO[]): void {
     this.itemsSubject.next(items);
   }
 
@@ -33,7 +42,7 @@ export class InfractionServiceService {
     page: number,
     limit: number,
     searchParams: any = {}
-  ): Observable<{ items: InfractionDto[]; total: number }> {
+  ): Observable<{ items: InfractionResponseDTO[]; total: number }> {
     this.isLoadingSubject.next(true); // Iniciar loading
     let params = new HttpParams()
       .set('page', (page - 1).toString())
@@ -55,8 +64,17 @@ export class InfractionServiceService {
     );
   }
 
-  createInfraction(infraction: InfractionDto): Observable<any> {
-    return this.http.post(this.apiUrl, infraction, {
+  getInfractionById(id: number): Observable<InfractionResponseDTO | undefined> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`).pipe(
+      map((oneInfraction) => {
+        this.oneInfraction.next(oneInfraction);
+        return oneInfraction;
+      })
+    );
+  }
+
+  createInfraction(infraction: InfractionDto): Observable<InfractionModel> {
+    return this.http.post<InfractionModel>(this.apiUrl, infraction, {
       headers: {
         'Content-Type': 'application/json',
       },

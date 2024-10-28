@@ -73,23 +73,23 @@
           name="status"
           class="form-control"
           [ngClass]="{
-            'border-success': claim?.claim_state === ClaimStatusEnum.APPROVED,
-            'bg-success-subtle': claim?.claim_state === ClaimStatusEnum.APPROVED,
-            'text-success':claim?.claim_state === ClaimStatusEnum.APPROVED,
-            'border-danger': claim?.claim_state === ClaimStatusEnum.REJECTED,
-            'bg-danger-subtle': claim?.claim_state === ClaimStatusEnum.REJECTED,
-            'text-danger': claim?.claim_state === ClaimStatusEnum.REJECTED,
+            'border-success': claim?.claim_status === ClaimStatusEnum.APPROVED,
+            'bg-success-subtle': claim?.claim_status === ClaimStatusEnum.APPROVED,
+            'text-success':claim?.claim_status === ClaimStatusEnum.APPROVED,
+            'border-danger': claim?.claim_status === ClaimStatusEnum.REJECTED,
+            'bg-danger-subtle': claim?.claim_status === ClaimStatusEnum.REJECTED,
+            'text-danger': claim?.claim_status === ClaimStatusEnum.REJECTED,
             'border-info':
-            claim?.claim_state === ClaimStatusEnum.SENT,
+            claim?.claim_status === ClaimStatusEnum.SENT,
             'bg-info-subtle':
-            claim?.claim_state === ClaimStatusEnum.SENT,
+            claim?.claim_status === ClaimStatusEnum.SENT,
             'text-dark':
-            claim?.claim_state === ClaimStatusEnum.SENT,
+            claim?.claim_status === ClaimStatusEnum.SENT,
           }"
           value="{{
-            claim?.claim_state! | getValueByKeyForEnum : ClaimStatusEnum
+            claim?.claim_status! | getValueByKeyForEnum : ClaimStatusEnum
           }}"
-          
+          disabled
         />
       </div>
 
@@ -114,7 +114,7 @@
           }
         </div>
 
-        @if(isAdmin){ @if (editing) {
+        @if (editing) {
         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
           <button class="btn btn-danger" (click)="cancelEdit()" type="button">
             Cancelar
@@ -129,12 +129,16 @@
         </div>
         }@else {
         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-          <button class="btn btn-warning" (click)="edit()" type="button">
-            Editar
+          <button class="btn btn-secondary" (click)="goBack()" type="button">
+            Volver
           </button>
         </div>
-        } }
+        }
       </div>
     </div>
   </form>
+  @if(!editing){
+
+  <app-claim-documents [claim]="claim"></app-claim-documents>
+  }
 </app-main-container>
