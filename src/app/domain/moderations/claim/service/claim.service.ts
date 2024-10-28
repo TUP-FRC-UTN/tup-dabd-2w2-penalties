@@ -42,12 +42,8 @@ export class ClaimService {
     this.totalItemsSubject.next(total);
   }
 
-  createClaim(claim: ClaimNew): Observable<any> {
-    return this.http.post(`${this.apiUrl}/claims`, claim, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+  createClaim(claimData: FormData): Observable<any> {
+    return this.http.post(`${this.apiUrl}/claims`, claimData);
   }
 
   updateClaim(claimDTO: ClaimDTO, userId: number): Observable<ClaimDTO> {
@@ -125,5 +121,28 @@ export class ClaimService {
         return oneClaim;
       })
     );
+  }
+
+  downloadDocumentation(documentationId: number, filename: string): void {
+    const url = `${this.apiUrl}/proof/documentation/${documentationId}`;
+    this.http.get(url, { responseType: 'blob' }).subscribe({
+      next: (response: Blob) => {
+        this.downloadFile(response, filename);
+      },
+      error: (error) => {
+        console.error('Download failed', error);
+      },
+    });
+  }
+
+  private downloadFile(blob: Blob, filename: string): void {
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
   }
 }

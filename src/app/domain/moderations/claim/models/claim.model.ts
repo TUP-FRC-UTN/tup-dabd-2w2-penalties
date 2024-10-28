@@ -7,6 +7,7 @@ export interface ClaimDTO extends EntityBase {
   infraction_id: number;
   sanction_type: SanctionType;
   claim_status: ClaimStatusEnum;
+  proofs: Proof[];
 }
 
 export interface UpdateClaimDTO {
@@ -26,4 +27,8 @@ export enum ClaimStatusEnum {
   SENT = 'Enviado',
   APPROVED = 'Aprobado',
   REJECTED = 'Desaprobado',
+}
+
+export interface Proof extends EntityBase {
+  document_identifier: string;
 }
