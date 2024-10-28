@@ -2,7 +2,7 @@
   <div class="container">
     <div class="row">
       @if (!changeService.getBlack()){
-        <div class="col-md-4">
+        <div class="">
           <label for="rolesB" class="text-light">Selección Rol:</label>
           <select id="rolesB" class="form-select text-light bg-dark" [(ngModel)]="selectedRole"
                   (change)="onRoleChange($event)">
@@ -10,7 +10,7 @@
           </select>
         </div>
 
-        <div class="col-md-4">
+        <div class="">
           <label for="lotesB" class="text-light">Selección Lotes:</label>
           <select id="lotesB" class="form-select text-light bg-dark" multiple [(ngModel)]="selectedLotes"
                   (change)="onLotesChange($event)">
@@ -18,7 +18,7 @@
           </select>
         </div>
 
-        <div class="col-md-4">
+        <div class="">
           <label for="userIdB" class="text-light">Selección UserID:</label>
           <select id="userIdB" class="form-select text-light bg-dark" [(ngModel)]="selectedUserId"
                   (change)="onUserIdChange($event)">
