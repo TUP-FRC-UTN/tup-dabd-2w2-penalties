@@ -205,7 +205,13 @@ export class ClaimListComponent {
 
   openFormModal(sanctionTypeToEdit: number | null = null): void {
     const modalRef = this.modalService.open(NewClaimModalComponent);
-    modalRef.componentInstance.sanctionTypeToEdit = sanctionTypeToEdit;
+    modalRef.result
+      .then((result) => {
+        if (result) {
+          this.loadItems();
+        }
+      })
+      .catch(() => {});
   }
 
   checkClaim(claim: ClaimDTO): void {
