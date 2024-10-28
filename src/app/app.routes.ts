@@ -8,6 +8,7 @@ import { InfractionListComponent } from './domain/moderations/infraction/compone
 import { ClaimListComponent } from './domain/moderations/claim/components/claim-list/claim-list.component';
 import { SanctionTypeDetailComponent } from './domain/moderations/sanction-type/components/sanction-type-detail/sanction-type-detail.component';
 import { ClaimDetailComponent } from './domain/moderations/claim/components/claim-detail/claim-detail.component';
+import { InfractionDetailComponent } from './domain/moderations/infraction/components/infraction-detail/infraction-detail.component';
 
 export const routes: Routes = [
   {
@@ -36,6 +37,10 @@ export const routes: Routes = [
   {
     path: 'infraction',
     component: InfractionListComponent,
+  },
+  {
+    path: 'infraction/:id',
+    component: InfractionDetailComponent,
   },
   {
     path: 'claim',

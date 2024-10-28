@@ -126,4 +126,10 @@ export class ClaimService {
       })
     );
   }
+
+  getClaimByInfractionId(id: number): Observable<ClaimDTO[]> {
+    return this.http.get<ClaimDTO[]>(
+      `${this.apiUrl}/claims/infraction/${id}`
+    );
+  }
 }

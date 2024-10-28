@@ -37,6 +37,7 @@ export class TableComponent {
   @Output() headerButtonClick = new EventEmitter<void>();
   @Output() excelButtonClick = new EventEmitter<void>();
   @Output() pdfButtonClick = new EventEmitter<void>();
+  @Output() infoButtonClick = new EventEmitter<void>();
 
   // Properties:
 
@@ -72,5 +73,13 @@ export class TableComponent {
 
   onPdfButtonClick(): void {
     this.pdfButtonClick.emit();
+  }
+
+  onInfoButtonClick(): void {
+    this.infoButtonClick.emit();
+  }
+
+  getNestedValue(item: any, accessorKey: string): any {
+    return accessorKey.split('.').reduce((acc, key) => acc?.[key], item);
   }
 }
