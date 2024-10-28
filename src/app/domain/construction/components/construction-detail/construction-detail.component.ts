@@ -76,6 +76,8 @@ export class ConstructionDetailComponent implements OnInit {
   rejectForm: FormGroup;
   mode: 'detail' | 'edit' = 'detail';
 
+  isOwner: boolean = false;
+
   constructor(private fb: FormBuilder) {
     this.rejectForm = this.fb.group({
       rejectReason: ['', Validators.required],
