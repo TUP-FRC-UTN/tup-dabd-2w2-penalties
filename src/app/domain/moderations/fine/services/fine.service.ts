@@ -2,7 +2,14 @@ import { inject, Injectable } from '@angular/core';
 
 import { BehaviorSubject, Observable, of, Subject, throwError } from 'rxjs';
 
-import { catchError, debounceTime, map, switchMap, tap } from 'rxjs/operators';
+import {
+  catchError,
+  debounceTime,
+  finalize,
+  map,
+  switchMap,
+  tap,
+} from 'rxjs/operators';
 import { Fine } from '../models/fine.model';
 import { FineStatusEnum } from '../models/fine-status.enum';
 import { HttpClient, HttpParams } from '@angular/common/http';
@@ -17,6 +24,7 @@ import { environment } from '../../../../../environments/environment';
 import jsPDF from 'jspdf';
 import { DatePipe } from '@angular/common';
 import { ExcelExportService } from 'ngx-dabd-grupo01';
+import { ClaimDTO } from '../../claim/models/claim.model';
 
 interface SearchResult {
   fines: Fine[];
@@ -62,116 +70,49 @@ export class FineService {
     this.fineStatusKeys = Object.keys(this.FineStatusEnum) as Array<
       keyof typeof FineStatusEnum
     >;
-    this._search$
-      .pipe(
-        tap(() => this._loading$.next(true)),
-        debounceTime(200),
-        switchMap(() => this._search()),
-        tap(() => this._loading$.next(false))
-      )
-      .subscribe((result) => {
-        this._fines$.next(result.fines);
-        this._total$.next(result.total);
-      });
-
-    this._search$.next();
   }
 
   FineStatusEnum = FineStatusEnum;
   fineStatusKeys: string[] = [];
 
-  get fines$() {
-    return this._fines$.asObservable();
-  }
-  get total$() {
-    return this._total$.asObservable();
-  }
-  get loading$() {
-    return this._loading$.asObservable();
-  }
-  get page() {
-    return this._state.page;
-  }
-  get pageSize() {
-    return this._state.pageSize;
-  }
-  get searchTerm() {
-    return this._state.searchTerm;
+  private itemsSubject = new BehaviorSubject<Fine[]>([]);
+  items$ = this.itemsSubject.asObservable();
+
+  private totalItemsSubject = new BehaviorSubject<number>(0);
+  totalItems$ = this.totalItemsSubject.asObservable();
+
+  private isLoadingSubject = new BehaviorSubject<boolean>(false);
+  isLoading$ = this.isLoadingSubject.asObservable();
+
+  private oneClaim = new BehaviorSubject<Fine | undefined>(undefined);
+  oneClaim$ = this.oneClaim.asObservable();
+
+  setItems(items: Fine[]): void {
+    this.itemsSubject.next(items);
   }
 
-  get searchState() {
-    return this._state.searchState;
-  }
-  get dateFrom() {
-    return this._state.dateFrom;
-  }
-  get dateTo() {
-    return this._state.dateTo;
+  setTotalItems(total: number): void {
+    this.totalItemsSubject.next(total);
   }
 
-  set page(page: number) {
-    this._set({ page });
-  }
-  set pageSize(pageSize: number) {
-    this._set({ pageSize });
-  }
-  set searchTerm(searchTerm: string) {
-    this._set({ searchTerm });
-  }
-  set searchState(searchState: string) {
-    this._set({ searchState });
-  }
-  set sortColumn(sortColumn: SortColumn) {
-    this._set({ sortColumn });
-  }
-  set sortDirection(sortDirection: SortDirection) {
-    this._set({ sortDirection });
+  createClaim(claimData: FormData): Observable<any> {
+    return this.http.post(`${this.apiUrl}/claims`, claimData);
   }
 
-  set dateFrom(dateFrom: any) {
-    this._set({ dateFrom });
-  }
-  set dateTo(dateTo: any) {
-    this._set({ dateTo });
-  }
+  public findAll(searchParams: any = {}): Observable<Fine[]> {
+    let params = new HttpParams();
+    Object.keys(searchParams).forEach((key) => {
+      if (searchParams[key]) {
+        if (Array.isArray(searchParams[key])) {
+          searchParams[key].forEach((value) => {
+            params = params.append(key, value.toString());
+          });
+        } else {
+          params = params.set(key, searchParams[key].toString());
+        }
+      }
+    });
 
-  public clearFilters(): void {
-    this.searchTerm = '';
-    this.searchState = '';
-    this.sortColumn = '';
-    this.sortDirection = '';
-    this.dateFrom = null;
-    this.dateTo = null;
-  }
-
-  private _set(patch: Partial<State>) {
-    Object.assign(this._state, patch);
-    this._search$.next();
-  }
-
-  public _search(): Observable<SearchResult> {
-    let params = this.getParams();
-    return this.http
-      .get<Page<Fine>>(`${this.apiUrl}/fine/pageable`, { params })
-      .pipe(
-        map((data) => {
-          const result: SearchResult = {
-            fines: data.content,
-            total: data.totalElements,
-          };
-          return result;
-        }),
-        catchError((error) => {
-          console.error('Error en la solicitud:', error);
-          return of({ fines: [], total: 0 }); // Devuelve un objeto vacío en caso de error
-        })
-      );
-
-    // return of({ fines: [], total: 0 });
-  }
-
-  public findAll(): Observable<Fine[]> {
-    const params = this.getParams();
     return this.http.get<Fine[]>(`${this.apiUrl}/fine`, { params }).pipe(
       map((data) => data),
       catchError((error) => {
@@ -180,42 +121,6 @@ export class FineService {
         );
       })
     );
-  }
-
-  getParams() {
-    const {
-      sortColumn,
-      sortDirection,
-      pageSize,
-      page,
-      searchTerm,
-      searchState,
-      dateFrom,
-      dateTo,
-    } = this._state;
-    let params = new HttpParams()
-      .set('page', (page - 1).toString())
-      .set('size', pageSize.toString());
-
-    if (searchState !== '') {
-      params = params.set('fineState', searchState);
-    }
-
-    if (this.dateFrom) {
-      const fromDate = `${this.dateFrom.year}-${this.dateFrom.month
-        .toString()
-        .padStart(2, '0')}-${this.dateFrom.day.toString().padStart(2, '0')}`;
-      params = params.set('startDate', fromDate);
-    }
-
-    if (this.dateTo) {
-      const toDate = `${this.dateTo.year}-${this.dateTo.month
-        .toString()
-        .padStart(2, '0')}-${this.dateTo.day.toString().padStart(2, '0')}`;
-      params = params.set('endDate', toDate);
-    }
-
-    return params;
   }
 
   getFineById(id: number) {
@@ -232,7 +137,7 @@ export class FineService {
     );
   }
   updateState(fine: UpdateFineStateDTO): Observable<Fine> {
-    return this.http.put<Fine>(`${this.apiUrl}/fine/state`, fine).pipe(
+    return this.http.put<Fine>(`${this.apiUrl}/fine/fine/state`, fine).pipe(
       catchError((error) => {
         console.error('Error en la solicitud de edición de multa:', error);
         return throwError(() => new Error('Error en la edición de la multa'));
@@ -314,6 +219,38 @@ export class FineService {
 
     // Guardar el PDF
     doc.save('infracciones.pdf');
+  }
+
+  getPaginatedFines(
+    page: number,
+    limit: number,
+    searchParams: any = {}
+  ): Observable<{ items: Fine[]; total: number }> {
+    this._loading$.next(true);
+    let params = new HttpParams()
+      .set('page', (page - 1).toString())
+      .set('size', limit.toString());
+
+    Object.keys(searchParams).forEach((key) => {
+      if (searchParams[key]) {
+        if (Array.isArray(searchParams[key])) {
+          searchParams[key].forEach((value) => {
+            params = params.append(key, value.toString());
+          });
+        } else {
+          params = params.set(key, searchParams[key].toString());
+        }
+      }
+    });
+
+    return this.http.get<any>(`${this.apiUrl}/fine/pageable`, { params }).pipe(
+      map((data) => {
+        const items = data.content || [];
+        const total = data.totalElements || 0;
+        return { items, total };
+      }),
+      finalize(() => this._loading$.next(false))
+    );
   }
 
   onExportToExcel(): void {
