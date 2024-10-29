@@ -118,7 +118,7 @@ export class ClaimListComponent {
     setTimeout(() => {
       this.columns = [
         {
-          headerName: 'Nº de Multa',
+          headerName: 'Nº. Reclamo',
           accessorKey: 'id',
           cellRenderer: this.check,
         },
@@ -284,7 +284,13 @@ export class ClaimListComponent {
     this.page = 1;
     this.loadItems();
   }
+  onInfoButtonClick() {
+    const modalRef = this.modalService.open(ConfirmAlertComponent);
+    modalRef.componentInstance.alertType = 'info';
 
+    modalRef.componentInstance.alertTitle = 'Ayuda';
+    modalRef.componentInstance.alertMessage = `Esta pantalla te permite consultar tus reclamos recibidos y realizado, y al administrador gestionarlo para generar multas. \n Considerá que depende del administrador rechazar un reclamo o agrupar alguno de ellos para generar una infracción para el lote.`;
+  }
   disapproveClaim(claimId: number) {
     const modalRef = this.modalService.open(ConfirmAlertComponent);
     modalRef.componentInstance.alertTitle = 'Confirmación';

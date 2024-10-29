@@ -41,7 +41,7 @@ export class InfractionListComponent {
   // Services:
   private infractionService = inject(InfractionServiceService);
   private modalService = inject(NgbModal);
-  private router = inject(Router); 
+  private router = inject(Router);
   private roleService = inject(RoleService);
 
   // Properties:
@@ -187,7 +187,11 @@ export class InfractionListComponent {
   }
 
   onInfoButtonClick() {
-    this.modalService.open(InfractionListInfoComponent);
+    const modalRef = this.modalService.open(ConfirmAlertComponent);
+    modalRef.componentInstance.alertType = 'info';
+
+    modalRef.componentInstance.alertTitle = 'Ayuda';
+    modalRef.componentInstance.alertMessage = `Esta pantalla te permite consultar tus infracciones recibidos, y al administrador gestionarlo para generar multas. \n Considerá que de tener mas multas que las configuradas para cada tipo, entonces serás multado, podes ver mas en "Tipos de sanciones"`;
   }
 
   rejectInfraction(id: number) {
@@ -198,9 +202,11 @@ export class InfractionListComponent {
     modalRef.result
       .then((result) => {
         if (result) {
-          this.infractionService.rejectInfraction(id, this.userId).subscribe(() => {
-            this.loadItems();
-          });
+          this.infractionService
+            .rejectInfraction(id, this.userId)
+            .subscribe(() => {
+              this.loadItems();
+            });
         }
       })
       .catch(() => {});

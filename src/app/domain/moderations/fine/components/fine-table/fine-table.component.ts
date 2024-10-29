@@ -23,6 +23,7 @@ import { Router } from '@angular/router';
 import { FineService } from '../../services/fine.service';
 import { Fine } from '../../models/fine.model';
 import {
+  ConfirmAlertComponent,
   MainContainerComponent,
   TableColumn,
   TableComponent,
@@ -90,6 +91,8 @@ export class FineTable {
   private pdfService = inject(PdfService);
   private roleService = inject(RoleService);
   fineService = inject(FineService);
+  modalService = inject(NgbModal);
+
 
   items$: Observable<Fine[]> = this.fineService.items$;
   totalItems$: Observable<number> = this.fineService.totalItems$;
@@ -233,5 +236,16 @@ export class FineTable {
     this.status = '';
     this.searchParams = {};
     this.loadItems();
+  }
+
+
+  infoModal() {
+    const modalRef = this.modalService.open(ConfirmAlertComponent);
+    modalRef.componentInstance.alertType = 'info';
+
+    modalRef.componentInstance.alertTitle = 'Ayuda';
+    modalRef.componentInstance.alertMessage = `Esta pantalla te permite consultar tus reclamos realizados y recibidos, y al administrador gestionarlo para generar multas `;
+
+
   }
 }

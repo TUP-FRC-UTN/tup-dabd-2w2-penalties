@@ -43,13 +43,6 @@ export class InfractionClaimListComponent implements AfterViewInit {
 
   ClaimStatusEnum = ClaimStatusEnum;
 
-  // Methods:
-  ngOnInit(): void {
-    this.claimService.getClaimByInfractionId(this.infractionId!).subscribe((claims) => {
-      this.claims = claims;
-    });
-  }
-
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.columns = [
