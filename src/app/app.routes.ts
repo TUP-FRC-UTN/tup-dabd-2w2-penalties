@@ -28,7 +28,7 @@ export const routes: Routes = [
     path: 'fine',
     component: FineTable,
   },
-  { path: 'fine/:id', component: FineDetailComponent },
+  { path: 'fine/:id/:mode', component: FineDetailComponent },
   {
     path: 'sanctionType',
     component: SanctionTypeListComponent,

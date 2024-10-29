@@ -9,7 +9,11 @@ import {
 import { ConstructionFormComponent } from '../construction-form/construction-form.component';
 import { ConstructionService } from '../../services/construction.service';
 import { Router } from '@angular/router';
-import { TableColumn, TableComponent } from 'ngx-dabd-grupo01';
+import {
+  ConfirmAlertComponent,
+  TableColumn,
+  TableComponent,
+} from 'ngx-dabd-grupo01';
 import { FormsModule } from '@angular/forms';
 import { MainContainerComponent } from '../../../../../../projects/ngx-dabd-grupo01/src/public-api';
 import { GetValueByKeyForEnumPipe } from '../../../../shared/pipes/get-value-by-key-for-status.pipe';
@@ -184,5 +188,12 @@ export class ConstructionListComponent {
     this.status = '';
     this.searchParams = {};
     this.loadItems();
+  }
+  infoModal() {
+    const modalRef = this.modalService.open(ConfirmAlertComponent);
+    modalRef.componentInstance.alertType = 'info';
+
+    modalRef.componentInstance.alertTitle = 'Ayuda';
+    modalRef.componentInstance.alertMessage = `Aquí podrás consultar y gestionar tus obras en curso. \n Recordá que se debe subir documentacion obligatoria y ser aprobada por el administrador. `;
   }
 }
