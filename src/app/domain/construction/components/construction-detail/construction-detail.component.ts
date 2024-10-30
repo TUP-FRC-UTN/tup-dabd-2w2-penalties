@@ -18,20 +18,32 @@ import {
 } from '../../models/construction.model';
 import { CommonModule } from '@angular/common';
 import { ConstructionWorkersComponent } from '../../../workers/components/construction-workers/construction-workers.component';
-import { FormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { ConstructionDocumentationListComponent } from '../../../construction-documentation/components/construction-documentation-list/construction-documentation-list.component';
 import { ConstructionNotesListComponent } from '../../../note/components/construction-notes-list/construction-notes-list.component';
 import { WorkerService } from '../../../workers/services/worker.service';
-import { MainContainerComponent, TableComponent } from 'ngx-dabd-grupo01';
+import {
+  ConfirmAlertComponent,
+  MainContainerComponent,
+  TableComponent,
+  ToastService,
+} from 'ngx-dabd-grupo01';
 import { GetValueByKeyForEnumPipe } from '../../../../shared/pipes/get-value-by-key-for-status.pipe';
-import { ToastService } from '../../../../../../projects/ngx-dabd-grupo01/src/public-api';
+import { RoleService } from '../../../../shared/services/role.service';
 
 @Component({
   selector: 'app-construction-detail',
   standalone: true,
   imports: [
     CommonModule,
+    ReactiveFormsModule,
     FormsModule,
     MainContainerComponent,
     TableComponent,
@@ -52,19 +64,43 @@ export class ConstructionDetailComponent implements OnInit {
   private workerService = inject(WorkerService);
   private modalService = inject(NgbModal);
   private toastService = inject(ToastService);
+  private roleService = inject(RoleService);
 
   // Properties:
+  editConstruction!: ConstructionUpdateRequestDto;
   construction: ConstructionResponseDto | undefined;
   activeTab: ConstructionTab = 'documentation';
   selectedStatus!: ConstructionStatus;
   statusOptions: ConstructionStatus[] = CONSTRUCTION_STATUSES;
   successMessage: string | null = null;
   CONSTRUCTION_STATUSES_ENUM = CONSTRUCTION_STATUSES_ENUM;
+  @ViewChild('confirmAlertContentTemplate')
+  confirmAlertContentTemplate!: TemplateRef<any>;
+  rejectForm: FormGroup;
+  mode: 'detail' | 'edit' = 'detail';
+
+  role = '';
+
+  constructor(private fb: FormBuilder) {
+    this.rejectForm = this.fb.group({
+      rejectReason: ['', Validators.required],
+    });
+  }
+
+  get rejectReasonControl() {
+    return this.rejectForm.get('rejectReason');
+  }
 
   ngOnInit(): void {
+    this.roleService.currentRole$.subscribe((role) => {
+      this.role = role;
+    });
+
     this.activatedRoute.params.subscribe((params) => {
       const id = params['id'];
+      const mode = params['mode'];
       this.getConstructionById(id);
+      this.mode = mode === 'edit' ? 'edit' : 'detail';
     });
 
     this.workerService.message$.subscribe((message) => {
@@ -90,6 +126,28 @@ export class ConstructionDetailComponent implements OnInit {
         this.selectedStatus =
           (construction?.construction_status as ConstructionStatus) ||
           'PLANNED';
+        const splittedStartDate = construction?.planned_start_date?.split('/');
+        const planned_start_date =
+          splittedStartDate?.[2] +
+            '-' +
+            splittedStartDate?.[1] +
+            '-' +
+            splittedStartDate?.[0] || '';
+
+        const splittedEndDate = construction?.planned_end_date?.split('/');
+        const planned_end_date =
+          splittedEndDate?.[2] +
+            '-' +
+            splittedEndDate?.[1] +
+            '-' +
+            splittedEndDate?.[0] || '';
+
+        this.editConstruction = {
+          project_name: construction?.project_name || '',
+          description: construction?.project_description || '',
+          planned_start_date: planned_start_date,
+          planned_end_date: planned_end_date,
+        };
       });
   }
 
@@ -120,27 +178,6 @@ export class ConstructionDetailComponent implements OnInit {
     }
   }
 
-  editConstruction: ConstructionUpdateRequestDto = {
-    description: '',
-    planned_start_date: new Date(),
-    planned_end_date: new Date(),
-    project_name: '',
-  };
-
-  @ViewChild('editModal') editModal!: TemplateRef<any>;
-
-  openEditModal(): void {
-    if (this.construction) {
-      this.editConstruction = {
-        project_name: this.construction.project_name,
-        description: this.construction.project_description,
-        planned_start_date: new Date(this.construction.planned_start_date),
-        planned_end_date: new Date(this.construction.planned_end_date),
-      };
-      this.modalService.open(this.editModal);
-    }
-  }
-
   saveChanges(): void {
     if (this.construction) {
       this.constructionService
@@ -150,9 +187,7 @@ export class ConstructionDetailComponent implements OnInit {
         )
         .subscribe({
           next: (updatedConstruction) => {
-            this.construction = updatedConstruction;
-
-            this.modalService.dismissAll();
+            this.getConstructionById(updatedConstruction.construction_id);
             this.toastService.sendSuccess(
               'Los datos se actualizaron correctamente'
             );
@@ -182,6 +217,21 @@ export class ConstructionDetailComponent implements OnInit {
     }
   }
 
+  onConstructionReview(constructionId: number): void {
+    if (this.construction) {
+      this.constructionService
+        .onReviewConstruction(constructionId)
+        .subscribe(() => {
+          if (this.construction) {
+            this.construction.construction_status = 'ON_REVISION';
+            this.toastService.sendSuccess(
+              'Se envio a revisión la construcción correctamente'
+            );
+          }
+        });
+    }
+  }
+
   onConstructionRejected(constructionId: number, reason: string): void {
     if (this.construction) {
       this.constructionService
@@ -203,5 +253,93 @@ export class ConstructionDetailComponent implements OnInit {
           },
         });
     }
+  }
+
+  onConstructionUpdated(): void {
+    this.getConstructionById(this.construction?.construction_id || 0);
+  }
+
+  isConstructionAbleToApprove() {
+    if (this.construction?.construction_documentation) {
+      const isSomeDocPending =
+        this.construction.construction_documentation.some(
+          (doc: { state: string }) => doc.state === 'PENDING_APPROVAL'
+        );
+      const isSomeDocRejected =
+        this.construction.construction_documentation.some(
+          (doc: { state: string }) => doc.state === 'REJECTED'
+        );
+
+      return !isSomeDocPending && !isSomeDocRejected;
+    } else {
+      return false;
+    }
+  }
+
+  isConstructionAbleToReview() {
+    if (
+      this.construction?.construction_documentation &&
+      this.construction.construction_documentation.length > 0 &&
+      this.construction?.construction_status === "LOADING" ||
+      this.construction?.construction_status === "REJECTED"
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  approveConstruction() {
+    const modalRef = this.modalService.open(ConfirmAlertComponent);
+    modalRef.componentInstance.alertTitle = 'Confirmación';
+    modalRef.componentInstance.alertMessage = `¿Está seguro de que desea aprobar esta obra?`;
+    modalRef.componentInstance.alertType = 'info';
+
+    modalRef.result
+      .then((result) => {
+        if (result) {
+          this.onConstructionApproved(this.construction?.construction_id || 0);
+        }
+      })
+      .catch(() => {});
+  }
+
+  rejectConstruction() {
+    const modalRef = this.modalService.open(ConfirmAlertComponent);
+
+    modalRef.componentInstance.alertTitle = 'Confirmación';
+    modalRef.componentInstance.alertMessage = `¿Está seguro de que desea rechazar esta obra?`;
+    modalRef.componentInstance.alertType = 'warning';
+
+    modalRef.componentInstance.content = this.confirmAlertContentTemplate;
+
+    modalRef.componentInstance.onConfirm = () => {
+      if (this.rejectForm.valid) {
+        const rejectReason = this.rejectForm.value.rejectReason;
+        this.onConstructionRejected(
+          this.construction?.construction_id || 0,
+          rejectReason
+        );
+        modalRef.close();
+        this.rejectForm.reset();
+      } else {
+        this.rejectForm.markAllAsTouched();
+      }
+    };
+  }
+
+  onReviewConstruction() {
+    const modalRef = this.modalService.open(ConfirmAlertComponent);
+    modalRef.componentInstance.alertTitle = 'Confirmación';
+    modalRef.componentInstance.alertMessage = `¿Está seguro de que desea enviar a revisión esta obra?`;
+    modalRef.componentInstance.alertType = 'info';
+
+    modalRef.result
+      .then((result) => {
+        if (result) {
+          this.onConstructionReview(this.construction?.construction_id || 0);
+        }
+      })
+      .catch(() => {});
   }
 }

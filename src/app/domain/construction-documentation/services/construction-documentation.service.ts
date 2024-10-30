@@ -44,6 +44,14 @@ export class ConstructionDocumentationService {
     );
   }
 
+  deleteConstructionDoc(
+    constructionDocId: number
+  ): Observable<ConstructionDocResponseDto> {
+    return this.http.delete<ConstructionDocResponseDto>(
+      `${this.apiUrl}/constructions/documentation/${constructionDocId}`
+    );
+  }
+
   getAllDocumentationTypes(): Observable<
     ConstructionDocumentationTypeResponseDTO[]
   > {
@@ -107,5 +115,4 @@ export class ConstructionDocumentationService {
     document.body.removeChild(a);
     window.URL.revokeObjectURL(url);
   }
-
 }

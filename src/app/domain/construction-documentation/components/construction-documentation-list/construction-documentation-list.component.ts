@@ -1,29 +1,30 @@
 import {
+  AfterViewInit,
   Component,
   EventEmitter,
   inject,
   Input,
+  OnInit,
   Output,
   TemplateRef,
   ViewChild,
 } from '@angular/core';
-import { NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import {
+  NgbDropdownModule,
+  NgbModal,
+  NgbTooltipModule,
+} from '@ng-bootstrap/ng-bootstrap';
 import { ConstructionDocumentationFormComponent } from '../construction-documentation-form/construction-documentation-form.component';
 import { CommonModule } from '@angular/common';
 import {
   TableColumn,
   TableComponent,
   ConfirmAlertComponent,
+  ToastService,
 } from 'ngx-dabd-grupo01';
-import {
-  FormBuilder,
-  ReactiveFormsModule,
-  FormGroup,
-  FormsModule,
-  Validators,
-} from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ConstructionDocumentationService } from '../../services/construction-documentation.service';
-//import { ConfirmAlertComponent } from '../../../../../../projects/ngx-dabd-grupo01/src/public-api';
+import { RoleService } from '../../../../shared/services/role.service';
 
 @Component({
   selector: 'app-construction-documentation-list',
@@ -34,11 +35,12 @@ import { ConstructionDocumentationService } from '../../services/construction-do
     TableComponent,
     NgbTooltipModule,
     FormsModule,
+    NgbDropdownModule,
   ],
   templateUrl: './construction-documentation-list.component.html',
   styleUrl: './construction-documentation-list.component.scss',
 })
-export class ConstructionDocumentationListComponent {
+export class ConstructionDocumentationListComponent implements AfterViewInit, OnInit {
   // Inputs:
   @Input() construction: any = undefined;
   @Input() currentConstructionStatus!: string;
@@ -46,12 +48,17 @@ export class ConstructionDocumentationListComponent {
   // Outputs:
   @Output() constructionApproved = new EventEmitter();
   @Output() constructionRejected = new EventEmitter();
+  @Output() constructionUpdated = new EventEmitter();
+  @Output() constructionReview = new EventEmitter();
 
   // Services:
   private modalService = inject(NgbModal);
   constructionDocumentationService = inject(ConstructionDocumentationService);
+  toastService = inject(ToastService);
+  roleService = inject(RoleService);
 
   // Properties:
+  @ViewChild('revisionTemplate') revisionTemplate!: TemplateRef<any>;
   @ViewChild('actionsTemplate') actionsTemplate!: TemplateRef<any>;
   @ViewChild('isApprovedTemplate') isApprovedTemplate!: TemplateRef<any>;
   @ViewChild('documentTypeNameTemplate')
@@ -60,23 +67,20 @@ export class ConstructionDocumentationListComponent {
   confirmAlertContentTemplate!: TemplateRef<any>;
 
   columns: TableColumn[] = [];
-  rejectForm: FormGroup;
 
-  constructor(private fb: FormBuilder) {
-    this.rejectForm = this.fb.group({
-      rejectReason: ['', Validators.required],
+  role = "";
+
+  ngOnInit(): void {
+    this.roleService.currentRole$.subscribe((role) => {
+      this.role = role;
     });
-  }
-
-  get rejectReasonControl() {
-    return this.rejectForm.get('rejectReason');
   }
 
   // Methods:
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.columns = [
-        { headerName: 'Id', accessorKey: 'id' },
+        { headerName: 'N° de Documento', accessorKey: 'id' },
         {
           headerName: 'Estado',
           accessorKey: 'approved',
@@ -87,6 +91,11 @@ export class ConstructionDocumentationListComponent {
           headerName: 'Tipo',
           accessorKey: 'documentType.name',
           cellRenderer: this.documentTypeNameTemplate,
+        },
+        {
+          headerName: 'Revision',
+          accessorKey: 'revision',
+          cellRenderer: this.revisionTemplate,
         },
         {
           headerName: 'Acciones',
@@ -107,7 +116,7 @@ export class ConstructionDocumentationListComponent {
     modalRef.result
       .then((result) => {
         if (result) {
-          this.construction = result;
+          this.constructionUpdated.emit();
         }
       })
       .catch(() => {});
@@ -115,7 +124,6 @@ export class ConstructionDocumentationListComponent {
 
   rejectDocument(document: any) {
     const modalRef = this.modalService.open(ConfirmAlertComponent);
-    modalRef.componentInstance.alertTitle = 'Confirmación';
     modalRef.componentInstance.alertMessage = `¿Estás seguro de que desea rechazar el documento ${document.documentPath}?`;
 
     modalRef.result
@@ -145,60 +153,33 @@ export class ConstructionDocumentationListComponent {
       });
   }
 
-  clearForm() {
-    this.rejectForm.reset();
-  }
-
-  approveConstruction() {
+  deleteDocument(document: any) {
     const modalRef = this.modalService.open(ConfirmAlertComponent);
-    modalRef.componentInstance.alertTitle = 'Confirmación';
-    modalRef.componentInstance.alertMessage = `¿Está seguro de que desea aprobar esta obra?`;
-    modalRef.componentInstance.alertType = 'info';
+    modalRef.componentInstance.alertMessage =
+      '¿Está seguro de que desea eliminar el documento?';
+    modalRef.componentInstance.alertVariant = 'delete';
 
     modalRef.result
       .then((result) => {
         if (result) {
-          this.constructionApproved.emit();
-          this.clearForm();
+          this.constructionDocumentationService
+            .deleteConstructionDoc(document.id)
+            .subscribe({
+              next: () => {
+                this.constructionUpdated.emit();
+                this.toastService.sendSuccess(
+                  'Documento eliminado correctamente'
+                );
+              },
+              error: () => {
+                this.toastService.sendError(
+                  'Ocurrio un error al eliminar el documento'
+                );
+              },
+            });
         }
       })
       .catch(() => {});
-  }
-
-  rejectConstruction() {
-    const modalRef = this.modalService.open(ConfirmAlertComponent);
-
-    modalRef.componentInstance.alertTitle = 'Confirmación';
-    modalRef.componentInstance.alertMessage = `¿Está seguro de que desea rechazar esta obra?`;
-    modalRef.componentInstance.alertType = 'warning';
-
-    modalRef.componentInstance.content = this.confirmAlertContentTemplate;
-
-    modalRef.componentInstance.onConfirm = () => {
-      if (this.rejectForm.valid) {
-        const rejectReason = this.rejectForm.value.rejectReason;
-        this.constructionRejected.emit(rejectReason);
-        modalRef.close();
-        this.clearForm();
-      } else {
-        this.rejectForm.markAllAsTouched();
-      }
-    };
-  }
-
-  isConstructionAbleToApprove() {
-    if (this.construction.construction_documentation) {
-      return (
-        !this.construction.construction_documentation.some(
-          (doc: { state: string }) => doc.state === 'PENDING_APPROVAL'
-        ) &&
-        !this.construction.construction_documentation.some(
-          (doc: { state: string }) => doc.state === 'REJECTED'
-        )
-      );
-    } else {
-      return false;
-    }
   }
 
   download(documentationId: number): void {

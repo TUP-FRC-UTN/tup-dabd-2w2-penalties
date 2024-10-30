@@ -14,8 +14,6 @@ import {
   throwError,
 } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
-import { SafeCall } from '@angular/compiler';
-import { ToastService } from '../../../../../../projects/ngx-dabd-grupo01/src/lib/toast/toast-service';
 
 type OneSanctionType = SanctionType | undefined;
 @Injectable({
@@ -23,7 +21,6 @@ type OneSanctionType = SanctionType | undefined;
 })
 export class SanctionTypeService {
   private http = inject(HttpClient);
-  private toastService = inject(ToastService);
 
   private apiUrl = environment.moderationApiUrl;
 
@@ -41,13 +38,13 @@ export class SanctionTypeService {
 
   ChargeTypeEnum = ChargeTypeEnum;
 
-  getSanctionTypes(name: string) {
+  getSanctionTypes(name: string ='') {
     let params = new HttpParams();
-    if (name !== '') {
+    if (name && name !== '') {
       params = params.set('partialName', name);
     }
 
-    return this.http.get<Array<SanctionType>>(`${this.apiUrl}/sanctionType`, {
+    return this.http.get<Array<SanctionType>>(`${this.apiUrl}/sanction-type`, {
       params,
     });
   }

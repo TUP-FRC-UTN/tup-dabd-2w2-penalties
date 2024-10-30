@@ -25,9 +25,9 @@
     [isLoading]="(isLoading$ | async) || false"
     (searchValueChange)="onSearchValueChange('partialName', $event)"
     searchPlaceHolder="Nombre..."
+    [headerButtonText]="'Nuevo'"
+    (headerButtonClick)="openFormModal()"
+    (infoButtonClick)="infoModal()"
   >
-    <button class="btn btn-outline-primary" (click)="openFormModal()">
-      Nuevo
-    </button>
   </app-table>
 </app-main-container>

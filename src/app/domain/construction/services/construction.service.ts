@@ -115,6 +115,13 @@ export class ConstructionService {
     );
   }
 
+  onReviewConstruction(id: number): Observable<ConstructionResponseDto> {
+    return this.http.put<ConstructionResponseDto>(
+      `${this.apiUrl}/review/${id}`,
+      {}
+    );
+  }
+
   rejectConstruction(
     id: number,
     reason: string

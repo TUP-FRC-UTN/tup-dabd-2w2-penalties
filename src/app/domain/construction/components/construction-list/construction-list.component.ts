@@ -1,21 +1,35 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, TemplateRef, ViewChild } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
-import { ConstructionResponseDto } from '../../models/construction.model';
+import {
+  CONSTRUCTION_STATUSES_ENUM,
+  ConstructionResponseDto,
+} from '../../models/construction.model';
 import { ConstructionFormComponent } from '../construction-form/construction-form.component';
 import { ConstructionService } from '../../services/construction.service';
 import { Router } from '@angular/router';
 import {
-  MainContainerComponent,
+  ConfirmAlertComponent,
   TableColumn,
   TableComponent,
 } from 'ngx-dabd-grupo01';
+import { FormsModule } from '@angular/forms';
+import { MainContainerComponent } from '../../../../../../projects/ngx-dabd-grupo01/src/public-api';
+import { GetValueByKeyForEnumPipe } from '../../../../shared/pipes/get-value-by-key-for-status.pipe';
+import { RoleService } from '../../../../shared/services/role.service';
 
 @Component({
   selector: 'app-construction-list',
   standalone: true,
-  imports: [CommonModule, TableComponent, MainContainerComponent],
+  imports: [
+    FormsModule,
+    CommonModule,
+    TableComponent,
+    MainContainerComponent,
+    NgbDropdownModule,
+    GetValueByKeyForEnumPipe,
+  ],
   templateUrl: './construction-list.component.html',
   styleUrl: './construction-list.component.css',
 })
@@ -27,6 +41,8 @@ export class ConstructionListComponent {
   private modalService = inject(NgbModal);
 
   // Properties:
+  CONSTRUCTION_STATUSES_ENUM = CONSTRUCTION_STATUSES_ENUM;
+
   items$: Observable<ConstructionResponseDto[]> =
     this.constructionService.items$;
   totalItems$: Observable<number> = this.constructionService.totalItems$;
@@ -34,21 +50,65 @@ export class ConstructionListComponent {
 
   page: number = 1;
   size: number = 10;
-  searchParams: { [key: string]: string } = {};
+  searchParams: { [key: string]: any } = {};
+
+  // Filtro dinámico
+  filterType: string = '';
+  startDate: string = '';
+  endDate: string = '';
+  status: string = '';
 
   @ViewChild('actionsTemplate') actionsTemplate!: TemplateRef<any>;
+  @ViewChild('statusTemplate') statusTemplate!: TemplateRef<any>;
 
   columns: TableColumn[] = [];
 
+  role: string = '';
+  userId: number | undefined;
+  userPlotsIds: number[] = [];
+  roleService = inject(RoleService);
+
   // Methods:
+  updateFiltersAccordingToUser() {
+    if (this.role !== 'ADMIN') {
+      this.searchParams = {
+        ...this.searchParams,
+        plotsIds: this.userPlotsIds,
+        userId: this.userId!,
+      };
+    } else {
+      if (this.searchParams['userId']) {
+        delete this.searchParams['userId'];
+      }
+      if (this.searchParams['plotsIds']) {
+        delete this.searchParams['plotsIds'];
+      }
+    }
+  }
+
   ngOnInit(): void {
+    this.roleService.currentUserId$.subscribe((userId: number) => {
+      this.userId = userId;
+      this.loadItems();
+    });
+
+    this.roleService.currentLotes$.subscribe((plots: number[]) => {
+      this.userPlotsIds = plots;
+      this.loadItems();
+    });
+
+    this.roleService.currentRole$.subscribe((role: string) => {
+      this.role = role;
+      this.loadItems();
+    });
+
     this.loadItems();
   }
 
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.columns = [
-        { headerName: 'Id', accessorKey: 'construction_id' },
+        { headerName: 'N.° Construcción', accessorKey: 'construction_id' },
         { headerName: 'Descripción', accessorKey: 'project_description' },
         { headerName: 'Lote', accessorKey: 'plot_id' },
         { headerName: 'Inicio', accessorKey: 'planned_start_date' },
@@ -58,6 +118,7 @@ export class ConstructionListComponent {
         {
           headerName: 'Estado',
           accessorKey: 'construction_status',
+          cellRenderer: this.statusTemplate,
         },
         {
           headerName: 'Acciones',
@@ -69,6 +130,7 @@ export class ConstructionListComponent {
   }
 
   loadItems(): void {
+    this.updateFiltersAccordingToUser();
     this.constructionService
       .getAllConstructions(this.page, this.size, this.searchParams)
       .subscribe((response) => {
@@ -87,8 +149,8 @@ export class ConstructionListComponent {
     this.loadItems();
   };
 
-  onSearchValueChange = (key: string, searchValue: any): void => {
-    this.searchParams = { [key]: searchValue };
+  onSearchValueChange = (searchValue: any): void => {
+    this.searchParams = { searchValue };
     this.page = 1;
     this.loadItems();
   };
@@ -98,7 +160,40 @@ export class ConstructionListComponent {
     modalRef.componentInstance.itemId = itemId;
   }
 
-  goToDetails = (id: number): void => {
-    this.router.navigate(['constructions', id]);
+  goToDetails = (id: number, mode: 'detail' | 'edit'): void => {
+    this.router.navigate(['constructions', id, mode]);
   };
+
+  setFilterType(type: string): void {
+    this.filterType = type;
+  }
+
+  applyFilters(): void {
+    if (this.filterType === 'fecha') {
+      this.searchParams = {
+        startDate: this.startDate,
+        endDate: this.endDate,
+      };
+    } else if (this.filterType === 'estado') {
+      this.searchParams = { constructionStatuses: [this.status] };
+    }
+    this.page = 1;
+    this.loadItems();
+  }
+
+  clearFilters(): void {
+    this.filterType = '';
+    this.startDate = '';
+    this.endDate = '';
+    this.status = '';
+    this.searchParams = {};
+    this.loadItems();
+  }
+  infoModal() {
+    const modalRef = this.modalService.open(ConfirmAlertComponent);
+    modalRef.componentInstance.alertType = 'info';
+
+    modalRef.componentInstance.alertTitle = 'Ayuda';
+    modalRef.componentInstance.alertMessage = `Aquí podrás consultar y gestionar tus obras en curso. \n Recordá que se debe subir documentacion obligatoria y ser aprobada por el administrador. `;
+  }
 }

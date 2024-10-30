@@ -1,154 +1,111 @@
-<app-main-container title="Multas">
-  <form>
-    <div class="mb-3 row justify-content-between align-items-center">
-      <div class="col-10">
-        <div class="row justify-content-left align-items-center g-2">
-          <div class="col-1">
+<ng-template #fineState let-item>
+  {{ item.fine_state | getValueByKeyForEnum : FineStatusEnum }}
+</ng-template>
+
+<ng-template #fineDate let-item>
+  {{ item.created_date | date : "dd/MM/yyyy" }}
+</ng-template>
+
+<ng-template #actionsTemplate let-item>
+  <button class="btn btn-primary btn-sm me-2" (click)="goToFineDetail(item.id)">
+    <i class="bi bi-eye"></i>
+  </button>
+</ng-template>
+
+<app-main-container title="Multas" id="pdf-template">
+  <app-table
+    [items]="(items$ | async) || []"
+    [columns]="columns"
+    [pagination]="{
+      totalItems: (totalItems$ | async) || 0,
+      page: page,
+      size: size,
+      onPageChange: onPageChange,
+      onPageSizeChange: onPageSizeChange
+    }"
+    [isLoading]="(isLoading$ | async) || false"
+    (searchValueChange)="onSearchValueChange('partialName', $event)"
+    searchPlaceHolder="Lote..."
+    (excelButtonClick)="onExportToExcel()"
+    [showHeaderButton]="false"
+    [showSearchBar]="false"
+    (infoButtonClick)="infoModal()"
+  >
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="btn-group me-5" role="group">
+        <div class="d-flex align-items-center">
+          <div class="btn-group me-2">
             <button
-              class="btn btn-outline-primary d-flex justify-content-center align-items-center"
-              (click)="service.clearFilters()"
+              type="button"
+              class="btn btn-outline-danger"
+              (click)="clearFilters()"
             >
-              <i class="bi bi-trash m-0"></i>
+              <i class="bi bi-trash-fill"></i> Limpiar
+            </button>
+            <div
+              class="btn-group"
+              ngbDropdown
+              role="group"
+              aria-label="Button group with nested dropdown"
+            >
+              <button
+                type="button"
+                class="btn btn-outline-info dropdown-toggle"
+                ngbDropdownToggle
+              >
+                <i class="bi bi-funnel-fill"></i> Filtros
+              </button>
+              <div class="dropdown-menu" ngbDropdownMenu>
+                <button ngbDropdownItem (click)="setFilterType('fecha')">
+                  Por fecha
+                </button>
+                <button ngbDropdownItem (click)="setFilterType('estado')">
+                  Por estado
+                </button>
+              </div>
+            </div>
+          </div>
+          <!-- Fecha -->
+          @if(filterType === 'fecha'){
+          <div class="d-flex">
+            <input
+              type="date"
+              class="form-control me-2"
+              placeholder="Fecha de inicio"
+              [(ngModel)]="startDate"
+              [max]="endDate"
+            />
+            <input
+              type="date"
+              class="form-control me-2"
+              placeholder="Fecha de fin"
+              [(ngModel)]="endDate"
+              [min]="startDate"
+            />
+            <button class="btn btn-dark" type="button" (click)="applyFilters()">
+              Buscar
             </button>
           </div>
 
-          <!-- Filtro de estado -->
-          <div class="col-3">
-            <label for="fineStateFilter" class="col-form-label">Estado:</label>
-            <select
-              id="fineStateFilter"
-              class="form-select"
-              name="fineStateFilter"
-              [(ngModel)]="service.searchState"
-            >
+          }
+          <!-- Estado -->
+          @if(filterType === 'estado'){
+          <div class="d-flex">
+            <select class="form-select me-2" [(ngModel)]="status">
               <option [ngValue]="''">Todos</option>
-              @for (key of service.fineStatusKeys; track $index) {
+              @for (key of fineService.fineStatusKeys; track $index) {
               <option [value]="key">
-                {{ service.getValueByKeyForStatusEnum(key) }}
+                {{ key | getValueByKeyForEnum : FineStatusEnum }}
               </option>
               }
             </select>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-1">
-        <app-new-fine-modal
-          (fineCreated)="onFineCreated($event)"
-        ></app-new-fine-modal>
-      </div>
-    </div>
-
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <!-- <th scope="col">#</th>
-				<th scope="col" sortable="name" (sort)="onSort($event)">Country</th>
-				<th scope="col" sortable="area" (sort)="onSort($event)">Area</th>
-				<th scope="col" sortable="population" (sort)="onSort($event)">Population</th> -->
-
-          <th scope="col">Multa</th>
-          <th scope="col">Lote</th>
-          <th scope="col">Estado</th>
-          <th scope="col">Tipo</th>
-          <th scope="col">Alta</th>
-
-          <th scope="col">Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        @if (service.loading$ | async) {
-        <div></div>
-        <div class="spinner-border" role="status">
-          <span class="visually-hidden">Loading...</span>
-        </div>
-        }@else { @for (fine of fines$ | async; track fine.id) {
-        <!-- <tr>
-					<th scope="row">{{ fine.id }}</th>
-					<td>
-						<img
-							[src]="'https://upload.wikimedia.org/wikipedia/commons/' + fine.flag"
-							[alt]="'The flag of ' + fine.name"
-							class="me-2"
-							style="width: 20px"
-						/>
-						<ngb-highlight [result]="fine.name" [term]="service.searchTerm" />
-					</td>
-					<td><ngb-highlight [result]="fine.area | number" [term]="service.searchTerm" /></td>
-					<td><ngb-highlight [result]="fine.population | number" [term]="service.searchTerm" /></td>
-				</tr> -->
-
-        <tr>
-          <th scope="row">{{ fine.id }}</th>
-          <td>
-            <ngb-highlight
-              [result]="fine.plotId.toString()"
-              [term]="service.searchTerm"
-            />
-          </td>
-          <td>
-            <ngb-highlight
-              [result]="service.getValueByKeyForStatusEnum(fine.fineState)"
-              [term]="service.searchTerm"
-            />
-          </td>
-
-          <td>
-            <ngb-highlight
-              [result]="fine.sanctionType.name"
-              [term]="service.searchTerm"
-            />
-          </td>
-
-          <td>
-            <ngb-highlight
-              [result]="fine.createdDate | date : 'dd/MM/yyyy'"
-              [term]="service.searchTerm"
-            />
-          </td>
-
-          <td>
-            <button
-              type="button"
-              class="btn btn-primary"
-              (click)="viewDetail(fine.id)"
-            >
-              Ver Detalle
+            <button class="btn btn-dark" type="button" (click)="applyFilters()">
+              Buscar
             </button>
-          </td>
-        </tr>
-        } @empty {
-        <tr>
-          <td colspan="6" style="text-align: center">
-            No se encontraron resultados
-          </td>
-        </tr>
-        } }
-      </tbody>
-    </table>
-
-    <div class="d-flex justify-content-between p-2">
-      <ngb-pagination
-        [collectionSize]="(total$ | async)!"
-        [(page)]="service.page"
-        [pageSize]="service.pageSize"
-      >
-      </ngb-pagination>
-
-      <select
-        class="form-select"
-        style="width: auto"
-        name="pageSize"
-        [(ngModel)]="service.pageSize"
-      >
-        <option [ngValue]="5">5 items per page</option>
-        <option [ngValue]="10">10 items per page</option>
-      </select>
+          </div>
+          }
+        </div>
+      </div>
     </div>
-  </form>
-  @if (successMessage) {
-  <div class="alert alert-success" role="alert">
-    {{ successMessage }}
-  </div>
-  }
+  </app-table>
 </app-main-container>

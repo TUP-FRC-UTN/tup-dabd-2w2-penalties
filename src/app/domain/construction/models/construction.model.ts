@@ -8,8 +8,8 @@ export interface ConstructionRequestDto {
 
 export interface ConstructionUpdateRequestDto {
   description: string;
-  planned_start_date: Date;
-  planned_end_date: Date;
+  planned_start_date: string;
+  planned_end_date: string;
   project_name: string;
 }
 
@@ -38,6 +38,7 @@ export interface ConstructionUpdateStatusRequestDto {
 export type ConstructionTab = 'documentation' | 'workers' | 'notes';
 
 export type ConstructionStatus =
+    'ON_REVISION'
   | 'PLANNED'
   | 'APPROVED'
   | 'IN_PROGRESS'
@@ -50,6 +51,7 @@ export const CONSTRUCTION_STATUSES: ConstructionStatus[] = [
   'IN_PROGRESS',
   'COMPLETED',
   'STOPPED',
+  'ON_REVISION',
 ];
 
 export enum CONSTRUCTION_STATUSES_ENUM {
@@ -60,4 +62,5 @@ export enum CONSTRUCTION_STATUSES_ENUM {
   IN_PROGRESS = 'En progreso',
   COMPLETED = 'Completada',
   STOPPED = 'Frenada',
+  ON_REVISION = 'En revisión',
 }

@@ -1,5 +1,8 @@
 <div class="d-flex mb-3">
-  <div class="w-100 d-flex justify-content-between align-items-center">
+  <div class="w-100 d-flex align-items-center" [ngClass]="{
+    'justify-content-between': showSearchBar,
+    'justify-content-end': !showSearchBar
+  }">
     @if(showSearchBar){
     <div class="input-group" style="max-width: 280px">
       <span class="input-group-text" id="search-icon">
@@ -8,27 +11,46 @@
       <input
         type="text"
         class="form-control"
-        placeholder="{{searchPlaceHolder}}"
+        placeholder="{{ searchPlaceHolder }}"
         [(ngModel)]="searchValue"
         (ngModelChange)="onSearchValueChange()"
         aria-describedby="search-icon"
       />
     </div>
+    } @if(showHeaderButton) {
+    <button class="btn btn-outline-primary" (click)="onHeaderButtonClick()">
+      @if(headerButtonIcon) {
+      <i class="{{ headerButtonIcon }} me-1"></i>
+      }
+      {{ headerButtonText }}
+    </button>
     }
-
-    <ng-content></ng-content>
   </div>
   @if(showExportOptions) {
   <div class="d-flex gap-2 ms-3 ps-3" style="border-left: 2px solid #e0e0e0">
-    <button class="btn btn-success" placement="top" ngbTooltip="Exportar Excel">
+    @if(showExportExcelButton) {
+    <button
+      class="btn btn-success"
+      placement="top"
+      ngbTooltip="Exportar Excel"
+      (click)="onExcelButtonClick()"
+    >
       <i class="bi bi-file-earmark-excel"></i>
     </button>
-    <button class="btn btn-danger" placement="top" ngbTooltip="Exportar PDF">
+    } @if (showExportPdfButton) {
+    <button
+      class="btn btn-danger"
+      placement="top"
+      ngbTooltip="Exportar PDF"
+      (click)="onPdfButtonClick()"
+    >
       <i class="bi bi-file-earmark-pdf"></i>
     </button>
+    }
   </div>
   }
 </div>
+<ng-content></ng-content>
 <div
   class="table-responsive border overflow-auto"
   [ngStyle]="{ height: height }"
@@ -38,17 +60,23 @@
     <table class="table table-striped">
       <thead>
         <tr>
-          <th *ngFor="let column of columns">
+          @for (column of columns; track $index) {
+          <th>
             <div class="skeleton"></div>
           </th>
+          }
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let item of [1, 2, 3, 4]">
-          <td *ngFor="let column of columns">
+        @for(item of [1, 2, 3, 4]; track $index) {
+        <tr>
+          @for(column of columns; track $index) {
+          <td>
             <div class="skeleton"></div>
           </td>
+          }
         </tr>
+        }
       </tbody>
     </table>
   </ng-container>
@@ -68,7 +96,7 @@
         <td>
           @if(!column.cellRenderer) {
           <ng-container>
-            {{ item[column.accessorKey] }}
+            {{ getNestedValue(item, column.accessorKey) }}
           </ng-container>
           } @else {
           <ng-container
@@ -95,14 +123,7 @@
 
 @if(pagination) {
 <div class="d-flex justify-content-between align-items-center mt-3">
-  <ngb-pagination
-    [collectionSize]="pagination.totalItems"
-    [(page)]="pagination.page"
-    [pageSize]="pagination.size"
-    (pageChange)="onPageChange($event)"
-  ></ngb-pagination>
-
-  <div class="form-group mb-3">
+  <div class="form-group">
     <select
       id="itemsPerPage"
       class="form-select"
@@ -110,9 +131,20 @@
       (change)="onItemsPerPageChange(pagination.size)"
     >
       @for(option of sizeOptions; track $index) {
-      <option [value]="option">{{ option }} items per page</option>
+      <option [value]="option">{{ option }} Elementos</option>
       }
     </select>
+  </div>
+  <div class="d-flex">
+    <ngb-pagination
+      [collectionSize]="pagination.totalItems"
+      [(page)]="pagination.page"
+      [pageSize]="pagination.size"
+      (pageChange)="onPageChange($event)"
+    ></ngb-pagination>
+    <button class="btn btn-secondary ms-3 mb-3" (click)="onInfoButtonClick()">
+      <i class="bi bi-info-circle"></i>
+    </button>
   </div>
 </div>
 }

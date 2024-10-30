@@ -7,6 +7,8 @@ import { SanctionTypeListComponent } from './domain/moderations/sanction-type/co
 import { InfractionListComponent } from './domain/moderations/infraction/components/infraction-list/infraction-list.component';
 import { ClaimListComponent } from './domain/moderations/claim/components/claim-list/claim-list.component';
 import { SanctionTypeDetailComponent } from './domain/moderations/sanction-type/components/sanction-type-detail/sanction-type-detail.component';
+import { ClaimDetailComponent } from './domain/moderations/claim/components/claim-detail/claim-detail.component';
+import { InfractionDetailComponent } from './domain/moderations/infraction/components/infraction-detail/infraction-detail.component';
 
 export const routes: Routes = [
   {
@@ -19,14 +21,14 @@ export const routes: Routes = [
     component: ConstructionListComponent,
   },
   {
-    path: 'constructions/:id',
+    path: 'constructions/:id/:mode',
     component: ConstructionDetailComponent,
   },
   {
     path: 'fine',
     component: FineTable,
   },
-  { path: 'fine/:id', component: FineDetailComponent },
+  { path: 'fine/:id/:mode', component: FineDetailComponent },
   {
     path: 'sanctionType',
     component: SanctionTypeListComponent,
@@ -37,7 +39,12 @@ export const routes: Routes = [
     component: InfractionListComponent,
   },
   {
+    path: 'infraction/:id',
+    component: InfractionDetailComponent,
+  },
+  {
     path: 'claim',
     component: ClaimListComponent,
   },
+  { path: 'claim/:id/:mode', component: ClaimDetailComponent },
 ];

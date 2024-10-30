@@ -1,13 +1,33 @@
-import {Component, inject, TemplateRef} from '@angular/core';
-import {ModalDismissReasons, NgbInputDatepicker, NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {CadastreService} from "../../../../cadastre/services/cadastre.service";
-import {Plot} from "../../../../cadastre/plot/models/plot.model";
-import {FormsModule} from "@angular/forms";
-import {SanctionType} from "../../../sanction-type/models/sanction-type.model";
-import {SanctionTypeService} from "../../../sanction-type/services/sanction-type.service";
-import {InfractionServiceService} from "../../services/infraction-service.service";
-import {InfractionDto} from "../../models/infraction.model";
-import {NgClass} from "@angular/common";
+import {
+  Component,
+  ElementRef,
+  inject,
+  Input,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
+import {
+  ModalDismissReasons,
+  NgbActiveModal,
+  NgbInputDatepicker,
+  NgbModal,
+} from '@ng-bootstrap/ng-bootstrap';
+import { CadastreService } from '../../../../cadastre/services/cadastre.service';
+import { Plot } from '../../../../cadastre/plot/models/plot.model';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { SanctionType } from '../../../sanction-type/models/sanction-type.model';
+import { SanctionTypeService } from '../../../sanction-type/services/sanction-type.service';
+import { InfractionServiceService } from '../../services/infraction-service.service';
+import { InfractionDto } from '../../models/infraction.model';
+import { CommonModule, NgClass } from '@angular/common';
+import { ClaimDTO } from '../../../claim/models/claim.model';
+import { TruncatePipe } from '../../../../../shared/pipes/truncate.pipe';
+import { ToastService } from 'ngx-dabd-grupo01';
 
 @Component({
   selector: 'app-new-infraction-modal',
@@ -15,66 +35,52 @@ import {NgClass} from "@angular/common";
   imports: [
     NgbInputDatepicker,
     FormsModule,
-    NgClass
+    NgClass,
+    CommonModule,
+    ReactiveFormsModule,
+    TruncatePipe,
   ],
   templateUrl: './new-infraction-modal.component.html',
-  styleUrl: './new-infraction-modal.component.scss'
+  styleUrl: './new-infraction-modal.component.scss',
 })
 export class NewInfractionModalComponent {
-
   //services
-  private cadastreService = inject(CadastreService)
-  private sanctionService=inject(SanctionTypeService)
-  private infractionService= inject(InfractionServiceService)
+  activeModal = inject(NgbActiveModal);
+  private cadastreService = inject(CadastreService);
+  private sanctionService = inject(SanctionTypeService);
+  private infractionService = inject(InfractionServiceService);
+
+  toastService = inject(ToastService);
 
   //variables
   plots: Plot[] | undefined;
-  sanctionTypes:SanctionType[]|undefined;
+  sanctionTypes: SanctionType[] | undefined;
 
-  claims:number[] = [];
-  sanctionTypeNumber:number | undefined;
-  description:string | undefined;
-  plotId:number|undefined;
+  @Input() claims: ClaimDTO[] = [];
+  @Input() sanctionTypeNumber: number | undefined;
+  @Input() plotId: number | undefined;
 
-
-
+  description: string | undefined;
 
   // Modal logic
   private modalService = inject(NgbModal);
   closeResult = '';
 
   open(content: TemplateRef<any>) {
-
-    //gets the plots from cadastre
     this.cadastreService.getPlots().subscribe({
       next: (response) => {
         this.plots = response.content;
-
-        //console.log(this.plots);
       },
     });
 
-    // gets the sanction types from the service
     this.sanctionService.getPaginatedSanctionTypes(1, 10).subscribe({
       next: (response) => {
         this.sanctionTypes = response.items;
-        console.log(this.sanctionTypes);
       },
-      error: (error) => {
-        console.error('Error fetching sanction types:', error);
-      }
+      error: (error) => {},
     });
 
-
-    // open modal
-    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.then(
-      (result) => {
-        this.closeResult = `Closed with: ${result}`;
-      },
-      (reason) => {
-        this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-      },
-    );
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' });
   }
 
   private getDismissReason(reason: any): string {
@@ -88,41 +94,32 @@ export class NewInfractionModalComponent {
     }
   }
 
-  //methods
-  //adds claims harcoded for now
-  addClaim(id:number){
-    const index = this.claims.indexOf(id);
-
-    if (index !== -1) {
-      // Remove the id if it's already in the array
-      this.claims.splice(index, 1);
-    } else {
-      // Add the id if it's not in the array
-      this.claims.push(id);
-    }
-    console.log('current claims array: ',this.claims)
-  }
-
-  //submit method for the form
-  submitInfraction(){
-    if (this.plotId&&this.sanctionTypeNumber&&this.description){
-      const newInfraction: InfractionDto={
-        plotId:this.plotId,
-        description:this.description,
-        sanctionTypeId:this.sanctionTypeNumber,
-        claimsId:this.claims
-      }
+  submitInfraction() {
+    if (this.plotId && this.sanctionTypeNumber && this.description) {
+      const newInfraction: InfractionDto = {
+        plotId: this.plotId,
+        description: this.description,
+        sanctionTypeId: this.sanctionTypeNumber,
+        claimsId: this.claims.map((claim) => claim.id),
+      };
 
       this.infractionService.createInfraction(newInfraction).subscribe({
-        next:(response)=>{
-          console.log('Infracción creada con éxito', response);
+        next: (response) => {
+          this.toastService.sendSuccess(
+            'Infracción ' + response.id + ' creada exitosamente'
+          );
+          if (response.fine_id !== null) {
+            this.toastService.sendSuccess(
+              'Multa ' + response.fine_id + ' creada exitosamente'
+            );
+          }
+          this.activeModal.close(response);
         },
-        error:(error)=>{
-          console.error('error al crear la infraccion: ',error)
-        }
-      })
+        error: (error) => {
+          this.toastService.sendError('Error al crear la infracción');
+        },
+      });
     } else {
-      console.error('faltan datos obligatorios en el formulario')
     }
   }
 }

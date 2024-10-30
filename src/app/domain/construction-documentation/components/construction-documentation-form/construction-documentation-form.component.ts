@@ -3,8 +3,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConstructionDocumentationTypeResponseDTO } from '../../models/construction-documentation.model';
 import { Observable } from 'rxjs';
 import { ConstructionDocumentationService } from '../../services/construction-documentation.service';
-import { FormConfig, FormFieldsComponent } from 'ngx-dabd-grupo01';
-import { ToastService } from '../../../../../../projects/ngx-dabd-grupo01/src/public-api';
+import { FormConfig, FormFieldsComponent, ToastService } from 'ngx-dabd-grupo01';
 
 @Component({
   selector: 'app-construction-documentation-form',

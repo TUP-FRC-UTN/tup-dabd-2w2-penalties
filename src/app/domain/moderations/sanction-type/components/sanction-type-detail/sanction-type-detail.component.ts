@@ -7,10 +7,9 @@ import { FormsModule } from '@angular/forms';
 
 import { NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { GetValueByKeyForEnumPipe } from '../../../../../shared/pipes/get-value-by-key-for-status.pipe';
-import { ToastService } from '../../../../../../../projects/ngx-dabd-grupo01/src/lib/toast/toast-service';
 import { MainContainerComponent } from '../../../../../../../projects/ngx-dabd-grupo01/src/lib/main-container/main-container.component';
-import { TableComponent } from '../../../../../../../projects/ngx-dabd-grupo01/src/lib/table/table.component';
 import { ConfirmAlertComponent } from '../../../../../../../projects/ngx-dabd-grupo01/src/lib/confirm-alert/confirm-alert.component';
+import { ToastService } from 'ngx-dabd-grupo01';
 
 @Component({
   selector: 'app-sanction-type-detail',
@@ -20,7 +19,6 @@ import { ConfirmAlertComponent } from '../../../../../../../projects/ngx-dabd-gr
     CommonModule,
     FormsModule,
     MainContainerComponent,
-    TableComponent,
     NgbTooltipModule,
     GetValueByKeyForEnumPipe,
   ],

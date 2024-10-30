@@ -1,45 +1,80 @@
-<app-main-container title="Construcción {{construction?.construction_id}}" [onGoBack]="goBack">
-  <div class="row">
-    <div class="mb-3 col-6">
-      <label for="name" class="form-label">Nombre</label>
+<ng-template #confirmAlertContentTemplate>
+  <form [formGroup]="rejectForm">
+    <label for="rejectReason" class="form-label">Ingrese un motivo</label>
+    <input
+      type="text"
+      class="form-control"
+      id="rejectReason"
+      formControlName="rejectReason"
+      [ngClass]="{
+        'is-invalid':
+          rejectReasonControl?.invalid && rejectReasonControl?.touched
+      }"
+    />
+    @if(rejectReasonControl?.invalid && rejectReasonControl?.touched) {
+    <div class="invalid-feedback">El motivo es requerido.</div>
+    }
+  </form>
+</ng-template>
+
+<app-main-container title="Construcción {{ construction?.construction_id }}">
+  <form #editForm="ngForm" class="row">
+    <div class="mb-3 col-6 d-flex align-items-center">
+      <label for="name" class="form-label me-3" style="width: 150px"
+        >Nombre</label
+      >
       <input
+        #nameControl="ngModel"
         id="name"
         name="name"
-        class="form-control"
+        class="form-control flex-grow-1"
         value="{{ construction?.project_name }}"
-        disabled
+        [(ngModel)]="editConstruction.project_name"
+        [ngClass]="{
+          'is-invalid':
+            nameControl.invalid && (nameControl.dirty || nameControl.touched)
+        }"
+        [disabled]="mode === 'detail'"
+        required
       />
+      <!--       @if (nameControl.invalid && (nameControl.dirty || nameControl.touched)) {
+      @if (nameControl.getError('required')) {
+      <div class="invalid-feedback">Este campo es obligatorio</div>
+      } } -->
     </div>
-    <div class="mb-3 col-6">
-      <label for="description" class="form-label">Descripción</label>
+    <div class="mb-3 col-6 d-flex align-items-center">
+      <label for="description" class="form-label me-3" style="width: 150px"
+        >Descripción</label
+      >
       <input
+        #descriptionControl="ngModel"
         id="description"
         name="description"
-        class="form-control"
+        class="form-control flex-grow-1"
         value="{{ construction?.project_description }}"
-        disabled
+        [(ngModel)]="editConstruction.description"
+        [disabled]="mode === 'detail'"
+        [ngClass]="{
+          'is-invalid':
+            descriptionControl.invalid &&
+            (descriptionControl.dirty || descriptionControl.touched)
+        }"
+        required
       />
+      <!--       @if (descriptionControl.invalid && (descriptionControl.dirty ||
+      descriptionControl.touched)) { @if
+      (descriptionControl.getError('required')) {
+      <div class="invalid-feedback">Este campo es obligatorio</div>
+      } } -->
     </div>
-    <!-- <div class="mb-3 col-6">
-      <label for="status" class="form-label">Status</label>
-      <div class="d-flex gap-3">
-        <select id="status" name="status" class="form-control" [(ngModel)]="selectedStatus">
-          <option *ngFor="let status of statusOptions" [value]="status">
-            {{ status }}
-          </option>
-        </select>
-        <button class="btn btn-primary" [disabled]="selectedStatus === construction?.construction_status"
-          (click)="updateStatus()" placement="top" ngbTooltip="Actualizar estado">
-          <i class="bi bi-floppy"></i>
-        </button>
-      </div>
-    </div> -->
-    <div class="mb-3 col-6">
-      <label for="status" class="form-label">Estado</label>
+    <div class="mb-3 col-6 d-flex align-items-center">
+      <label for="status" class="form-label me-3" style="width: 150px"
+        >Estado</label
+      >
       <input
         id="status"
         name="status"
-        class="form-control"
+        class="form-control flex-grow-1"
         [ngClass]="{
           'border-success': construction?.construction_status === 'APPROVED',
           'bg-success-subtle': construction?.construction_status === 'APPROVED',
@@ -64,42 +99,153 @@
         disabled
       />
     </div>
-    <div class="mb-3 col-6">
-      <label for="start_date" class="form-label">Fecha estimada de inicio</label>
+    <div class="mb-3 col-6 d-flex align-items-center">
+      <label for="start_date" class="form-label me-3" style="width: 150px"
+        >Fecha estimada de inicio</label
+      >
       <input
+        #startDateControl="ngModel"
         id="start_date"
         name="start_date"
-        class="form-control"
+        class="form-control flex-grow-1"
         value="{{ construction?.planned_start_date }}"
-        disabled
+        [(ngModel)]="editConstruction.planned_start_date"
+        [ngClass]="{
+          'is-invalid':
+            startDateControl.invalid &&
+            (startDateControl.dirty || startDateControl.touched)
+        }"
+        type="date"
+        [disabled]="mode === 'detail'"
+        required
       />
+      <!--     @if (startDateControl.invalid && (startDateControl.dirty ||
+      startDateControl.touched)) { @if (startDateControl.getError('required')) {
+      <div class="invalid-feedback">Este campo es obligatorio</div>
+      } } -->
     </div>
-    <div class="mb-3 col-6">
-      <label for="end_date" class="form-label">Fecha estimada de finalización</label>
+    <div class="mb-3 col-6 d-flex align-items-center">
+      <label for="end_date" class="form-label me-3" style="width: 150px"
+        >Fecha estimada de finalización</label
+      >
       <input
+        #endDateControl="ngModel"
         id="end_date"
         name="end_date"
-        class="form-control"
+        class="form-control flex-grow-1"
         value="{{ construction?.planned_end_date }}"
-        disabled
+        [(ngModel)]="editConstruction.planned_end_date"
+        [ngClass]="{
+          'is-invalid':
+            endDateControl.invalid &&
+            (endDateControl.dirty || endDateControl.touched)
+        }"
+        type="date"
+        [disabled]="mode === 'detail'"
+        required
       />
+      <!--       @if (endDateControl.invalid && (endDateControl.dirty ||
+      endDateControl.touched)) { @if (endDateControl.getError('required')) {
+      <div class="invalid-feedback">Este campo es obligatorio</div>
+      } } -->
     </div>
-    <div class="mb-3 col-6">
-      <label for="plot_id" class="form-label">Lote</label>
+    <div class="mb-3 col-6 d-flex align-items-center">
+      <label for="plot_id" class="form-label me-3" style="width: 150px"
+        >Lote</label
+      >
       <input
         id="plot_id"
         name="plot_id"
-        class="form-control"
+        class="form-control flex-grow-1"
         value="{{ construction?.plot_id }}"
         disabled
       />
     </div>
+  </form>
+  <hr style="color: #808080" />
+  <div class="d-grid gap-2 d-md-flex justify-content-between">
+    @if(mode === "detail") {
+    <div
+      class="alert m-0 me-2 py-1"
+      role="alert"
+      [ngClass]="{
+        'alert-success':
+          isConstructionAbleToApprove() &&
+          construction?.construction_status !== 'REJECTED',
+        'alert-danger': construction?.construction_status === 'REJECTED',
+        'alert-warning': !isConstructionAbleToApprove()
+      }"
+    >
+      <!-- APPROVED -->
+      @if(construction?.construction_status === 'APPROVED') {
+      <i class="bi bi-check-circle"></i>
+      La obra ya está aprobada }
+      <!-- REJECTED -->
+      @else if(construction?.construction_status === 'REJECTED') {
+      <i class="bi bi-exclamation-circle"></i>
+      La obra ya fue rechazada }
+      <!-- REVIEW -->
+      @else if(construction?.construction_status === 'ON_REVISION' && role ===
+      "OWNER") {
+      <i class="bi bi-exclamation-circle"></i>
+      La obra fue enviada a revisión }
+      <!-- ALL APPROVED -->
+      @else if(isConstructionAbleToApprove()) {
+      <i class="bi bi-check-circle"></i>
+      Todos los documentos están aprobados, puede aprobar la obra }
+      <!-- DOCUMENTS NOT APPROVED -->
+      @else {
+      <i class="bi bi-exclamation-circle"></i>
+      No podrá aprobar la obra hasta que todos los documentos estén aprobados}
+    </div>
+    } @if(mode === "edit") {
+    <div></div>
+    }
+    <div>
+      @if(mode === "detail") { @if(role === "OWNER") {
+      <button
+        class="btn btn-success me-2"
+        (click)="onReviewConstruction()"
+        [disabled]="!isConstructionAbleToReview()"
+      >
+        <i class="bi bi-clipboard-check"></i>
+        Enviar a revisión
+      </button>
+      }
+      <!-- ADMIN -->
+      @if (role === "ADMIN") {
+      <button
+        class="btn btn-primary me-2"
+        (click)="approveConstruction()"
+        [disabled]="
+          !isConstructionAbleToApprove() ||
+          construction?.construction_status !== 'ON_REVISION'
+        "
+      >
+        <i class="bi bi-clipboard-check"></i>
+        Aprobar obra
+      </button>
+      <button
+        class="btn btn-danger me-2"
+        (click)="rejectConstruction()"
+        [disabled]="construction?.construction_status !== 'ON_REVISION'"
+      >
+        <i class="bi bi-clipboard-x"></i> Rechazar obra
+      </button>
+      } } @if(mode === "edit" && role === "OWNER") {
+      <button
+        class="btn btn-success me-2"
+        [disabled]="!editForm.form.valid"
+        (click)="saveChanges()"
+      >
+        Confirmar
+      </button>
+      }
+      <button class="btn btn-secondary" (click)="goBack()">Volver</button>
+    </div>
   </div>
-  <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-    <button class="btn btn-warning" (click)="openEditModal()">
-      <i class="bi bi-pencil me-2"></i>Editar
-    </button>
-  </div>
+  @if(mode === "detail") {
+
   <hr style="color: #808080" />
   <ul class="nav nav-tabs">
     <li class="nav-item">
@@ -139,7 +285,11 @@
     (constructionApproved)="
       onConstructionApproved(construction?.construction_id!)
     "
-    (constructionRejected)="onConstructionRejected(construction?.construction_id!, $event)"
+    (constructionReview)="onConstructionReview(construction?.construction_id!)"
+    (constructionRejected)="
+      onConstructionRejected(construction?.construction_id!, $event)
+    "
+    (constructionUpdated)="onConstructionUpdated()"
   ></app-construction-documentation-list>
   }
   <!-- Workers -->
@@ -161,84 +311,5 @@
   <div class="alert alert-success" role="alert">
     {{ successMessage }}
   </div>
-  }
-
-  <!-- Forulario para editar la obra -->
-  <ng-template #editModal let-modal>
-    <div class="modal-header">
-      <h4 class="modal-title">Editar Construcción</h4>
-      <button
-        type="button"
-        class="btn-close"
-        aria-label="Close"
-        (click)="modal.dismiss('Cross click')"
-      ></button>
-    </div>
-    <!-- <div *ngIf="updateSuccess" class="alert alert-success m-3" role="alert">
-      Los datos se actualizaron correctamente.
-    </div> -->
-    <div class="modal-body">
-      <form #editForm="ngForm">
-        <div class="mb-3">
-          <label for="project_name" class="form-label"
-            >Nombre del Proyecto</label
-          >
-          <input
-            id="project_name"
-            name="project_name"
-            class="form-control"
-            [(ngModel)]="editConstruction.project_name"
-            required
-          />
-        </div>
-        <div class="mb-3">
-          <label for="project_description" class="form-label"
-            >Descripción</label
-          >
-          <input
-            id="project_description"
-            name="project_description"
-            class="form-control"
-            [(ngModel)]="editConstruction.description"
-          />
-        </div>
-        <div class="mb-3">
-          <label for="planned_start_date" class="form-label"
-            >Fecha de Inicio</label
-          >
-          <input
-            type="date"
-            id="planned_start_date"
-            name="planned_start_date"
-            class="form-control"
-            [(ngModel)]="editConstruction.planned_start_date"
-            required
-          />
-        </div>
-        <div class="mb-3">
-          <label for="planned_end_date" class="form-label">Fecha de Fin</label>
-          <input
-            type="date"
-            id="planned_end_date"
-            name="planned_end_date"
-            class="form-control"
-            [(ngModel)]="editConstruction.planned_end_date"
-            required
-          />
-        </div>
-      </form>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" (click)="modal.dismiss('Cancel click')">
-        Cancelar
-      </button>
-      <button
-        class="btn btn-primary"
-        [disabled]="!editForm.form.valid"
-        (click)="saveChanges()"
-      >
-        Guardar
-      </button>
-    </div>
-  </ng-template>
+  } }
 </app-main-container>
