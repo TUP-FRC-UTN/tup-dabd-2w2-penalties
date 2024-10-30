@@ -1,62 +1,36 @@
-<div class="container-fluid main-component">
-  <div class="row flex-nowrap">
+<div class="container-fluid">
+  <div class="row flex-nowrap mt-5">
+    <!-- Sidebar -->
     <div class="bg-dark col-auto col-md-4 col-lg-3 min-vh-100">
       <div class="bg-dark p-2">
-        <a class="d-flex text-decoration-none mt-1 justify-content-center align-items-center text-white text-center">
-          <span class="fs-4 d-none d-md-inline text-center">Obras & Multas</span>
-        </a>
-        <ul class="nav nav-pills flex-column mt-4">
-          <li class="nav-item mb-3">
+        <ul class="nav nav-pills flex-column mt-2">
+          <li>
             <a class="nav-link fs-5 ms-3 d-none d-lg-inline bg-dark text-light" routerLink="constructions">Obras</a>
           </li>
-          <li>
-            <div class="accordion accordion-flush" id="accordionFlushExample">
-              <div class="accordion-item bg-dark text-light">
-                <h2 class="accordion-header">
-                  <button class="accordion-button collapsed fs-5 ms-3 d-none d-lg-inline bg-dark text-light " type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-                    Multas
-                  </button>
-                </h2>
-                <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
-                  <div>
-                    <a class="nav-link fs-5 ms-3 d-none d-lg-inline bg-dark text-light" routerLink="constructions">Multas</a>
-                  </div>
-                  <div>
-                    <a class="nav-link fs-5 ms-3 d-none d-lg-inline bg-dark text-light" routerLink="constructions">Infracciones</a>
-                  </div>
-                  <div>
-                    <a class="nav-link fs-5 ms-3 d-none d-lg-inline bg-dark text-light" routerLink="constructions">Reclamos</a>
-                  </div>
-                  <div>
-                    <a class="nav-link fs-5 ms-3 d-none d-lg-inline bg-dark text-light" routerLink="constructions">Tipos</a>
-                  </div>
-                </div>
-              </div>
-            </div>
+
+          <!-- multas -->
+          <li class="nav-item">
+            <a href="#" class="nav-link text-white" data-bs-toggle="collapse" data-bs-target="#multasMenu"
+               aria-expanded="false">
+              <span class="fs-5">Multas</span>
+            </a>
+            <ul class="collapse nav flex-column" id="multasMenu">
+              <li>
+                <a routerLink="fine" class="nav-link text-white">Multas</a>
+              </li>
+              <li>
+                <a routerLink="infraction" class="nav-link text-white">Infracciones</a>
+              </li>
+              <li>
+                <a routerLink="claim" class="nav-link text-white">Reclamos</a>
+              </li>
+              <li>
+                <a routerLink="sanctionType" class="nav-link text-white">Tipo de Sanciones</a>
+              </li>
+            </ul>
           </li>
-          <li ngbDropdown class="nav-item mb-3" role="presentation">
-            <button type="button" class="nav-link fs-5 ms-3 d-none d-lg-inline bg-dark text-light" ngbDropdownToggle>
-              Multas
-            </button>
-            <div ngbDropdownMenu class="bg-dark border border-light">
-              <button ngbDropdownItem routerLink="fine" class="fs-5 ms-3 d-none d-lg-inline text-light">
-                Multas
-              </button>
-              <button ngbDropdownItem routerLink="infraction" class="fs-5 ms-3 d-none d-lg-inline text-light">
-                Infracciones
-              </button>
-              <button ngbDropdownItem routerLink="claim" class="fs-5 ms-3 d-none d-lg-inline text-light">
-                Reclamos
-              </button>
-              <div class="dropdown-divider border border-light"></div>
-              <button ngbDropdownItem routerLink="sanctionType" class="fs-5 ms-3 d-none d-lg-inline text-light">
-                Tipos
-              </button>
-            </div>
-          </li>
-          <app-role-selector class="ms-auto mt-5"></app-role-selector>
         </ul>
-        <button type="button" class="btn btn-light mt-5" (click)="change()"> white </button>
+        <app-role-selector class="pt-5"></app-role-selector>
       </div>
     </div>
     <div class="col">
