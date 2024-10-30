@@ -2,6 +2,9 @@ import {Component, inject} from '@angular/core';
 import {RouterLink, RouterOutlet} from "@angular/router";
 import {DeleteLaterService} from "../../../delete-later.service";
 import {
+  NgbAccordionBody,
+  NgbAccordionButton, NgbAccordionCollapse,
+  NgbAccordionDirective, NgbAccordionHeader, NgbAccordionItem,
   NgbDropdown,
   NgbDropdownButtonItem,
   NgbDropdownItem,
@@ -21,7 +24,13 @@ import {RoleSelectorComponent} from "../role-selector/role-selector.component";
     NgbDropdownItem,
     NgbDropdownMenu,
     NgbDropdownToggle,
-    RoleSelectorComponent
+    RoleSelectorComponent,
+    NgbAccordionDirective,
+    NgbAccordionItem,
+    NgbAccordionHeader,
+    NgbAccordionButton,
+    NgbAccordionCollapse,
+    NgbAccordionBody
   ],
   templateUrl: './black-sidebar.component.html',
   styleUrl: './black-sidebar.component.scss'

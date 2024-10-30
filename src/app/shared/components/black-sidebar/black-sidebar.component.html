@@ -9,6 +9,31 @@
           <li class="nav-item mb-3">
             <a class="nav-link fs-5 ms-3 d-none d-lg-inline bg-dark text-light" routerLink="constructions">Obras</a>
           </li>
+          <li>
+            <div class="accordion accordion-flush" id="accordionFlushExample">
+              <div class="accordion-item bg-dark text-light">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed fs-5 ms-3 d-none d-lg-inline bg-dark text-light " type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                    Multas
+                  </button>
+                </h2>
+                <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                  <div>
+                    <a class="nav-link fs-5 ms-3 d-none d-lg-inline bg-dark text-light" routerLink="constructions">Multas</a>
+                  </div>
+                  <div>
+                    <a class="nav-link fs-5 ms-3 d-none d-lg-inline bg-dark text-light" routerLink="constructions">Infracciones</a>
+                  </div>
+                  <div>
+                    <a class="nav-link fs-5 ms-3 d-none d-lg-inline bg-dark text-light" routerLink="constructions">Reclamos</a>
+                  </div>
+                  <div>
+                    <a class="nav-link fs-5 ms-3 d-none d-lg-inline bg-dark text-light" routerLink="constructions">Tipos</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
           <li ngbDropdown class="nav-item mb-3" role="presentation">
             <button type="button" class="nav-link fs-5 ms-3 d-none d-lg-inline bg-dark text-light" ngbDropdownToggle>
               Multas
@@ -30,16 +55,6 @@
             </div>
           </li>
           <app-role-selector class="ms-auto mt-5"></app-role-selector>
-<!--          <li class="nav-item">-->
-<!--            <a class="nav-link text-white" [routerLink]="'stadistics'">-->
-<!--              <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-graph-up"-->
-<!--                   viewBox="0 0 16 16">-->
-<!--                <path fill-rule="evenodd"-->
-<!--                      d="M0 0h1v15h15v1H0zm14.817 3.113a.5.5 0 0 1 .07.704l-4.5 5.5a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61 4.15-5.073a.5.5 0 0 1 .704-.07"/>-->
-<!--              </svg>-->
-<!--              <span class="fs-5 ms-3 d-none d-lg-inline">Estadisticas</span>-->
-<!--            </a>-->
-<!--          </li>-->
         </ul>
         <button type="button" class="btn btn-light mt-5" (click)="change()"> white </button>
       </div>
