@@ -7,13 +7,14 @@ import {
   ViewChild,
   ViewChildren,
 } from '@angular/core';
-import { Observable } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Observable, Subject } from 'rxjs';
 
 import { NgbdSortableHeader, SortEvent } from './sortable.directive';
 import { FormsModule } from '@angular/forms';
 import {
   NgbDatepicker,
   NgbDatepickerModule,
+  NgbDropdownModule,
   NgbHighlight,
   NgbModal,
   NgbPaginationModule,
@@ -22,6 +23,7 @@ import { Router } from '@angular/router';
 import { FineService } from '../../services/fine.service';
 import { Fine } from '../../models/fine.model';
 import {
+  ConfirmAlertComponent,
   MainContainerComponent,
   TableColumn,
   TableComponent,
@@ -31,6 +33,7 @@ import {
 import { GetValueByKeyForEnumPipe } from '../../../../../shared/pipes/get-value-by-key-for-status.pipe';
 import { FineStatusEnum } from '../../models/fine-status.enum';
 import { PdfService } from '../../../../../shared/services/pdf.service';
+import { RoleService } from '../../../../../shared/services/role.service';
 
 @Component({
   selector: 'app-fine-table',
@@ -47,6 +50,12 @@ import { PdfService } from '../../../../../shared/services/pdf.service';
     NgbDatepickerModule,
     TableComponent,
     GetValueByKeyForEnumPipe,
+    CommonModule,
+    TableComponent,
+    MainContainerComponent,
+    GetValueByKeyForEnumPipe,
+    NgbDropdownModule,
+    FormsModule,
   ],
   templateUrl: './fine-table.component.html',
   providers: [FineService],
@@ -57,28 +66,68 @@ export class FineTable {
   @ViewChild('actionsTemplate') actionsTemplate!: TemplateRef<any>;
   @ViewChild('pdfTemplate', { static: true }) pdfTemplate!: TemplateRef<any>;
 
-  fines$: Observable<Fine[]>;
-  total$: Observable<number>;
+  role: string = '';
+  userId: number | undefined;
+  userPlotsIds: number[] = [];
 
   columns: TableColumn[] = [];
+
+  searchParams: { [key: string]: string | string[] | number[] | number } = {};
+  searchSubject: Subject<{ key: string; value: any }> = new Subject();
+
+  page: number = 1;
+  size: number = 10;
+  filterType: string = '';
+  status: string = '';
+  startDate: string = '';
+  endDate: string = '';
 
   @ViewChildren(NgbdSortableHeader)
   headers!: QueryList<NgbdSortableHeader>;
   router = inject(Router);
-  private modalService = inject(NgbModal);
+  private = inject(NgbModal);
   FineStatusEnum = FineStatusEnum;
   private toastService = inject(ToastService);
   private pdfService = inject(PdfService);
+  private roleService = inject(RoleService);
+  fineService = inject(FineService);
+  modalService = inject(NgbModal);
 
-  constructor(public service: FineService) {
-    this.fines$ = service.fines$;
-    this.total$ = service.total$;
+
+  items$: Observable<Fine[]> = this.fineService.items$;
+  totalItems$: Observable<number> = this.fineService.totalItems$;
+  isLoading$: Observable<boolean> = this.fineService.isLoading$;
+
+  ngOnInit() {
+    this.roleService.currentRole$.subscribe((role: string) => {
+      this.role = role;
+      this.loadItems();
+    });
+    this.roleService.currentUserId$.subscribe((userId: number) => {
+      this.userId = userId;
+      this.loadItems();
+    });
+
+    this.roleService.currentLotes$.subscribe((plots: number[]) => {
+      this.userPlotsIds = plots;
+      this.loadItems();
+    });
+
+    this.searchSubject
+      .pipe(debounceTime(200), distinctUntilChanged())
+      .subscribe(({ key, value }) => {
+        this.searchParams = { [key]: value };
+        this.page = 1;
+        this.loadItems();
+      });
+
+    this.loadItems();
   }
 
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.columns = [
-        { headerName: 'Id', accessorKey: 'id' },
+        { headerName: 'Nº de multa', accessorKey: 'id' },
         { headerName: 'Lote', accessorKey: 'plot_id' },
         {
           headerName: 'Tipo',
@@ -99,48 +148,104 @@ export class FineTable {
     });
   }
 
-  onFineCreated(id: number) {
-    this.service._search$.next();
+  loadItems(): void {
+    if (
+      this.role === 'ADMIN' ||
+      (this.role === 'OWNER' && this.userPlotsIds.length !== 0)
+    ) {
+      this.updateFiltersAccordingToUser();
+      this.fineService
+        .getPaginatedFines(this.page, this.size, this.searchParams)
+        .subscribe((response) => {
+          this.fineService.setItems(response.items);
+          this.fineService.setTotalItems(response.total);
+        });
+    } else {
+      this.fineService.setItems([]);
+      this.fineService.setTotalItems(0);
+    }
   }
 
-  onSort({ column, direction }: SortEvent) {
-    // resetting other headers
-    this.headers.forEach((header) => {
-      if (header.sortable !== column) {
-        header.direction = '';
+  updateFiltersAccordingToUser() {
+    if (this.role !== 'ADMIN') {
+      this.searchParams = {
+        ...this.searchParams,
+        plotsIds: this.userPlotsIds,
+      };
+    } else {
+      if (this.searchParams['plotsIds']) {
+        delete this.searchParams['plotsIds'];
       }
-    });
-
-    this.service.sortColumn = column;
-    this.service.sortDirection = direction;
+    }
   }
 
-  viewDetail(id: number) {
-    this.router.navigate([`/fine/${id}`]);
+  onFineCreated(id: number) {
+    this.fineService._search$.next();
+  }
+
+  goToFineDetail(id: number) {
+    this.router.navigate([`/fine/${id}/detail`]);
+  }
+
+  goToFineEdit(id: number) {
+    this.router.navigate([`/fine/${id}/edit`]);
   }
 
   onPageChange = (page: number): void => {
-    this.service.page = page;
+    this.page = page;
+    this.loadItems();
   };
 
   onPageSizeChange = (size: number): void => {
-    this.service.pageSize = size;
+    this.size = size;
+    this.loadItems();
   };
 
   onSearchValueChange = (key: string, searchValue: any): void => {
-    this.service.searchTerm = searchValue;
+    this.searchSubject.next({ key, value: searchValue });
   };
-
   onExportToExcel = (): void => {
     try {
-      this.service.onExportToExcel();
+      this.fineService.onExportToExcel();
     } catch (error) {
       this.toastService.sendError('Sucedió un error al generar el excel');
     }
   };
 
-  onExportToPdf(): void {
-    const data = document.getElementById('pdf-template');
-    if (data) this.pdfService.downloadPDF(data);
+  applyFilters(): void {
+    if (this.filterType === 'fecha') {
+      this.searchParams = {
+        startDate: this.startDate,
+        endDate: this.endDate,
+      };
+    } else if (this.filterType === 'estado') {
+      this.searchParams = { fineState: [this.status] };
+    }
+    this.page = 1;
+    this.loadItems();
+  }
+
+  setFilterType(type: string): void {
+    this.filterType = type;
+  }
+
+  clearFilters(): void {
+    this.filterType = '';
+    this.startDate = '';
+    this.endDate = '';
+    this.status = '';
+    this.searchParams = {};
+    this.loadItems();
+  }
+
+
+  infoModal() {
+    const modalRef = this.modalService.open(ConfirmAlertComponent);
+    modalRef.componentInstance.alertType = 'info';
+
+    modalRef.componentInstance.alertTitle = 'Ayuda';
+    modalRef.componentInstance.alertMessage = `Esta pantalla te permite consultar tus reclamos realizados y recibidos, y al administrador gestionarlo para generar multas `;
+
+
   }
 }

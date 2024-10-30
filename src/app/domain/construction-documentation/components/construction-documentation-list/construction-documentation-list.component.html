@@ -51,7 +51,7 @@
     placement="top"
     ngbTooltip="Eliminar"
     (click)="deleteDocument(item)"
-    [disabled]="role !== 'OWNER' || currentConstructionStatus !== 'LOADING'"
+    [disabled]="role !== 'OWNER' || currentConstructionStatus !== 'LOADING' && currentConstructionStatus !== 'REJECTED'" 
   >
     <i class="bi bi-trash"></i>
   </button>

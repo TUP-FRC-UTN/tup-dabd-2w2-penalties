@@ -14,7 +14,7 @@ import { GetValueByKeyForEnumPipe } from '../../../../../shared/pipes/get-value-
 import { CommonModule, DatePipe } from '@angular/common';
 import { ClaimStatusEnum } from '../../../claim/models/claim.model';
 import { FormsModule } from '@angular/forms';
-import {TableColumn} from "ngx-dabd-grupo01";
+import { TableColumn } from 'ngx-dabd-grupo01';
 
 @Component({
   selector: 'app-infraction-claim-list',
@@ -43,7 +43,6 @@ export class InfractionClaimListComponent implements AfterViewInit {
 
   ClaimStatusEnum = ClaimStatusEnum;
 
-  // Methods:
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.columns = [

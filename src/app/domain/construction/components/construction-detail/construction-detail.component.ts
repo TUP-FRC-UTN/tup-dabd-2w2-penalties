@@ -280,7 +280,8 @@ export class ConstructionDetailComponent implements OnInit {
     if (
       this.construction?.construction_documentation &&
       this.construction.construction_documentation.length > 0 &&
-      this.construction?.construction_status === "LOADING"
+      this.construction?.construction_status === "LOADING" ||
+      this.construction?.construction_status === "REJECTED"
     ) {
       return true;
     } else {

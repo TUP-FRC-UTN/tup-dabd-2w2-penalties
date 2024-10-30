@@ -12,6 +12,7 @@ import { TruncatePipe } from '../../../../../shared/pipes/truncate.pipe';
 import { TableComponent } from '../../../../../../../projects/ngx-dabd-grupo01/src/lib/table/table.component';
 import { MainContainerComponent } from '../../../../../../../projects/ngx-dabd-grupo01/src/lib/main-container/main-container.component';
 import { TableColumn } from '../../../../../../../projects/ngx-dabd-grupo01/src/lib/table/table.models';
+import { ConfirmAlertComponent } from 'ngx-dabd-grupo01';
 
 @Component({
   selector: 'app-sanction-type-list',
@@ -121,4 +122,14 @@ export class SanctionTypeListComponent {
     const modalRef = this.modalService.open(SanctionTypeFormComponent);
     modalRef.componentInstance.sanctionTypeToEdit = sanctionTypeToEdit;
   }
+  infoModal() {
+    const modalRef = this.modalService.open(ConfirmAlertComponent);
+    modalRef.componentInstance.alertType = 'info';
+
+    modalRef.componentInstance.alertTitle = 'Ayuda';
+    modalRef.componentInstance.alertMessage = `Aquí podrás consultar los tipos de sanciones y sus criterios para ser aplicados. \n Considerá que los costos pueden ser fijos o variables y la cantidad de infracciones que generan una multa dependen del tipo. `;
+
+
+  }
+  
 }
