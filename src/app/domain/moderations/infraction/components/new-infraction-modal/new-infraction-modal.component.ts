@@ -23,7 +23,7 @@ import {
 import { SanctionType } from '../../../sanction-type/models/sanction-type.model';
 import { SanctionTypeService } from '../../../sanction-type/services/sanction-type.service';
 import { InfractionServiceService } from '../../services/infraction-service.service';
-import { InfractionDto } from '../../models/infraction.model';
+import { InfractionDto, InfractionUpdateDto } from '../../models/infraction.model';
 import { CommonModule, NgClass } from '@angular/common';
 import { ClaimDTO } from '../../../claim/models/claim.model';
 import { TruncatePipe } from '../../../../../shared/pipes/truncate.pipe';
@@ -56,6 +56,8 @@ export class NewInfractionModalComponent {
   plots: Plot[] | undefined;
   sanctionTypes: SanctionType[] | undefined;
 
+  @Input() infraction: InfractionDto | undefined;
+
   @Input() claims: ClaimDTO[] = [];
   @Input() sanctionTypeNumber: number | undefined;
   @Input() plotId: number | undefined;
@@ -80,6 +82,13 @@ export class NewInfractionModalComponent {
       error: (error) => {},
     });
 
+    if (this.infraction) {
+      this.plotId = this.infraction.plotId;
+      this.description = this.infraction.description;
+      this.sanctionTypeNumber = this.infraction.sanctionTypeId;
+      // this.claims = this.infraction.claimsId;
+    }
+
     this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' });
   }
 
@@ -90,36 +99,48 @@ export class NewInfractionModalComponent {
       case ModalDismissReasons.BACKDROP_CLICK:
         return 'by clicking on a backdrop';
       default:
-        return `with: ${reason}`;
+        return `with: ${reason}x`;
     }
   }
 
   submitInfraction() {
     if (this.plotId && this.sanctionTypeNumber && this.description) {
-      const newInfraction: InfractionDto = {
-        plotId: this.plotId,
-        description: this.description,
-        sanctionTypeId: this.sanctionTypeNumber,
-        claimsId: this.claims.map((claim) => claim.id),
-      };
+      if (this.infraction) {
+        const updateData: InfractionUpdateDto = {
+          plotId: this.plotId,
+          description: this.description,
+        };
 
-      this.infractionService.createInfraction(newInfraction).subscribe({
-        next: (response) => {
-          this.toastService.sendSuccess(
-            'Infracción ' + response.id + ' creada exitosamente'
-          );
-          if (response.fine_id !== null) {
-            this.toastService.sendSuccess(
-              'Multa ' + response.fine_id + ' creada exitosamente'
-            );
+        this.infractionService.updateInfraction(this.infraction.plotId, updateData).subscribe({
+          next: () => {
+            this.toastService.sendSuccess(`Infracción ${this.infraction!.plotId} actualizada exitosamente`);
+            this.activeModal.close();
+          },
+          error: () => {
+            this.toastService.sendError('Error al actualizar la infracción');
           }
-          this.activeModal.close(response);
-        },
-        error: (error) => {
-          this.toastService.sendError('Error al crear la infracción');
-        },
-      });
-    } else {
+        });
+      } else {
+        const newInfraction: InfractionDto = {
+          plotId: this.plotId,
+          description: this.description,
+          sanctionTypeId: this.sanctionTypeNumber,
+          claimsId: this.claims.map(claim => claim.id),
+        };
+
+        this.infractionService.createInfraction(newInfraction).subscribe({
+          next: (response) => {
+            this.toastService.sendSuccess(`Infracción ${response.id} creada exitosamente`);
+            if (response.fine_id !== null) {
+              this.toastService.sendSuccess(`Multa ${response.fine_id} creada exitosamente`);
+            }
+            this.activeModal.close(response);
+          },
+          error: () => {
+            this.toastService.sendError('Error al crear la infracción');
+          },
+        });
+      }
     }
   }
 }
