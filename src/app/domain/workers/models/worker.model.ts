@@ -10,6 +10,16 @@ export interface WorkerRequestDto {
   created_by?: number;
 }
 
+export interface WorkerUpdateRequestDto {
+  address: string;
+  cuil: string;
+  document: string;
+  last_name: string;
+  name: string;
+
+}
+
+
 export interface WorkerResponseDTO {
   id: number;
 }
