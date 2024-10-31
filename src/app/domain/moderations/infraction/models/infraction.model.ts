@@ -8,6 +8,11 @@ export interface InfractionDto {
   claimsId: number[];
 }
 
+export interface InfractionUpdateDto {
+  plotId: number;
+  description: string;
+}
+
 export interface InfractionModel extends EntityBase {
   plot_id: number;
   description: string;
