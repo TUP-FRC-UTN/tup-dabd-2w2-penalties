@@ -8,6 +8,7 @@ import {
   InfractionDto,
   InfractionResponseDTO,
   InfractionStatusEnum,
+  InfractionUpdateDto,
 } from '../../models/infraction.model';
 import { InfractionServiceService } from '../../services/infraction-service.service';
 import {
@@ -214,5 +215,22 @@ export class InfractionListComponent {
 
   goToDetails(id: number) {
     this.router.navigate(['/infraction', id]);
+  }
+
+  openUpdateModal(infraction: InfractionResponseDTO): void {
+    const modalRef = this.modalService.open(NewInfractionModalComponent);
+    modalRef.componentInstance.infraction = { ...infraction };
+
+    modalRef.result.then((updatedData: InfractionUpdateDto) => {
+      if (updatedData) {
+        this.updateInfraction(infraction.id, updatedData);
+      }
+    }).catch(() => {});
+  }
+
+  private updateInfraction(id: number, updateData: InfractionUpdateDto): void {
+    this.infractionService.updateInfraction(id, updateData).subscribe(() => {
+      this.loadItems();  
+    });
   }
 }
