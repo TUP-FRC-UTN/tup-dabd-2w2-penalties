@@ -13,6 +13,10 @@
         <button ngbDropdownItem (click)="goToDetails(item.id)">
           Ver detalle
         </button>
+        <button ngbDropdownItem (click)="openUpdateModal(item)">
+          Editar
+        </button>
+
         @if((this.role === 'ADMIN' ) && (item.infraction_state === 'CREATED' ||
         item.infraction_state === 'ON_APPEALING')) {
         <button ngbDropdownItem (click)="rejectInfraction(item.id)">Desestimar</button>
