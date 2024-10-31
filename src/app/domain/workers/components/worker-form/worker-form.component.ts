@@ -3,12 +3,13 @@ import {
   EventEmitter,
   inject,
   Input,
+  OnInit,
   Output,
   ViewChild,
 } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { WorkerService } from '../../services/worker.service';
-import { WorkerRequestDto } from '../../models/worker.model';
+import { WorkerRequestDto, WorkerUpdateRequestDto } from '../../models/worker.model';
 import {
   FormConfig,
   FormFieldsComponent,
@@ -22,9 +23,18 @@ import {
   templateUrl: './worker-form.component.html',
   styleUrl: './worker-form.component.css',
 })
-export class WorkerFormComponent {
+export class WorkerFormComponent implements OnInit{
   // Inputs:
   @Input() constructionId: number | null = null;
+  @Input() workerId: number | null = null;
+  @Input() workerData: any | null = null;
+
+  // Propiedades para el formulario
+  address: string = '';
+  cuil: string = '';
+  document: string = '';
+  last_name: string = '';
+  name: string = '';
 
   @ViewChild(FormFieldsComponent) formFieldsComponent!: FormFieldsComponent;
 
@@ -45,19 +55,19 @@ export class WorkerFormComponent {
     fields: [
       {
         name: 'name',
-        label: 'Name',
+        label: 'Nombre',
         type: 'text',
         validations: { required: true },
       },
       {
         name: 'last_name',
-        label: 'Last Name',
+        label: 'Apellido',
         type: 'text',
         validations: { required: true },
       },
       {
         name: 'address',
-        label: 'Address',
+        label: 'Direccion',
         type: 'text',
         validations: { required: true },
         fieldSpan: 2,
@@ -71,13 +81,24 @@ export class WorkerFormComponent {
       },
       {
         name: 'document',
-        label: 'Document',
+        label: 'Documento',
         type: 'number',
         validations: { required: true, maxLength: 20 },
         fieldSpan: 1,
       },
     ],
   };
+
+  
+  ngOnInit() {
+    if (this.workerData) {
+      this.address = this.workerData.address;
+      this.cuil = this.workerData.cuil;
+      this.document = this.workerData.document;
+      this.last_name = this.workerData.last_name;
+      this.name = this.workerData.name;
+    }
+  }
 
   onSubmit = (formValue: any): void => {
     const worker: WorkerRequestDto = {
@@ -91,15 +112,37 @@ export class WorkerFormComponent {
       created_by: 0,
     };
 
-    this.workerService.registerWorker(worker).subscribe({
-      next: (result) => {
-        this.activeModal.close();
-        this.toastService.sendSuccess(`Se creó el trabajador ${result.id}`);
-      },
-      error: (error) => {
-        this.toastService.sendError('Ocurrió un error al crear el trabajador');
-      },
-    });
+    const workerUpdate: WorkerUpdateRequestDto = {
+      address: formValue.address,
+      cuil: formValue.cuil,
+      document: formValue.document,
+      last_name: formValue.last_name,
+      name: formValue.name
+    };
+
+    if (this.workerId) {
+      this.workerService.updateWorkerLikeAdmin(this.workerId, workerUpdate).subscribe({
+        next: (result) => {
+          this.activeModal.close('updated');
+          this.toastService.sendSuccess(`Se actualizo el trabajador ${result.id}`);
+        },
+        error: (err) => {
+          this.toastService.sendError('Error al actualizar el trabajador');
+          console.error(err);
+        },
+      });
+    } else {
+      this.workerService.registerWorker(worker).subscribe({
+        next: (result) => {
+          this.activeModal.close();
+          this.toastService.sendSuccess(`Se creó el trabajador ${result.id}`);
+        },
+        error: (error) => {
+          this.toastService.sendError('Ocurrió un error al crear el trabajador');
+        },
+      });
+    }
+  
   };
 
   submitForm(): void {
