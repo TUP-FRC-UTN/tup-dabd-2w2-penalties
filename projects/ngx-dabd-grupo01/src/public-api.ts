@@ -17,3 +17,10 @@ export * from './lib/toast/toasts-container.component';
 
 export * from './lib/excel-service/excel.service';
 
+export * from './lib/main-layout/main-layout.component';
+
+export * from './lib/sidebar/sidebar.component';
+export * from './lib/sidebar/sidebar.model';
+
+export * from './lib/navbar/navbar.component';
+export * from './lib/navbar/navbar.model';

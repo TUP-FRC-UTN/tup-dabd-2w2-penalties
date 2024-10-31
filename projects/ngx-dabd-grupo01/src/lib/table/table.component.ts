@@ -21,7 +21,7 @@ export class TableComponent {
   @Input() columns!: TableColumn[];
   @Input() isLoading?: boolean | null = false;
   @Input() pagination?: TablePagination;
-  @Input() height?: string = '580px';
+  @Input() height?: string = '560px';
   @Input() showSearchBar?: boolean = true;
   @Input() showExportOptions?: boolean = true;
   @Input() showExportExcelButton?: boolean = true;

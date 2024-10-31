@@ -18,6 +18,7 @@ import { FormsModule } from '@angular/forms';
 import { MainContainerComponent } from '../../../../../../projects/ngx-dabd-grupo01/src/public-api';
 import { GetValueByKeyForEnumPipe } from '../../../../shared/pipes/get-value-by-key-for-status.pipe';
 import { RoleService } from '../../../../shared/services/role.service';
+import { SidebarComponent } from '../../../../../../projects/ngx-dabd-grupo01/src/lib/sidebar/sidebar.component';
 
 @Component({
   selector: 'app-construction-list',
@@ -29,6 +30,7 @@ import { RoleService } from '../../../../shared/services/role.service';
     MainContainerComponent,
     NgbDropdownModule,
     GetValueByKeyForEnumPipe,
+    SidebarComponent,
   ],
   templateUrl: './construction-list.component.html',
   styleUrl: './construction-list.component.css',

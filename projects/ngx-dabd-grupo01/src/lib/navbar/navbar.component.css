@@ -1,7 +1,6 @@
-i {
+app-notifications {
   color: white !important;
 }
-
 
 /* Estilo para el botón de logout */
 .btn-danger {
@@ -19,10 +18,14 @@ i {
   font-size: 1.1rem;
 }
 
-.navbar-logo {
-  height: 40px;
-  width: auto;
-  object-fit: contain;
-  margin-left: 1rem;
-  /* Si necesitas ajustar el margen */
+.navbar-width {
+  width: calc(100% - 250px);
+}
+
+.nav-link:hover {
+  color: #00CC64 !important;
+}
+
+.nav-link-active {
+  color: #00CC64 !important;
 }
