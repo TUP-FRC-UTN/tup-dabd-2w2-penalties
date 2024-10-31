@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, catchError, map, throwError } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import { WorkerRequestDto, WorkerResponseDTO } from '../models/worker.model';
+import { WorkerRequestDto, WorkerResponseDTO, WorkerUpdateRequestDto } from '../models/worker.model';
 
 @Injectable({
   providedIn: 'root',
@@ -57,5 +57,10 @@ export class WorkerService {
           );
         })
       );
+  }
+
+
+  updateWorkerLikeAdmin(workerId: number, workerData: WorkerUpdateRequestDto): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/workers/${workerId}`, workerData);
   }
 }
