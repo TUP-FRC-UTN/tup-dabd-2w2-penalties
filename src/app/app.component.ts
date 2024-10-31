@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterModule, RouterOutlet } from '@angular/router';
 
 import { CustomNavBarComponent } from './shared/components/custom-nav-bar/custom-nav-bar.component';
@@ -29,7 +29,7 @@ import { NavbarItem } from '../../projects/ngx-dabd-grupo01/src/lib/navbar/navba
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   navbarMenu: NavbarItem[] = [
     {
       label: 'Obras & Multas',
@@ -44,7 +44,7 @@ export class AppComponent {
             { label: 'Multas', routerLink: '/fine' },
             { label: 'Infracciones', routerLink: '/infraction' },
             { label: 'Reclamos', routerLink: '/claim' },
-            { label: 'Tipos de Multas', routerLink: '/sanctionType' },
+            { label: 'Tipos de Sanciones', routerLink: '/sanctionType' },
           ],
         },
       ],
@@ -58,4 +58,12 @@ export class AppComponent {
       ]
     },
   ];
+
+  ngOnInit(): void {
+    if (this.navbarMenu[0]?.sidebarMenu && this.navbarMenu[0].sidebarMenu[1] && this.navbarMenu[0].sidebarMenu[1].subMenu) {
+      this.navbarMenu[0].badge = "2";
+      this.navbarMenu[0].sidebarMenu[1].badge = "2";
+      this.navbarMenu[0].sidebarMenu[1].subMenu[1].badge = "2";
+    }
+  }
 }

@@ -5,4 +5,5 @@ export interface NavbarItem {
   routerLink?: string;
   subMenu?: NavbarItem[];
   sidebarMenu?: SidebarItem[];
+  badge?: string;
 }

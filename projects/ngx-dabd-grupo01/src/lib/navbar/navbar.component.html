@@ -15,7 +15,7 @@
     </button>
 
     <div class="collapse navbar-collapse ms-3" id="navbarNavAltMarkup">
-      <div class="navbar-nav">
+      <div class="navbar-nav align-items-center">
         @for(item of navbarMenu; track $index) {
         <li
           class="nav-item dropdown"
@@ -60,7 +60,9 @@
           </ul>
           }
         </li>
-        }
+        @if(item.badge) {
+        <span class="badge rounded-pill bg-danger"> {{ item.badge }} </span>
+        } }
       </div>
       <i class="bi bi-bell text-white ms-auto me-4"></i>
       <button class="btn btn-danger d-flex align-items-center">
