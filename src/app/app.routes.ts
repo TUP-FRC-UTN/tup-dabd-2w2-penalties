@@ -11,11 +11,11 @@ import { ClaimDetailComponent } from './domain/moderations/claim/components/clai
 import { InfractionDetailComponent } from './domain/moderations/infraction/components/infraction-detail/infraction-detail.component';
 
 export const routes: Routes = [
-  {
+  /*   {
     path: '',
     redirectTo: 'constructions',
     pathMatch: 'full',
-  },
+  }, */
   {
     path: 'constructions',
     component: ConstructionListComponent,

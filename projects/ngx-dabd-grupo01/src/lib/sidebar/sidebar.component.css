@@ -1,0 +1,16 @@
+.sidebar-width {
+  width: 250px;
+}
+
+.nav-link:hover {
+  color: #00CC64 !important;
+}
+
+.nav-link-active {
+  color: #00CC64 !important;
+}
+
+.sidebar-logo {
+  height: 60px;
+}
+

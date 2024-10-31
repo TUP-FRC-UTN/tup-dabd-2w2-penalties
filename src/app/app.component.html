@@ -1,8 +1,16 @@
-@if (!changeService.getBlack()) {
-  <app-black-navbar></app-black-navbar>
-  <app-toasts aria-live="polite" aria-atomic="true"></app-toasts>
+<app-toasts aria-live="polite" aria-atomic="true"></app-toasts>
+
+<!-- @if (!changeService.getBlack()) {
+<app-black-navbar></app-black-navbar>
+<app-toasts aria-live="polite" aria-atomic="true"></app-toasts>
 } @else {
-  <app-custom-nav-bar/>
-  <router-outlet/>
-  <app-toasts aria-live="polite" aria-atomic="true"></app-toasts>
-}
+<app-custom-nav-bar />
+<router-outlet />
+<app-toasts aria-live="polite" aria-atomic="true"></app-toasts>
+} -->
+
+<!-- <app-black-navbar></app-black-navbar>
+<app-sidebar></app-sidebar>
+<router-outlet /> -->
+
+<app-main-layout [navbarMenu]="navbarMenu"></app-main-layout>

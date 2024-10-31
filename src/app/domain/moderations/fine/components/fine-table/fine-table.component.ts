@@ -52,7 +52,6 @@ import { RoleService } from '../../../../../shared/services/role.service';
     GetValueByKeyForEnumPipe,
     CommonModule,
     TableComponent,
-    MainContainerComponent,
     GetValueByKeyForEnumPipe,
     NgbDropdownModule,
     FormsModule,

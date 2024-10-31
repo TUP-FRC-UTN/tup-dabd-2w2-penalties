@@ -1,0 +1,54 @@
+<aside
+  id="sidebar"
+  class="p-3 vh-100 sticky-top bg-dark z-0 sidebar-width position-fixed"
+>
+  <div class="sidebar-header mb-2">
+    <div class="d-flex justify-content-center">
+      <img
+        src="https://www.villadelcondor.com/imagenes/villa_del_condor.png"
+        alt="Villa del Condor - Casas & Club de Montaña"
+        class="mb-5 sidebar-logo"
+      />
+    </div>
+    <a class="navbar-brand text-white h2" href="#">{{ title }}</a>
+  </div>
+  <ul class="nav flex-column">
+    @for(item of menu; track $index) {
+    <li class="nav-item">
+      <a
+        class="nav-link text-white"
+        [ngClass]="{
+          'dropdown-toggle': item.subMenu,
+          'nav-link-active': item.label === selectedSidebarItem
+        }"
+        [routerLink]="!item.subMenu ? item.routerLink : null"
+        routerLinkActive="active"
+        role="button"
+        (click)="toggleCollapse($index, item)"
+      >
+        {{ item.label }}
+      </a>
+      @if(item.subMenu) {
+      <div class="collapse" [ngbCollapse]="!isOpen[$index]">
+        <ul class="nav flex-column ms-3">
+          @for(subItem of item.subMenu; track $index) {
+          <li (click)="selectSidebarItem(subItem)">
+            <a
+              class="nav-link text-white"
+              [routerLink]="subItem.routerLink"
+              [ngClass]="{
+                'nav-link-active': subItem.label === selectedSidebarItem
+              }"
+              routerLinkActive="active"
+              
+              >{{ subItem.label }}</a
+            >
+          </li>
+          }
+        </ul>
+      </div>
+      }
+    </li>
+    }
+  </ul>
+</aside>
