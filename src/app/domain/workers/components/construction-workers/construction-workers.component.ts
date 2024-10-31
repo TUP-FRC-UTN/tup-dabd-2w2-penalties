@@ -110,4 +110,17 @@ export class ConstructionWorkersComponent implements AfterViewInit {
       this.role = role;
     });
   }
+
+  openUpdateModal(worker: any): void {
+    const modalRef = this.modalService.open(WorkerFormComponent);
+    modalRef.componentInstance.workerId = worker.id;
+    modalRef.componentInstance.workerData = { 
+      address: worker.address,
+      cuil: worker.cuil,
+      document: worker.document,
+      last_name: worker.last_name,
+      name: worker.name
+    };
+  }
+
 }
