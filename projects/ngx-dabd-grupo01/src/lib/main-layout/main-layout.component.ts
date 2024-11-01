@@ -4,11 +4,12 @@ import { SidebarComponent } from '../sidebar/sidebar.component';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { RouterOutlet } from '@angular/router';
 import { SidebarItem } from '../sidebar/sidebar.model';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [SidebarComponent, NavbarComponent, RouterOutlet],
+  imports: [CommonModule, SidebarComponent, NavbarComponent, RouterOutlet],
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.scss',
 })
