@@ -51,6 +51,7 @@
     (headerButtonClick)="openFormModal()"
     [showHeaderButton]="role === 'OWNER'"
   >
+  <app-table-filters [filters]="filterConfig" (filterValueChange)="onFilterValueChange($event)"></app-table-filters>
     <div class="d-flex justify-content-between align-items-center mb-3">
       <div class="btn-group me-5" role="group">
         <div class="d-flex align-items-center">

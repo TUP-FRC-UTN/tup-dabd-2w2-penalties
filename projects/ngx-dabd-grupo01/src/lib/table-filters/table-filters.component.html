@@ -1,0 +1,116 @@
+<button
+  type="button"
+  class="btn btn-outline-info dropdown-toggle position-relative"
+  [ngbPopover]="popContent"
+  [autoClose]="false"
+  placement="bottom"
+>
+  <i class="bi bi-funnel-fill"></i>
+  <span
+    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary"
+  >
+    {{ filtersApplied }}
+  </span>
+</button>
+
+<ng-template #popContent>
+  @for(filter of filters; track $index){
+  <div class="form-group mb-3">
+    <label>{{ filter.label }}</label>
+
+    <!-- Text -->
+    @if(filter.type === 'text'){
+    <input
+      type="text"
+      class="form-control"
+      [(ngModel)]="filterValues[filter.key]"
+      [placeholder]="filter.placeholder"
+    />}
+
+    <!-- Number -->
+    @if(filter.type === 'number'){
+    <input
+      type="number"
+      class="form-control"
+      [(ngModel)]="filterValues[filter.key]"
+      [placeholder]="filter.placeholder"
+    />}
+
+    <!-- Select -->
+    @if(isSelectFilter(filter)){
+    <select class="form-select" [(ngModel)]="filterValues[filter.key]">
+      @for(option of filter.options; track $index){
+      <option [ngValue]="option.value">
+        {{ option.label }}
+      </option>
+      }</select
+    >}
+
+    <!-- Checkbox -->
+    @if(isCheckboxFilter(filter)){
+    <div>
+      @for(option of filter.options; track $index){
+      <div class="form-check">
+        <input
+          type="checkbox"
+          class="form-check-input"
+          [value]="option.value"
+          [(ngModel)]="filterValues[filter.key]"
+          [checked]="filterValues[filter.key]?.includes(option.value)"
+          (change)="onCheckboxChange($event, filter.key)"
+        />
+        <label class="form-check-label">{{ option.label }}</label>
+      </div>
+      }
+    </div>
+    }
+
+    <!-- Radio -->
+    @if(isRadioFilter(filter)){
+    <div>
+      @for(option of filter.options; track $index){
+      <div class="form-check">
+        <input
+          type="radio"
+          class="form-check-input"
+          [name]="filter.key"
+          [value]="option.value"
+          [(ngModel)]="filterValues[filter.key]"
+        />
+        <label class="form-check-label">{{ option.label }}</label>
+      </div>
+      }
+    </div>
+    }
+
+    <!-- Date -->
+    @if(isDateFilter(filter)){
+    <input
+      type="date"
+      class="form-control"
+      [(ngModel)]="filterValues[filter.key]"
+      [placeholder]="filter.placeholder"
+    />}
+  </div>
+  }
+
+  <hr style="color: #808080" />
+
+  <!-- Buttons -->
+  <div class="d-flex justify-content-start align-items-center gap-2 mt-4">
+    <button
+      type="button"
+      class="btn btn-outline-danger w-50"
+      (click)="clearFilters()"
+    >
+      <i class="bi bi-trash-fill"></i>
+    </button>
+    <button
+      type="button"
+      class="btn btn-outline-primary w-50"
+      (click)="applyFilters()"
+    >
+      <i class="bi bi-search"></i>
+    </button>
+  </div>
+</ng-template>

@@ -19,6 +19,11 @@ import { MainContainerComponent } from '../../../../../../projects/ngx-dabd-grup
 import { GetValueByKeyForEnumPipe } from '../../../../shared/pipes/get-value-by-key-for-status.pipe';
 import { RoleService } from '../../../../shared/services/role.service';
 import { SidebarComponent } from '../../../../../../projects/ngx-dabd-grupo01/src/lib/sidebar/sidebar.component';
+import { TableFiltersComponent } from '../../../../../../projects/ngx-dabd-grupo01/src/lib/table-filters/table-filters.component';
+import {
+  Filter,
+  FilterConfigBuilder,
+} from '../../../../../../projects/ngx-dabd-grupo01/src/lib/table-filters/table-filters.model';
 
 @Component({
   selector: 'app-construction-list',
@@ -31,6 +36,7 @@ import { SidebarComponent } from '../../../../../../projects/ngx-dabd-grupo01/sr
     NgbDropdownModule,
     GetValueByKeyForEnumPipe,
     SidebarComponent,
+    TableFiltersComponent,
   ],
   templateUrl: './construction-list.component.html',
   styleUrl: './construction-list.component.css',
@@ -198,4 +204,31 @@ export class ConstructionListComponent {
     modalRef.componentInstance.alertTitle = 'Ayuda';
     modalRef.componentInstance.alertMessage = `Aquí podrás consultar y gestionar tus obras en curso. \n Recordá que se debe subir documentacion obligatoria y ser aprobada por el administrador. `;
   }
+
+  filterConfig: Filter[] = new FilterConfigBuilder()
+    .textFilter('ID de Reclamo', 'claimId', 'Escriba el ID de Reclamo')
+    .numberFilter(
+      'ID de Infracción',
+      'infractionId',
+      'Escriba el ID de Infracción'
+    )
+    .selectFilter('Estado', 'status', 'Seleccione el Estado', [
+      { value: 'todos', label: 'Todos' },
+      { value: 'pendiente', label: 'Pendiente' },
+      { value: 'aprobado', label: 'Aprobado' },
+    ])
+    .checkboxFilter('Tipo de Reclamo', 'claimType', [
+      { value: 'fisico', label: 'Físico' },
+      { value: 'legal', label: 'Legal' },
+    ])
+    .radioFilter('Tipo de Infracción', 'infractionType', [
+      { value: 'fisico', label: 'Físico' },
+      { value: 'legal', label: 'Legal' },
+    ])
+    .dateFilter('Fecha de Infracción', 'infractionDate', 'Fecha de Infracción')
+    .build();
+
+    onFilterValueChange(filters: Record<string, any>) {
+      console.log('Filtros aplicados:', filters);
+    }
 }
