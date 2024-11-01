@@ -7,13 +7,17 @@ import {
 } from '@angular/core';
 import { NewClaimModalComponent } from '../new-claim-modal/new-claim-modal.component';
 import { Router } from '@angular/router';
-import { NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {
+  NgbDropdownModule,
+  NgbModal,
+  NgbPopoverModule,
+} from '@ng-bootstrap/ng-bootstrap';
 import { debounceTime, distinctUntilChanged, Observable, Subject } from 'rxjs';
 import {
   ConfirmAlertComponent,
   MainContainerComponent,
   TableColumn,
-  TableComponent,
+  
   ToastService,
 } from 'ngx-dabd-grupo01';
 import { CommonModule } from '@angular/common';
@@ -24,6 +28,7 @@ import { ClaimDTO, ClaimStatusEnum } from '../../models/claim.model';
 import { RoleService } from '../../../../../shared/services/role.service';
 import { NewInfractionModalComponent } from '../../../infraction/components/new-infraction-modal/new-infraction-modal.component';
 import { FormsModule } from '@angular/forms';
+import { TableComponent } from '../../../../../../../projects/ngx-dabd-grupo01/src/lib/table/table.component';
 
 @Component({
   selector: 'app-claim-list',
@@ -37,6 +42,7 @@ import { FormsModule } from '@angular/forms';
     TruncatePipe,
     NgbDropdownModule,
     FormsModule,
+    NgbPopoverModule,
   ],
   templateUrl: './claim-list.component.html',
   styleUrl: './claim-list.component.scss',
@@ -69,6 +75,8 @@ export class ClaimListComponent {
   status: string = '';
   startDate: string = '';
   endDate: string = '';
+
+  filtersApplied: number = 0;
   searchParams: { [key: string]: string | string[] | number[] | number } = {};
 
   @ViewChild('actionsTemplate') actionsTemplate!: TemplateRef<any>;
@@ -273,14 +281,14 @@ export class ClaimListComponent {
   }
 
   applyFilters(): void {
-    if (this.filterType === 'fecha') {
-      this.searchParams = {
-        startDate: this.startDate,
-        endDate: this.endDate,
-      };
-    } else if (this.filterType === 'estado') {
-      this.searchParams = { claimStatus: [this.status] };
-    }
+    this.searchParams = {
+      startDate: this.startDate,
+      endDate: this.endDate,
+      claimStatus: [this.status],
+    };
+
+    this.filtersApplied = Object.keys(this.searchParams).length
+
     this.page = 1;
     this.loadItems();
   }

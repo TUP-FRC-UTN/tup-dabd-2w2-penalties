@@ -11,7 +11,7 @@
   {{ item.description | truncate : 40 }}
 </ng-template>
 
-<app-main-container title="Tipos de sanciones">
+<app-main-container title="Tipos de sanciones" (infoButtonClick)="infoModal()">
   <app-table
     [items]="(items$ | async) || []"
     [columns]="columns"
@@ -27,7 +27,6 @@
     searchPlaceHolder="Nombre..."
     [headerButtonText]="'Nuevo'"
     (headerButtonClick)="openFormModal()"
-    (infoButtonClick)="infoModal()"
   >
   </app-table>
 </app-main-container>

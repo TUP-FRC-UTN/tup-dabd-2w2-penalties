@@ -32,14 +32,19 @@ import { NavbarItem } from '../../projects/ngx-dabd-grupo01/src/lib/navbar/navba
 export class AppComponent implements OnInit {
   navbarMenu: NavbarItem[] = [
     {
-      label: 'Obras & Multas',
+      label: 'Obras',
       sidebarMenu: [
         {
           label: 'Obras',
           routerLink: '/constructions',
         },
+      ],
+    },
+    {
+      label: 'Multas',
+      sidebarMenu: [
         {
-          label: 'Moderación',
+          label: 'Multas',
           subMenu: [
             { label: 'Multas', routerLink: '/fine' },
             { label: 'Infracciones', routerLink: '/infraction' },
@@ -55,15 +60,19 @@ export class AppComponent implements OnInit {
         { label: 'Usuarios', routerLink: '/user' },
         { label: 'Roles', routerLink: '/role' },
         { label: 'Lotes', routerLink: '/lot' },
-      ]
+      ],
     },
   ];
 
   ngOnInit(): void {
-    if (this.navbarMenu[0]?.sidebarMenu && this.navbarMenu[0].sidebarMenu[1] && this.navbarMenu[0].sidebarMenu[1].subMenu) {
-      this.navbarMenu[0].badge = "2";
-      this.navbarMenu[0].sidebarMenu[1].badge = "2";
-      this.navbarMenu[0].sidebarMenu[1].subMenu[1].badge = "2";
+    if (
+      this.navbarMenu[0]?.sidebarMenu &&
+      this.navbarMenu[0].sidebarMenu[1] &&
+      this.navbarMenu[0].sidebarMenu[1].subMenu
+    ) {
+      this.navbarMenu[0].badge = '2';
+      this.navbarMenu[0].sidebarMenu[1].badge = '2';
+      this.navbarMenu[0].sidebarMenu[1].subMenu[1].badge = '2';
     }
   }
 }

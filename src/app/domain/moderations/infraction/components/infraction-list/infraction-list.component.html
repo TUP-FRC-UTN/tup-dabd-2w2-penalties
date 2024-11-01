@@ -15,7 +15,9 @@
         </button>
         @if((this.role === 'ADMIN' ) && (item.infraction_state === 'CREATED' ||
         item.infraction_state === 'ON_APPEALING')) {
-        <button ngbDropdownItem (click)="rejectInfraction(item.id)">Desestimar</button>
+        <button ngbDropdownItem (click)="rejectInfraction(item.id)">
+          Desestimar
+        </button>
         }
       </div>
     </div>
@@ -50,10 +52,13 @@
   <a [href]="['/fine/' + item.fine_id]">
     {{ item.fine_id }}
   </a>
-  }@else { N/A } </ng-template
->
+  }@else { N/A }
+</ng-template>
 
-<app-main-container title="Infracciones">
+<app-main-container
+  title="Infracciones"
+  (infoButtonClick)="onInfoButtonClick()"
+>
   <app-table
     [items]="(items$ | async) || []"
     [columns]="columns"
@@ -67,7 +72,6 @@
     [isLoading]="(isLoading$ | async) || false"
     (searchValueChange)="onSearchValueChange($event)"
     (headerButtonClick)="openFormModal()"
-    (infoButtonClick)="onInfoButtonClick()"
     [showExportOptions]="false"
     [showHeaderButton]="role === 'ADMIN'"
   >
