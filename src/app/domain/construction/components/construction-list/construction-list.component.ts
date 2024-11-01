@@ -12,10 +12,9 @@ import { Router } from '@angular/router';
 import {
   ConfirmAlertComponent,
   TableColumn,
-  TableComponent,
 } from 'ngx-dabd-grupo01';
 import { FormsModule } from '@angular/forms';
-import { MainContainerComponent } from '../../../../../../projects/ngx-dabd-grupo01/src/public-api';
+import { MainContainerComponent, TableComponent } from '../../../../../../projects/ngx-dabd-grupo01/src/public-api';
 import { GetValueByKeyForEnumPipe } from '../../../../shared/pipes/get-value-by-key-for-status.pipe';
 import { RoleService } from '../../../../shared/services/role.service';
 import { SidebarComponent } from '../../../../../../projects/ngx-dabd-grupo01/src/lib/sidebar/sidebar.component';
@@ -206,29 +205,21 @@ export class ConstructionListComponent {
   }
 
   filterConfig: Filter[] = new FilterConfigBuilder()
-    .textFilter('ID de Reclamo', 'claimId', 'Escriba el ID de Reclamo')
-    .numberFilter(
-      'ID de Infracción',
-      'infractionId',
-      'Escriba el ID de Infracción'
-    )
-    .selectFilter('Estado', 'status', 'Seleccione el Estado', [
-      { value: 'todos', label: 'Todos' },
-      { value: 'pendiente', label: 'Pendiente' },
-      { value: 'aprobado', label: 'Aprobado' },
+    .selectFilter('Estado', 'constructionStatuses', 'Seleccione el Estado', [
+      { value: 'LOADING', label: 'En proceso de carga' },
+      { value: 'REJECTED', label: 'Rechazado' },
+      { value: 'APPROVED', label: 'Aprobado' },
     ])
-    .checkboxFilter('Tipo de Reclamo', 'claimType', [
-      { value: 'fisico', label: 'Físico' },
-      { value: 'legal', label: 'Legal' },
-    ])
-    .radioFilter('Tipo de Infracción', 'infractionType', [
-      { value: 'fisico', label: 'Físico' },
-      { value: 'legal', label: 'Legal' },
-    ])
-    .dateFilter('Fecha de Infracción', 'infractionDate', 'Fecha de Infracción')
+    .dateFilter('Fecha desde', 'startDate', 'Placeholder', 'yyyy-MM-dd\'T\'HH:mm:ss')
+    .dateFilter('Fecha hasta', 'endDate', 'Placeholder', 'yyyy-MM-dd\'T\'HH:mm:ss')
     .build();
 
-    onFilterValueChange(filters: Record<string, any>) {
-      console.log('Filtros aplicados:', filters);
-    }
+  onFilterValueChange(filters: Record<string, any>) {
+    this.searchParams = {
+      ...filters
+    };
+    
+    this.page = 1;
+    this.loadItems();
+  }
 }

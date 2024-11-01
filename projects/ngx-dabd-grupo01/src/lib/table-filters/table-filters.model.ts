@@ -6,6 +6,25 @@ export type FilterType =
   | 'date'
   | 'radio';
 
+type DateFormat =
+  | 'short'
+  | 'medium'
+  | 'long'
+  | 'full'
+  | 'shortDate'
+  | 'mediumDate'
+  | 'longDate'
+  | 'fullDate'
+  | 'shortTime'
+  | 'mediumTime'
+  | 'longTime'
+  | 'fullTime'
+  | 'yyyy-MM-dd'
+  | 'MM/dd/yyyy'
+  | 'dd-MM-yyyy'
+  | "yyyy-MM-dd'T'HH:mm:ss"
+  | 'yyyy-MM-ddTHH:mm:ss.SSSZ';
+
 export interface FilterOption {
   value: string;
   label: string;
@@ -75,8 +94,16 @@ export class RadioFilter extends Filter {
 }
 
 export class DateFilter extends Filter {
-  constructor(label: string, key: string, placeholder: string) {
+  format: DateFormat;
+
+  constructor(
+    label: string,
+    key: string,
+    placeholder: string,
+    format?: DateFormat
+  ) {
     super(label, 'date', key, placeholder);
+    this.format = format || 'yyyy-MM-dd';
   }
 }
 
@@ -132,9 +159,12 @@ export class FilterConfigBuilder {
   dateFilter(
     label: string,
     key: string,
-    placeholder: string
+    placeholder: string,
+    format?: DateFormat
   ): FilterConfigBuilder {
-    this.filters.push(new DateFilter(label, key, placeholder));
+    console.log(format);
+
+    this.filters.push(new DateFilter(label, key, placeholder, format));
     return this;
   }
 

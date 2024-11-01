@@ -6,11 +6,13 @@ import {
   NgbTooltipModule,
 } from '@ng-bootstrap/ng-bootstrap';
 import { TableColumn, TablePagination } from './table.models';
+import { TableFiltersComponent } from "../table-filters/table-filters.component";
+import { Filter } from '../table-filters/table-filters.model';
 
 @Component({
   selector: 'app-table',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgbPaginationModule, NgbTooltipModule],
+  imports: [CommonModule, FormsModule, NgbPaginationModule, NgbTooltipModule, TableFiltersComponent],
   templateUrl: './table.component.html',
   styleUrl: './table.component.css',
 })
@@ -30,10 +32,12 @@ export class TableComponent {
   @Input() headerButtonText?: string = 'Nuevo';
   @Input() headerButtonIcon?: string = undefined;
   @Input() searchPlaceHolder?: string = 'Buscar...';
+  @Input() tableFilters: Filter[] = [];
 
   // Outputs:
 
   @Output() searchValueChange = new EventEmitter<string>();
+  @Output() filterValueChange = new EventEmitter<Record<string, any>>();
   @Output() headerButtonClick = new EventEmitter<void>();
   @Output() excelButtonClick = new EventEmitter<void>();
   @Output() pdfButtonClick = new EventEmitter<void>();
@@ -77,6 +81,10 @@ export class TableComponent {
 
   onInfoButtonClick(): void {
     this.infoButtonClick.emit();
+  }
+
+  onFilterValueChange(filterValues: Record<string, any>): void {
+    this.filterValueChange.emit(filterValues);
   }
 
   getNestedValue(item: any, accessorKey: string): any {

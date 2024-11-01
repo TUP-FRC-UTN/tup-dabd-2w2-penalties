@@ -4,7 +4,7 @@
     'justify-content-end': !showSearchBar
   }">
     @if(showSearchBar){
-    <div class="input-group" style="max-width: 280px">
+    <div class="input-group btn-group"  style="max-width: 280px">
       <span class="input-group-text" id="search-icon">
         <i class="bi bi-search"></i>
       </span>
@@ -16,7 +16,9 @@
         (ngModelChange)="onSearchValueChange()"
         aria-describedby="search-icon"
       />
+      <app-table-filters class="btn-group" [filters]="tableFilters" (filterValueChange)="onFilterValueChange($event)"></app-table-filters>
     </div>
+    <ng-content></ng-content>
     } @if(showHeaderButton) {
     <button class="btn btn-outline-primary" (click)="onHeaderButtonClick()">
       @if(headerButtonIcon) {
@@ -50,7 +52,6 @@
   </div>
   }
 </div>
-<ng-content></ng-content>
 <div
   class="table-responsive border overflow-auto"
   [ngStyle]="{ height: height }"

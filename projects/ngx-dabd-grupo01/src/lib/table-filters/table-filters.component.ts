@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
@@ -23,6 +23,8 @@ export class TableFiltersComponent implements OnInit {
 
   filterValues: Record<string, any> = {};
   filtersApplied: number = 0;
+
+  constructor(private datePipe: DatePipe) {}
 
   ngOnInit() {
     this.filters.forEach((filter) => {
@@ -50,6 +52,8 @@ export class TableFiltersComponent implements OnInit {
     Object.keys(this.filterValues).forEach((key) => {
       this.filterValues[key] = Array.isArray(this.filterValues[key]) ? [] : '';
     });
+
+    this.updateFiltersApplied();
     this.emitFilterValues();
   }
 
@@ -83,6 +87,20 @@ export class TableFiltersComponent implements OnInit {
   }
 
   private emitFilterValues() {
-    this.filterValueChange.emit(this.filterValues);
+    const formattedValues = { ...this.filterValues };
+
+    this.filters.forEach((filter) => {
+      if (filter instanceof DateFilter && this.filterValues[filter.key]) {
+
+        const dateString = this.datePipe.transform(
+          this.filterValues[filter.key],
+          filter.format
+        );
+
+        formattedValues[filter.key] = dateString || '';
+      }
+    });
+
+    this.filterValueChange.emit(formattedValues);
   }
 }
