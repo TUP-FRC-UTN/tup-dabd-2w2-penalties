@@ -4,6 +4,7 @@ import {
   InfractionResponseDTO,
   InfractionModel,
   InfractionDto,
+  InfractionUpdateDto,
 } from '../models/infraction.model';
 import { BehaviorSubject, finalize, map, Observable } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
@@ -83,5 +84,9 @@ export class InfractionServiceService {
 
   rejectInfraction(id: number, userId: number = 1): Observable<void> {
     return this.http.put<void>(`${this.apiUrl}/${id}/disapprove`, { user_id: userId });
+  }
+
+  updateInfraction(id: number, infractionData: InfractionUpdateDto): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/update-infraction/${id}`, infractionData);
   }
 }
