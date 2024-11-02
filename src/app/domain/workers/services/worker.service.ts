@@ -59,6 +59,9 @@ export class WorkerService {
       );
   }
 
+  getAllWorkers(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/workers`);
+  } 
 
   updateWorkerLikeAdmin(workerId: number, workerData: WorkerUpdateRequestDto): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/workers/${workerId}`, workerData);

@@ -18,6 +18,15 @@ export interface WorkerUpdateRequestDto {
   name: string;
 
 }
+export interface WorkerUpdateResponseDto {
+  id: number;
+  address: string;
+  cuil: string;
+  document: string;
+  last_name: string;
+  name: string;
+
+}
 
 
 export interface WorkerResponseDTO {

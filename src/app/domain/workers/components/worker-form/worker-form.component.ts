@@ -23,18 +23,9 @@ import {
   templateUrl: './worker-form.component.html',
   styleUrl: './worker-form.component.css',
 })
-export class WorkerFormComponent implements OnInit{
+export class WorkerFormComponent{
   // Inputs:
   @Input() constructionId: number | null = null;
-  @Input() workerId: number | null = null;
-  @Input() workerData: any | null = null;
-
-  // Propiedades para el formulario
-  address: string = '';
-  cuil: string = '';
-  document: string = '';
-  last_name: string = '';
-  name: string = '';
 
   @ViewChild(FormFieldsComponent) formFieldsComponent!: FormFieldsComponent;
 
@@ -89,16 +80,6 @@ export class WorkerFormComponent implements OnInit{
     ],
   };
 
-  
-  ngOnInit() {
-    if (this.workerData) {
-      this.address = this.workerData.address;
-      this.cuil = this.workerData.cuil;
-      this.document = this.workerData.document;
-      this.last_name = this.workerData.last_name;
-      this.name = this.workerData.name;
-    }
-  }
 
   onSubmit = (formValue: any): void => {
     const worker: WorkerRequestDto = {
@@ -112,37 +93,17 @@ export class WorkerFormComponent implements OnInit{
       created_by: 0,
     };
 
-    const workerUpdate: WorkerUpdateRequestDto = {
-      address: formValue.address,
-      cuil: formValue.cuil,
-      document: formValue.document,
-      last_name: formValue.last_name,
-      name: formValue.name
-    };
+    this.workerService.registerWorker(worker).subscribe({
+      next: (result) => {
+        this.activeModal.close();
+        this.toastService.sendSuccess(`Se creó el trabajador ${result.id}`);
+      },
+      error: (error) => {
+        this.toastService.sendError('Ocurrió un error al crear el trabajador');
+      },
+    });
 
-    if (this.workerId) {
-      this.workerService.updateWorkerLikeAdmin(this.workerId, workerUpdate).subscribe({
-        next: (result) => {
-          this.activeModal.close('updated');
-          this.toastService.sendSuccess(`Se actualizo el trabajador ${result.id}`);
-        },
-        error: (err) => {
-          this.toastService.sendError('Error al actualizar el trabajador');
-          console.error(err);
-        },
-      });
-    } else {
-      this.workerService.registerWorker(worker).subscribe({
-        next: (result) => {
-          this.activeModal.close();
-          this.toastService.sendSuccess(`Se creó el trabajador ${result.id}`);
-        },
-        error: (error) => {
-          this.toastService.sendError('Ocurrió un error al crear el trabajador');
-        },
-      });
-    }
-  
+
   };
 
   submitForm(): void {

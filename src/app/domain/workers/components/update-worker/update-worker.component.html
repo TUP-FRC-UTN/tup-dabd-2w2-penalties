@@ -1,0 +1,82 @@
+<div class="modal-header">
+  <h4 class="modal-title">Editar infracción</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="dismiss()"></button>
+</div>
+<div class="modal-body">
+  <form #updateForm="ngForm">
+
+    <div class="mb-3">
+      <label for="direccion" class="form-label">Direccion</label>
+      <input class="form-control" id="direccion" [(ngModel)]="updateData.address" name="direccion" required
+        #direccionControl="ngModel" [ngClass]="{
+          'is-invalid': direccionControl.invalid && (direccionControl.dirty || direccionControl.touched)
+        }">
+      @if(direccionControl.invalid && direccionControl.touched){
+      <div class="invalid-feedback">
+        Este campo es obligatorio
+      </div>
+      }
+    </div>
+
+    <div class="mb-3">
+      <label for="name" class="form-label">Nombre</label>
+      <input class="form-control" id="name" [(ngModel)]="updateData.name" name="name" required
+        #nombreControl="ngModel" [ngClass]="{
+          'is-invalid': nombreControl.invalid && (nombreControl.dirty || nombreControl.touched)
+        }">
+      @if(nombreControl.invalid && nombreControl.touched){
+      <div class="invalid-feedback">
+        Este campo es obligatorio
+      </div>
+      }
+    </div>
+
+    <div class="mb-3">
+      <label for="lastName" class="form-label">Apellido</label>
+      <input class="form-control" id="lastName" [(ngModel)]="updateData.last_name" name="lastName" required
+        #lastNameControl="ngModel" [ngClass]="{
+          'is-invalid': lastNameControl.invalid && (lastNameControl.dirty || lastNameControl.touched)
+        }">
+      @if(lastNameControl.invalid && lastNameControl.touched){
+      <div class="invalid-feedback">
+        Este campo es obligatorio
+      </div>
+      }
+    </div>
+
+    <div class="mb-3">
+      <label for="cuil" class="form-label">Cuil</label>
+      <input class="form-control" id="cuil" [(ngModel)]="updateData.cuil" name="cuil" required
+        #cuilControl="ngModel" [ngClass]="{
+          'is-invalid': cuilControl.invalid && (cuilControl.dirty || cuilControl.touched)
+        }">
+      @if(cuilControl.invalid && cuilControl.touched){
+      <div class="invalid-feedback">
+        Este campo es obligatorio
+      </div>
+      }
+    </div>
+
+    <div class="mb-3">
+      <label for="document" class="form-label">DNI</label>
+      <input class="form-control" id="document" [(ngModel)]="updateData.document" name="document" required
+        #documentControl="ngModel" [ngClass]="{
+          'is-invalid': documentControl.invalid && (documentControl.dirty || documentControl.touched)
+        }">
+      @if(documentControl.invalid && documentControl.touched){
+      <div class="invalid-feedback">
+        Este campo es obligatorio
+      </div>
+      }
+    </div>
+
+  </form>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-success" [disabled]="updateForm.invalid" (click)="updateWorker()">
+    Guardar
+  </button>
+  <button type="button" class="btn btn-danger" (click)="dismiss()">
+    Cancelar
+  </button>
+</div>

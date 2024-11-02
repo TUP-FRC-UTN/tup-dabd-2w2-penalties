@@ -20,6 +20,7 @@ import {
 } from 'ngx-dabd-grupo01';
 import { WorkerService } from '../../services/worker.service';
 import { RoleService } from '../../../../shared/services/role.service';
+import { UpdateWorkerComponent } from '../update-worker/update-worker.component';
 
 @Component({
   selector: 'app-construction-workers',
@@ -112,7 +113,7 @@ export class ConstructionWorkersComponent implements AfterViewInit {
   }
 
   openUpdateModal(worker: any): void {
-    const modalRef = this.modalService.open(WorkerFormComponent);
+    const modalRef = this.modalService.open(UpdateWorkerComponent);
     modalRef.componentInstance.workerId = worker.id;
     modalRef.componentInstance.workerData = { 
       address: worker.address,
@@ -121,6 +122,14 @@ export class ConstructionWorkersComponent implements AfterViewInit {
       last_name: worker.last_name,
       name: worker.name
     };
+
+    modalRef.result.then((result) => {
+      if (result === true) {
+         
+      }
+    }).catch(() => {
+      console.log('Modal cerrado sin cambios');
+    });
   }
 
 }
