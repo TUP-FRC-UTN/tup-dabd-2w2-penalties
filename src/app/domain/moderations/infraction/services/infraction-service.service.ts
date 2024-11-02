@@ -86,7 +86,7 @@ export class InfractionServiceService {
     return this.http.put<void>(`${this.apiUrl}/${id}/disapprove`, { user_id: userId });
   }
 
-  updateInfraction(id: number, update: InfractionUpdateDto): Observable<void> {
-    return this.http.put<void>(`${this.apiUrl}/${id}`, update);
+  updateInfraction(id: number, infractionData: InfractionUpdateDto): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/update-infraction/${id}`, infractionData);
   }
 }
