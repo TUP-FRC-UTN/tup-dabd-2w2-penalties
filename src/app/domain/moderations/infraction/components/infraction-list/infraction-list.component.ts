@@ -221,7 +221,7 @@ export class InfractionListComponent {
   openUpdateModal(infraction: InfractionResponseDTO): void {
     const modalRef = this.modalService.open(UpdateInfractionComponent);
     modalRef.componentInstance.infractionId = infraction.id; 
-    modalRef.componentInstance.infractionData = {
+    modalRef.componentInstance.infraction = {
       id: infraction.id,
       plotId: infraction.plot_id,
       description: infraction.description
