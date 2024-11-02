@@ -22,6 +22,7 @@ import { GetValueByKeyForEnumPipe } from '../../../../../shared/pipes/get-value-
 import { RoleService } from '../../../../../shared/services/role.service';
 import { Router } from '@angular/router';
 import { ConfirmAlertComponent } from 'ngx-dabd-grupo01';
+import { UpdateInfractionComponent } from '../update-infraction/update-infraction.component';
 
 @Component({
   selector: 'app-infraction-list',
@@ -158,7 +159,7 @@ export class InfractionListComponent {
           this.loadItems();
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   }
 
   setFilterType(type: string): void {
@@ -210,7 +211,7 @@ export class InfractionListComponent {
             });
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   }
 
   goToDetails(id: number) {
@@ -218,19 +219,19 @@ export class InfractionListComponent {
   }
 
   openUpdateModal(infraction: InfractionResponseDTO): void {
-    const modalRef = this.modalService.open(NewInfractionModalComponent);
-    modalRef.componentInstance.infraction = { ...infraction };
+    const modalRef = this.modalService.open(UpdateInfractionComponent);
+    modalRef.componentInstance.infractionId = infraction.id; 
+    modalRef.componentInstance.infractionData = {
+      id: infraction.id,
+      plotId: infraction.plot_id,
+      description: infraction.description
+    };
 
-    modalRef.result.then((updatedData: InfractionUpdateDto) => {
-      if (updatedData) {
-        this.updateInfraction(infraction.id, updatedData);
+    modalRef.result.then((result) => {
+      if(result) {
+        this.loadItems;
       }
-    }).catch(() => {});
-  }
-
-  private updateInfraction(id: number, updateData: InfractionUpdateDto): void {
-    this.infractionService.updateInfraction(id, updateData).subscribe(() => {
-      this.loadItems();  
-    });
+    })
+    .catch(() => { })
   }
 }
