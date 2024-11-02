@@ -1,0 +1,79 @@
+<div class="modal-header">
+    <h4 class="modal-title">Editar infracción</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="dismiss()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <form #updateForm="ngForm">
+        <div class="mb-3">
+        <label for="plotId" class="form-label">Lote</label>
+        <select
+          #plotControl="ngModel"
+          [ngClass]="{
+            'is-invalid':
+              plotControl.invalid && (plotControl.dirty || plotControl.touched)
+          }"
+          class="form-select"
+          id="plotSelection"
+          [(ngModel)]="updateData.plotId"
+          name="plotId"
+          required
+          [disabled]="claims.length !== 0"
+        >
+          @if (plots) { @for (plot of plots; track plot.plot_number) {
+          <option value="{{ plot.plot_number }}">
+            {{ plot.plot_number }} - {{ plot.plot_type }}
+          </option>
+          } } @else {
+          <option value="1">1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          }
+        </select>
+        @if (plotControl.invalid && (plotControl.dirty || plotControl.touched)) {
+        @if (plotControl.getError('required')) {
+        <div class="invalid-feedback">Este campo es obligatorio</div>
+        } }
+      </div>
+      
+      <div class="mb-3">
+        <label for="description" class="form-label">Descripción</label>
+        <textarea
+          class="form-control"
+          id="description"
+          [(ngModel)]="updateData.description"
+          name="description"
+          required
+          #descriptionControl="ngModel"
+          [ngClass]="{
+            'is-invalid': descriptionControl.invalid && (descriptionControl.dirty || descriptionControl.touched)
+          }"
+        ></textarea>
+        <div class="invalid-feedback" *ngIf="descriptionControl.invalid && descriptionControl.touched">
+          Este campo es obligatorio
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-success"
+      [disabled]="updateForm.invalid"
+      (click)="updateInfraction()"
+    >
+      Actualizar
+    </button>
+    <button
+      type="button"
+      class="btn btn-danger"
+      (click)="dismiss()"
+    >
+      Cancelar
+    </button>
+  </div>
