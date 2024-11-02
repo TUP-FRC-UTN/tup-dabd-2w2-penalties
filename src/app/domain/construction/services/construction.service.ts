@@ -30,6 +30,10 @@ export class ConstructionService {
 
   private readonly http = inject(HttpClient);
 
+  getAllItems(): Observable<ConstructionResponseDto[]> {
+    return this.http.get<ConstructionResponseDto[]>(this.apiUrl);
+  }
+
   getAllConstructions(
     page: number,
     limit: number,
@@ -112,6 +116,25 @@ export class ConstructionService {
     return this.http.put<ConstructionResponseDto>(
       `${this.apiUrl}/approve/${id}`,
       {}
+    );
+  }
+
+  startConstruction(id: number): Observable<ConstructionResponseDto> {
+    return this.http.put<ConstructionResponseDto>(
+      `${this.apiUrl}/start/${id}`,
+      {}
+    );
+  }
+
+  finishConstruction(
+    id: number,
+    userId: number
+  ): Observable<ConstructionResponseDto> {
+    const params = new HttpParams().set('userId', userId);
+    return this.http.put<ConstructionResponseDto>(
+      `${this.apiUrl}/complete/${id}`,
+      {},
+      { params }
     );
   }
 

@@ -17,7 +17,7 @@
     [headerButtonText]="'Nuevo'"
     (headerButtonClick)="openFormModal()"
     [showSearchBar]="false"
-    [showHeaderButton]="role === 'OWNER'"
+    [showHeaderButton]="role === 'OWNER' && constructionStatus !== 'COMPLETED'"
   >
   </app-table>
 </div>

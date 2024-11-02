@@ -2,7 +2,7 @@ import { TemplateRef } from '@angular/core';
 
 export interface TableColumn {
   headerName: string;
-  accessorKey: string;
+  accessorKey?: string;
   cellRenderer?: TemplateRef<any>;
 }
 

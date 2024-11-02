@@ -80,6 +80,7 @@ export class ConstructionDetailComponent implements OnInit {
   mode: 'detail' | 'edit' = 'detail';
 
   role = '';
+  userId = 0;
 
   constructor(private fb: FormBuilder) {
     this.rejectForm = this.fb.group({
@@ -94,6 +95,10 @@ export class ConstructionDetailComponent implements OnInit {
   ngOnInit(): void {
     this.roleService.currentRole$.subscribe((role) => {
       this.role = role;
+    });
+
+    this.roleService.currentUserId$.subscribe((userId) => {
+      this.userId = userId;
     });
 
     this.activatedRoute.params.subscribe((params) => {
@@ -217,6 +222,36 @@ export class ConstructionDetailComponent implements OnInit {
     }
   }
 
+  onConstructionStarted(constructionId: number): void {
+    if (this.construction) {
+      this.constructionService
+        .startConstruction(constructionId)
+        .subscribe(() => {
+          if (this.construction) {
+            this.construction.construction_status = 'IN_PROGRESS';
+            this.toastService.sendSuccess(
+              'Se inició la construcción correctamente'
+            );
+          }
+        });
+    }
+  }
+
+  onConstructionFinished(constructionId: number): void {
+    if (this.construction) {
+      this.constructionService
+        .finishConstruction(constructionId, this.userId)
+        .subscribe(() => {
+          if (this.construction) {
+            this.construction.construction_status = 'COMPLETED';
+            this.toastService.sendSuccess(
+              'Se terminó la construcción correctamente'
+            );
+          }
+        });
+    }
+  }
+
   onConstructionReview(constructionId: number): void {
     if (this.construction) {
       this.constructionService
@@ -278,10 +313,10 @@ export class ConstructionDetailComponent implements OnInit {
 
   isConstructionAbleToReview() {
     if (
-      this.construction?.construction_documentation &&
-      this.construction.construction_documentation.length > 0 &&
-      this.construction?.construction_status === "LOADING" ||
-      this.construction?.construction_status === "REJECTED"
+      (this.construction?.construction_documentation &&
+        this.construction.construction_documentation.length > 0 &&
+        this.construction?.construction_status === 'LOADING') ||
+      this.construction?.construction_status === 'REJECTED'
     ) {
       return true;
     } else {
@@ -341,5 +376,43 @@ export class ConstructionDetailComponent implements OnInit {
         }
       })
       .catch(() => {});
+  }
+
+  onStartConstruction() {
+    const modalRef = this.modalService.open(ConfirmAlertComponent);
+    modalRef.componentInstance.alertTitle = 'Confirmación';
+    modalRef.componentInstance.alertMessage = `¿Está seguro de que desea iniciar esta obra?`;
+    modalRef.componentInstance.alertType = 'info';
+
+    modalRef.result
+      .then((result) => {
+        if (result) {
+          this.onConstructionStarted(this.construction?.construction_id || 0);
+        }
+      })
+      .catch(() => {});
+  }
+
+  onFinishConstruction() {
+    const modalRef = this.modalService.open(ConfirmAlertComponent);
+    modalRef.componentInstance.alertTitle = 'Confirmación';
+    modalRef.componentInstance.alertMessage = `¿Está seguro de que desea terminar esta obra? Los accesos se darán de baja y no podrá interactuar más con este registro`;
+    modalRef.componentInstance.alertType = 'warning';
+
+    modalRef.result
+      .then((result) => {
+        if (result) {
+          this.onConstructionFinished(this.construction?.construction_id || 0);
+        }
+      })
+      .catch(() => {});
+  }
+
+  infoModal() {
+    const modalRef = this.modalService.open(ConfirmAlertComponent);
+    modalRef.componentInstance.alertType = 'info';
+
+    modalRef.componentInstance.alertTitle = 'Ayuda';
+    modalRef.componentInstance.alertMessage = `Esta pantalla proporciona una vista detallada de la obra seleccionada, permitiéndole analizar toda la información relacionada de manera clara y estructurada. En esta sección puede acceder a todos los datos relevantes sobre la obra de forma precisa.`;
   }
 }

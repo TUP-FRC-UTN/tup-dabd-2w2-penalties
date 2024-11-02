@@ -1,22 +1,33 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   NgbPaginationModule,
   NgbTooltipModule,
 } from '@ng-bootstrap/ng-bootstrap';
 import { TableColumn, TablePagination } from './table.models';
-import { TableFiltersComponent } from "../table-filters/table-filters.component";
+import { TableFiltersComponent } from '../table-filters/table-filters.component';
 import { Filter } from '../table-filters/table-filters.model';
+import { ExcelExportService } from '../excel-service/excel.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-table',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgbPaginationModule, NgbTooltipModule, TableFiltersComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    NgbPaginationModule,
+    NgbTooltipModule,
+    TableFiltersComponent,
+  ],
   templateUrl: './table.component.html',
   styleUrl: './table.component.css',
 })
 export class TableComponent {
+  @Input() getAllItems!: () => Observable<any[]>;
+  private excelService = inject(ExcelExportService);
+
   // Inputs:
 
   @Input() items!: any[];
@@ -89,5 +100,29 @@ export class TableComponent {
 
   getNestedValue(item: any, accessorKey: string): any {
     return accessorKey.split('.').reduce((acc, key) => acc?.[key], item);
+  }
+
+  onExportToExcel(): void {
+    if (!this.getAllItems) {
+      console.error('getAllItems function is not provided.');
+      return;
+    }
+
+    this.getAllItems().subscribe((allItems) => {
+      const columns = this.columns
+        .filter((column) => column.accessorKey)
+        .map((column) => ({
+          header: column.headerName,
+          accessor: (item: any) =>
+            this.getNestedValue(item, column.accessorKey as string),
+        }));
+
+      this.excelService.exportToExcel(
+        allItems,
+        columns,
+        `listado-${Date.now()}`,
+        'DatosExportados'
+      );
+    });
   }
 }

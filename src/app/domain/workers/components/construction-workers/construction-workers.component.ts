@@ -31,6 +31,7 @@ import { RoleService } from '../../../../shared/services/role.service';
 export class ConstructionWorkersComponent implements AfterViewInit {
   // Inputs:
   @Input() workers: any[] = [];
+  @Input() constructionStatus: string | undefined;
   @Input() constructionId: number | undefined;
 
   // Services:

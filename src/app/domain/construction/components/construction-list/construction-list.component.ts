@@ -9,12 +9,13 @@ import {
 import { ConstructionFormComponent } from '../construction-form/construction-form.component';
 import { ConstructionService } from '../../services/construction.service';
 import { Router } from '@angular/router';
-import {
-  ConfirmAlertComponent,
-  TableColumn,
-} from 'ngx-dabd-grupo01';
+import { ConfirmAlertComponent } from 'ngx-dabd-grupo01';
 import { FormsModule } from '@angular/forms';
-import { MainContainerComponent, TableComponent } from '../../../../../../projects/ngx-dabd-grupo01/src/public-api';
+import {
+  MainContainerComponent,
+  TableComponent,
+  TableColumn
+} from '../../../../../../projects/ngx-dabd-grupo01/src/public-api';
 import { GetValueByKeyForEnumPipe } from '../../../../shared/pipes/get-value-by-key-for-status.pipe';
 import { RoleService } from '../../../../shared/services/role.service';
 import { SidebarComponent } from '../../../../../../projects/ngx-dabd-grupo01/src/lib/sidebar/sidebar.component';
@@ -129,7 +130,6 @@ export class ConstructionListComponent {
         },
         {
           headerName: 'Acciones',
-          accessorKey: 'actions',
           cellRenderer: this.actionsTemplate,
         },
       ];
@@ -201,7 +201,8 @@ export class ConstructionListComponent {
     modalRef.componentInstance.alertType = 'info';
 
     modalRef.componentInstance.alertTitle = 'Ayuda';
-    modalRef.componentInstance.alertMessage = `Aquí podrás consultar y gestionar tus obras en curso. \n Recordá que se debe subir documentacion obligatoria y ser aprobada por el administrador. `;
+    modalRef.componentInstance.alertMessage = `Esta pantalla presenta un listado completo de tus obras en curso. 
+    La pantalla está diseñada para ayudarle a visualizar de manera organizada y estructurada toda la información relevante y, al mismo tiempo, ofrece herramientas que le permiten interactuar con los datos de forma más efectiva, lo cual incluye opciones de filtrado, búsqueda y exportación.`;
   }
 
   filterConfig: Filter[] = new FilterConfigBuilder()
@@ -210,16 +211,30 @@ export class ConstructionListComponent {
       { value: 'REJECTED', label: 'Rechazado' },
       { value: 'APPROVED', label: 'Aprobado' },
     ])
-    .dateFilter('Fecha desde', 'startDate', 'Placeholder', 'yyyy-MM-dd\'T\'HH:mm:ss')
-    .dateFilter('Fecha hasta', 'endDate', 'Placeholder', 'yyyy-MM-dd\'T\'HH:mm:ss')
+    .dateFilter(
+      'Fecha desde',
+      'startDate',
+      'Placeholder',
+      "yyyy-MM-dd'T'HH:mm:ss"
+    )
+    .dateFilter(
+      'Fecha hasta',
+      'endDate',
+      'Placeholder',
+      "yyyy-MM-dd'T'HH:mm:ss"
+    )
     .build();
 
   onFilterValueChange(filters: Record<string, any>) {
     this.searchParams = {
-      ...filters
+      ...filters,
     };
-    
+
     this.page = 1;
     this.loadItems();
   }
+
+  getAllTimes = (): Observable<any> => {
+    return this.constructionService.getAllItems();
+  };
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { RouterModule, RouterOutlet } from '@angular/router';
 
 import { CustomNavBarComponent } from './shared/components/custom-nav-bar/custom-nav-bar.component';
@@ -10,6 +10,9 @@ import { BlackNavbarComponent } from './shared/components/black-navbar/black-nav
 import { SidebarComponent } from '../../projects/ngx-dabd-grupo01/src/lib/sidebar/sidebar.component';
 import { MainLayoutComponent } from '../../projects/ngx-dabd-grupo01/src/lib/main-layout/main-layout.component';
 import { NavbarItem } from '../../projects/ngx-dabd-grupo01/src/lib/navbar/navbar.model';
+import { InfractionServiceService } from './domain/moderations/infraction/services/infraction-service.service';
+import { InfractionStatusEnum } from './domain/moderations/infraction/models/infraction.model';
+import { InfractionBadgeService } from './domain/moderations/infraction/services/infraction-badge.service';
 
 @Component({
   selector: 'app-root',
@@ -30,6 +33,8 @@ import { NavbarItem } from '../../projects/ngx-dabd-grupo01/src/lib/navbar/navba
   styleUrl: './app.component.scss',
 })
 export class AppComponent implements OnInit {
+  private infractionBadgeService = inject(InfractionBadgeService);
+
   navbarMenu: NavbarItem[] = [
     {
       label: 'Obras & Multas',
@@ -55,15 +60,22 @@ export class AppComponent implements OnInit {
         { label: 'Usuarios', routerLink: '/user' },
         { label: 'Roles', routerLink: '/role' },
         { label: 'Lotes', routerLink: '/lot' },
-      ]
+      ],
     },
   ];
 
   ngOnInit(): void {
-    if (this.navbarMenu[0]?.sidebarMenu && this.navbarMenu[0].sidebarMenu[1] && this.navbarMenu[0].sidebarMenu[1].subMenu) {
-      this.navbarMenu[0].badge = "2";
-      this.navbarMenu[0].sidebarMenu[1].badge = "2";
-      this.navbarMenu[0].sidebarMenu[1].subMenu[1].badge = "2";
-    }
+    // Escucha el cambio en el conteo de infracciones
+    this.infractionBadgeService.infractionsCount$.subscribe((count) => {
+      const mainMenu = this.navbarMenu[0];
+      const sidebarMenuItem = mainMenu?.sidebarMenu?.[1];
+      const subMenuItem = sidebarMenuItem?.subMenu?.[1];
+
+      if (count !== 0) {
+        if (mainMenu) mainMenu.badge = count.toString();
+        if (sidebarMenuItem) sidebarMenuItem.badge = count.toString();
+        if (subMenuItem) subMenuItem.badge = count.toString();
+      }
+    });
   }
 }

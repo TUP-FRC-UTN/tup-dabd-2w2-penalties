@@ -26,10 +26,10 @@
     [isLoading]="(isLoading$ | async) || false"
     (searchValueChange)="onSearchValueChange('partialName', $event)"
     searchPlaceHolder="Lote..."
-    (excelButtonClick)="onExportToExcel()"
     [showHeaderButton]="false"
     [showSearchBar]="false"
     (infoButtonClick)="infoModal()"
+    [getAllItems]="getAllFines"
   >
     <div class="d-flex justify-content-between align-items-center mb-3">
       <div class="btn-group me-5" role="group">

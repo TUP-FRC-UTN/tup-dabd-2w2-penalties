@@ -35,7 +35,7 @@
       class="btn btn-success"
       placement="top"
       ngbTooltip="Exportar Excel"
-      (click)="onExcelButtonClick()"
+      (click)="onExportToExcel()"
     >
       <i class="bi bi-file-earmark-excel"></i>
     </button>
@@ -97,7 +97,7 @@
         <td>
           @if(!column.cellRenderer) {
           <ng-container>
-            {{ getNestedValue(item, column.accessorKey) }}
+            {{ getNestedValue(item, column.accessorKey || "") }}
           </ng-container>
           } @else {
           <ng-container

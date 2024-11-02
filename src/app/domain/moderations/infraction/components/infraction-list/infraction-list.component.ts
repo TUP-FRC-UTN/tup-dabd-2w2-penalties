@@ -21,6 +21,7 @@ import { GetValueByKeyForEnumPipe } from '../../../../../shared/pipes/get-value-
 import { RoleService } from '../../../../../shared/services/role.service';
 import { Router } from '@angular/router';
 import { ConfirmAlertComponent } from 'ngx-dabd-grupo01';
+import { InfractionBadgeService } from '../../services/infraction-badge.service';
 
 @Component({
   selector: 'app-infraction-list',
@@ -43,6 +44,7 @@ export class InfractionListComponent {
   private modalService = inject(NgbModal);
   private router = inject(Router);
   private roleService = inject(RoleService);
+  private infractionBadgeService = inject(InfractionBadgeService);
 
   // Properties:
   items$: Observable<InfractionResponseDTO[]> = this.infractionService.items$;
@@ -129,6 +131,12 @@ export class InfractionListComponent {
       .subscribe((response) => {
         this.infractionService.setItems(response.items);
         this.infractionService.setTotalItems(response.total);
+
+        const infractionsToSolve = response.items.filter(
+          (item) => item.infraction_state.toString() === "CREATED"
+        ).length;
+  
+        this.infractionBadgeService.updateInfractionsCount(infractionsToSolve);
       });
   }
 

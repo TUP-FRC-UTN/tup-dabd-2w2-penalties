@@ -25,8 +25,6 @@ import { Fine } from '../../models/fine.model';
 import {
   ConfirmAlertComponent,
   MainContainerComponent,
-  TableColumn,
-  TableComponent,
   ToastService,
 } from 'ngx-dabd-grupo01';
 
@@ -34,6 +32,7 @@ import { GetValueByKeyForEnumPipe } from '../../../../../shared/pipes/get-value-
 import { FineStatusEnum } from '../../models/fine-status.enum';
 import { PdfService } from '../../../../../shared/services/pdf.service';
 import { RoleService } from '../../../../../shared/services/role.service';
+import { TableColumn, TableComponent } from '../../../../../../../projects/ngx-dabd-grupo01/src/public-api';
 
 @Component({
   selector: 'app-fine-table',
@@ -91,7 +90,6 @@ export class FineTable {
   private roleService = inject(RoleService);
   fineService = inject(FineService);
   modalService = inject(NgbModal);
-
 
   items$: Observable<Fine[]> = this.fineService.items$;
   totalItems$: Observable<number> = this.fineService.totalItems$;
@@ -203,12 +201,9 @@ export class FineTable {
   onSearchValueChange = (key: string, searchValue: any): void => {
     this.searchSubject.next({ key, value: searchValue });
   };
-  onExportToExcel = (): void => {
-    try {
-      this.fineService.onExportToExcel();
-    } catch (error) {
-      this.toastService.sendError('Sucedió un error al generar el excel');
-    }
+
+  getAllFines = () => {
+    return this.fineService.findAll();
   };
 
   applyFilters(): void {
@@ -237,14 +232,11 @@ export class FineTable {
     this.loadItems();
   }
 
-
   infoModal() {
     const modalRef = this.modalService.open(ConfirmAlertComponent);
     modalRef.componentInstance.alertType = 'info';
 
     modalRef.componentInstance.alertTitle = 'Ayuda';
     modalRef.componentInstance.alertMessage = `Esta pantalla te permite consultar tus reclamos realizados y recibidos, y al administrador gestionarlo para generar multas `;
-
-
   }
 }
