@@ -14,7 +14,7 @@ import { FormsModule } from '@angular/forms';
 import {
   MainContainerComponent,
   TableComponent,
-  TableColumn
+  TableColumn,
 } from '../../../../../../projects/ngx-dabd-grupo01/src/public-api';
 import { GetValueByKeyForEnumPipe } from '../../../../shared/pipes/get-value-by-key-for-status.pipe';
 import { RoleService } from '../../../../shared/services/role.service';

@@ -1,10 +1,13 @@
 <div class="d-flex mb-3">
-  <div class="w-100 d-flex align-items-center" [ngClass]="{
-    'justify-content-between': showSearchBar,
-    'justify-content-end': !showSearchBar
-  }">
+  <div
+    class="w-100 d-flex align-items-center"
+    [ngClass]="{
+      'justify-content-between': showSearchBar,
+      'justify-content-end': !showSearchBar && !showOnlyTableFilters
+    }"
+  >
     @if(showSearchBar){
-    <div class="input-group btn-group"  style="max-width: 280px">
+    <div class="input-group btn-group" style="max-width: 280px">
       <span class="input-group-text" id="search-icon">
         <i class="bi bi-search"></i>
       </span>
@@ -16,9 +19,19 @@
         (ngModelChange)="onSearchValueChange()"
         aria-describedby="search-icon"
       />
-      <app-table-filters class="btn-group" [filters]="tableFilters" (filterValueChange)="onFilterValueChange($event)"></app-table-filters>
+      <app-table-filters
+        class="btn-group"
+        [filters]="tableFilters"
+        (filterValueChange)="onFilterValueChange($event)"
+      ></app-table-filters>
     </div>
     <ng-content></ng-content>
+    } @if(showOnlyTableFilters) {
+    <app-table-filters
+      class="btn-group"
+      [filters]="tableFilters"
+      (filterValueChange)="onFilterValueChange($event)"
+    ></app-table-filters>
     } @if(showHeaderButton) {
     <button class="btn btn-outline-primary" (click)="onHeaderButtonClick()">
       @if(headerButtonIcon) {

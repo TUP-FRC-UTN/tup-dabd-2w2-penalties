@@ -1,7 +1,6 @@
 export interface WorkerRequestDto {
   construction_id: number;
   address: string;
-  contact: { contact_value: string };
   cuil: string;
   document: string;
   last_name: string;
