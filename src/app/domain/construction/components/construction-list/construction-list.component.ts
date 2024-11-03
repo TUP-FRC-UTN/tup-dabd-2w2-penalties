@@ -210,6 +210,8 @@ export class ConstructionListComponent {
       { value: 'LOADING', label: 'En proceso de carga' },
       { value: 'REJECTED', label: 'Rechazado' },
       { value: 'APPROVED', label: 'Aprobado' },
+      { value: 'COMPLETED', label: 'Finalizadas' },
+      { value: 'IN_PROGRESS', label: 'En progreso' },
     ])
     .dateFilter(
       'Fecha desde',
