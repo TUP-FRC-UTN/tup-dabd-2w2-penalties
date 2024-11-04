@@ -1,7 +1,7 @@
 import { Component, inject, TemplateRef, ViewChild } from '@angular/core';
 import { MainContainerComponent } from '../../../../../../../projects/ngx-dabd-grupo01/src/lib/main-container/main-container.component';
 import { TableComponent } from '../../../../../../../projects/ngx-dabd-grupo01/src/lib/table/table.component';
-import { TableColumn } from 'ngx-dabd-grup01';
+import { ConfirmAlertComponent, TableColumn } from 'ngx-dabd-grupo01';
 import { Observable } from 'rxjs';
 import {
   InfractionResponseDTO,
@@ -16,6 +16,7 @@ import {
 } from '../../../../../../../projects/ngx-dabd-grupo01/src/public-api';
 import { GetValueByKeyForEnumPipe } from '../../../../../shared/pipes/get-value-by-key-for-status.pipe';
 import { BaseChartDirective } from 'ng2-charts';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-infraction-reports',
@@ -38,6 +39,8 @@ export class InfractionReportsComponent {
   InfractionStatusEnum = InfractionStatusEnum;
 
   searchParams: { [key: string]: any } = {};
+
+  private modalService = inject(NgbModal);
 
   items$: Observable<InfractionResponseDTO[]> = this.infractionService.items$;
   isLoading$: Observable<boolean> = this.infractionService.isLoading$;
@@ -195,5 +198,13 @@ export class InfractionReportsComponent {
         { data: Object.values(plotCounts), label: 'Cantidad de infracciones' },
       ],
     };
+  }
+
+  infoModal() {
+    const modalRef = this.modalService.open(ConfirmAlertComponent);
+    modalRef.componentInstance.alertType = 'info';
+
+    modalRef.componentInstance.alertTitle = 'Ayuda';
+    modalRef.componentInstance.alertMessage = `Esta pantalla presenta reportes detallados de las infracciones registradas, ofreciendo información clave sobre cada construcción, como el número de construcción, lote, fechas de inicio y finalización, y el motivo de la infracción. Además, cuenta con gráficos interactivos que permiten visualizar el estado de las construcciones y analizar distintos aspectos, como la distribución de infracciones por tipo de sanción, estado, lote y mes, proporcionando una comprensión visual de las tendencias y patrones. También incluye estadísticas relevantes, como la duración promedio de las obras y la cantidad promedio de trabajadores. Las herramientas de filtrado, búsqueda y exportación facilitan una gestión efectiva de los datos, permitiendo al usuario organizar y analizar la información de manera precisa y estructurada.`;
   }
 }

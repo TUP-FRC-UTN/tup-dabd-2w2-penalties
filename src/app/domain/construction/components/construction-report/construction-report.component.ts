@@ -1,7 +1,7 @@
 import { Component, inject, TemplateRef, ViewChild } from '@angular/core';
 import { MainContainerComponent } from '../../../../../../projects/ngx-dabd-grupo01/src/lib/main-container/main-container.component';
 import { TableComponent } from '../../../../../../projects/ngx-dabd-grupo01/src/lib/table/table.component';
-import { TableColumn } from 'ngx-dabd-grup01';
+import { TableColumn } from 'ngx-dabd-grupo01';
 import {
   CONSTRUCTION_STATUSES_ENUM,
   ConstructionResponseDto,
@@ -14,6 +14,8 @@ import { FilterConfigBuilder } from '../../../../../../projects/ngx-dabd-grupo01
 import { CommonModule } from '@angular/common';
 import { GetValueByKeyForEnumPipe } from '../../../../shared/pipes/get-value-by-key-for-status.pipe';
 import { BaseChartDirective } from 'ng2-charts';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmAlertComponent } from 'ngx-dabd-grupo01';
 
 @Component({
   selector: 'app-construction-report',
@@ -45,6 +47,8 @@ export class ConstructionReportComponent {
 
   averageDuration = '';
   averageWorkers = '';
+
+  private modalService = inject(NgbModal);
 
   // Datos genéricos para gráficos
   public pieChartLegend = true;
@@ -224,5 +228,13 @@ export class ConstructionReportComponent {
 
     this.averageDuration = averageDurationString;
     this.averageWorkers = averageWorkersString;
+  }
+
+  infoModal() {
+    const modalRef = this.modalService.open(ConfirmAlertComponent);
+    modalRef.componentInstance.alertType = 'info';
+
+    modalRef.componentInstance.alertTitle = 'Ayuda';
+    modalRef.componentInstance.alertMessage = `Esta pantalla muestra un informe visual y detallado de todas las infracciones relacionadas con las construcciones. La información se presenta en un formato gráfico y de tabla para facilitar su análisis. Incluye un gráfico circular que indica el estado de las construcciones (en proceso de carga, en progreso y finalizadas), lo que permite visualizar de manera rápida la distribución de los estados. Además, la pantalla muestra estadísticas clave, como la duración promedio de las obras y la cantidad promedio de trabajadores involucrados. Las opciones de filtrado, búsqueda y exportación están disponibles para facilitar una interacción más eficiente con los datos y un análisis detallado de las infracciones.`;
   }
 }

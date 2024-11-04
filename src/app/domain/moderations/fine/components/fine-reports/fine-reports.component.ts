@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { Fine } from '../../models/fine.model';
 import { FineService } from '../../services/fine.service';
 import { CommonModule } from '@angular/common';
-import { TableColumn } from 'ngx-dabd-grup01';
+import { ConfirmAlertComponent, TableColumn } from 'ngx-dabd-grupo01';
 import { GetValueByKeyForEnumPipe } from '../../../../../shared/pipes/get-value-by-key-for-status.pipe';
 import { FineStatusEnum } from '../../models/fine-status.enum';
 import { BaseChartDirective } from 'ng2-charts';
@@ -14,6 +14,7 @@ import {
   Filter,
   FilterConfigBuilder,
 } from '../../../../../../../projects/ngx-dabd-grupo01/src/public-api';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-fine-reports',
@@ -33,6 +34,8 @@ export class FineReportsComponent {
 
   columns: TableColumn[] = [];
   FineStatusEnum = FineStatusEnum;
+
+  private modalService = inject(NgbModal);
 
   searchParams: { [key: string]: any } = {};
 
@@ -247,5 +250,13 @@ export class FineReportsComponent {
     };
 
     this.loadItems();
+  }
+
+  infoModal() {
+    const modalRef = this.modalService.open(ConfirmAlertComponent);
+    modalRef.componentInstance.alertType = 'info';
+
+    modalRef.componentInstance.alertTitle = 'Ayuda';
+    modalRef.componentInstance.alertMessage = `Esta pantalla presenta reportes detallados de las multas registradas, ofreciendo información clave sobre cada construcción, como el número de construcción, lote, fechas de inicio y finalización, y el motivo de la infracción. Además, cuenta con gráficos interactivos que permiten visualizar el estado de las construcciones y analizar distintos aspectos, como la distribución de infracciones por tipo de sanción, estado, lote y mes, proporcionando una comprensión visual de las tendencias y patrones. También incluye estadísticas relevantes, como la duración promedio de las obras y la cantidad promedio de trabajadores. Las herramientas de filtrado, búsqueda y exportación facilitan una gestión efectiva de los datos, permitiendo al usuario organizar y analizar la información de manera precisa y estructurada.`;
   }
 }

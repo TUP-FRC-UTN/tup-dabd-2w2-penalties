@@ -29,7 +29,7 @@
   }@else { N/A }
 </ng-template>
 
-<app-main-container title="Reporte de Infracciones">
+<app-main-container title="Reporte de Infracciones" (infoButtonClick)="infoModal()">
   <div class="d-flex justify-content-center gap-3">
     <div class="w-25">
       <app-table
