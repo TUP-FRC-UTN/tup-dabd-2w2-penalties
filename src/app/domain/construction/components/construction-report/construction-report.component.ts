@@ -14,6 +14,7 @@ import { FilterConfigBuilder } from '../../../../../../projects/ngx-dabd-grupo01
 import { CommonModule } from '@angular/common';
 import { GetValueByKeyForEnumPipe } from '../../../../shared/pipes/get-value-by-key-for-status.pipe';
 import { BaseChartDirective } from 'ng2-charts';
+import { TableFiltersComponent } from "../../../../../../projects/ngx-dabd-grupo01/src/lib/table-filters/table-filters.component";
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmAlertComponent } from 'ngx-dabd-grupo01';
 
@@ -26,7 +27,8 @@ import { ConfirmAlertComponent } from 'ngx-dabd-grupo01';
     CommonModule,
     GetValueByKeyForEnumPipe,
     BaseChartDirective,
-  ],
+    TableFiltersComponent
+],
   templateUrl: './construction-report.component.html',
   styleUrl: './construction-report.component.scss',
 })
@@ -105,7 +107,7 @@ export class ConstructionReportComponent {
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.columns = [
-        { headerName: 'Construcción', accessorKey: 'construction_id' },
+        { headerName: 'N.°', accessorKey: 'construction_id' },
         { headerName: 'Lote', accessorKey: 'plot_id' },
         { headerName: 'Inicio', accessorKey: 'planned_start_date' },
         { headerName: 'Finalización', accessorKey: 'planned_end_date' },

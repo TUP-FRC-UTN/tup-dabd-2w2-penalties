@@ -35,7 +35,12 @@
     } @if(showHeaderButton) {
     <button class="btn btn-outline-primary" (click)="onHeaderButtonClick()">
       @if(headerButtonIcon) {
-      <i class="{{ headerButtonIcon }} me-1"></i>
+      <i
+        class="{{ headerButtonIcon }}"
+        [ngClass]="{
+          'me-1': headerButtonText
+        }"
+      ></i>
       }
       {{ headerButtonText }}
     </button>
@@ -145,7 +150,7 @@
       (change)="onItemsPerPageChange(pagination.size)"
     >
       @for(option of sizeOptions; track $index) {
-      <option [value]="option">{{ option }} Elementos</option>
+      <option [value]="option">{{ option }}</option>
       }
     </select>
   </div>

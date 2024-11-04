@@ -99,10 +99,10 @@
     }"
     [isLoading]="(isLoading$ | async) || false"
     (searchValueChange)="onSearchValueChange('partialSearch', $event)"
-    searchPlaceHolder="Nº, Descripción..."
-    [headerButtonText]="'Nuevo'"
     (headerButtonClick)="openFormModal()"
     (infoButtonClick)="onInfoButtonClick()"
+    [headerButtonIcon]="'bi bi-plus'"
+    [headerButtonText]="''"
   >
   </app-table>
 </app-main-container>

@@ -1,35 +1,36 @@
-<ng-template #statusTemplate let-item>
-  <span
-    class="badge p-2 border"
-    [ngClass]="{
-      'text-secondary': item.infraction_state === 'CREATED',
-      'border-secondary': item.infraction_state === 'CREATED',
-      'text-success': item.infraction_state === 'APPROVED',
-      'border-success': item.infraction_state === 'APPROVED',
-      'text-danger': item.infraction_state === 'REJECTED',
-      'border-danger': item.infraction_state === 'REJECTED',
-      'border-warning': item.infraction_state === 'ON_APPEALING',
-      'text-warning': item.infraction_state === 'ON_APPEALING'
-    }"
-    >{{
-      item.infraction_state | getValueByKeyForEnum : InfractionStatusEnum
-    }}</span
-  >
+<ng-template #sanctionType let-item>
+  {{ item.sanction_type.name }}
 </ng-template>
 
-<ng-template #dateTemplate let-item>
-  {{ item.created_date | date : "dd/MM/yyyy HH:mm" }}
-</ng-template>
-
-<ng-template #fineTemplate let-item>
-  @if (item.fine_id) {
-  <a [href]="['/fine/' + item.fine_id]">
-    {{ item.fine_id }}
+<ng-template #infraction let-item>
+  @if (item.infraction_id) {
+  <a [href]="['/infraction/' + item.infraction_id]">
+    {{ item.infraction_id }}
   </a>
   }@else { N/A }
 </ng-template>
 
-<app-main-container title="Reporte de Infracciones" (infoButtonClick)="infoModal()">
+<ng-template #date let-item>
+  {{ item.created_date | date : "dd/MM/yyyy HH:mm" }}
+</ng-template>
+
+<ng-template #claimStatus let-item>
+  @if(item.claim_status === 'APPROVED') {
+  <span class="badge border border-success text-success p-2">{{
+    item.claim_status | getValueByKeyForEnum : ClaimStatusEnum
+  }}</span>
+  } @else if(item.claim_status === 'REJECTED') {
+  <span class="badge border border-danger text-danger p-2">{{
+    item.claim_status | getValueByKeyForEnum : ClaimStatusEnum
+  }}</span>
+  } @else if (item.claim_status === 'SENT') {
+  <span class="badge text-secondary border border-secondary p-2">{{
+    item.claim_status | getValueByKeyForEnum : ClaimStatusEnum
+  }}</span>
+  }
+</ng-template>
+
+<app-main-container title="Reporte de Reclamos">
   <div class="d-flex justify-content-center gap-3">
     <div class="w-25">
       <app-table

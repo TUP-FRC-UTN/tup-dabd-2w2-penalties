@@ -41,7 +41,7 @@ export class SanctionTypeService {
   getSanctionTypes(name: string ='') {
     let params = new HttpParams();
     if (name && name !== '') {
-      params = params.set('partialName', name);
+      params = params.set('searchValue', name);
     }
 
     return this.http.get<Array<SanctionType>>(`${this.apiUrl}/sanction-type`, {
