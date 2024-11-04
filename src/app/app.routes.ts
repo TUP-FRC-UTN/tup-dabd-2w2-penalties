@@ -12,6 +12,7 @@ import { InfractionDetailComponent } from './domain/moderations/infraction/compo
 import { FineReportsComponent } from './domain/moderations/fine/components/fine-reports/fine-reports.component';
 import { InfractionReportsComponent } from './domain/moderations/infraction/components/infraction-reports/infraction-reports.component';
 import { ConstructionReportComponent } from './domain/construction/components/construction-report/construction-report.component';
+import { ClaimReportsComponent } from './domain/moderations/claim/components/claim-reports/claim-reports.component';
 
 export const routes: Routes = [
   /*   {
@@ -60,6 +61,10 @@ export const routes: Routes = [
   {
     path: 'claim',
     component: ClaimListComponent,
+  },
+  {
+    path: 'claim-report',
+    component: ClaimReportsComponent,
   },
   { path: 'claim/:id/:mode', component: ClaimDetailComponent },
 ];
