@@ -53,7 +53,7 @@
   }@else { N/A } </ng-template
 >
 
-<app-main-container title="Infracciones">
+<app-main-container title="Infracciones" (infoButtonClick)="onInfoButtonClick()">
   <app-table
     [items]="(items$ | async) || []"
     [columns]="columns"

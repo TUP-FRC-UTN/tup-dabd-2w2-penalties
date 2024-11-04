@@ -12,7 +12,7 @@
   </button>
 </ng-template>
 
-<app-main-container title="Multas" id="pdf-template">
+<app-main-container title="Multas" id="pdf-template" (infoButtonClick)="infoModal()">
   <app-table
     [items]="(items$ | async) || []"
     [columns]="columns"
