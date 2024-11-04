@@ -237,6 +237,6 @@ export class FineTable {
     modalRef.componentInstance.alertType = 'info';
 
     modalRef.componentInstance.alertTitle = 'Ayuda';
-    modalRef.componentInstance.alertMessage = `Esta pantalla te permite consultar tus reclamos realizados y recibidos, y al administrador gestionarlo para generar multas `;
+    modalRef.componentInstance.alertMessage = `Esta pantalla te permite consultar tanto los reclamos realizados como los recibidos. Además, proporciona al administrador las herramientas necesarias para gestionar estos reclamos y generar multas cuando sea necesario. La interfaz facilita la visualización y administración de los reclamos, asegurando un control efectivo en el proceso de sanciones.`;
   }
 }

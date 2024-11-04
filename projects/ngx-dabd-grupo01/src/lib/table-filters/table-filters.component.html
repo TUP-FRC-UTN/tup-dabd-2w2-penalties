@@ -55,7 +55,6 @@
           type="checkbox"
           class="form-check-input"
           [value]="option.value"
-          [(ngModel)]="filterValues[filter.key]"
           [checked]="filterValues[filter.key]?.includes(option.value)"
           (change)="onCheckboxChange($event, filter.key)"
         />

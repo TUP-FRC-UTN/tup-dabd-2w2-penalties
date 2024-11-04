@@ -36,6 +36,7 @@ export class TableComponent {
   @Input() pagination?: TablePagination;
   @Input() height?: string = '560px';
   @Input() showSearchBar?: boolean = true;
+  @Input() showOnlyTableFilters?: boolean = false;
   @Input() showExportOptions?: boolean = true;
   @Input() showExportExcelButton?: boolean = true;
   @Input() showExportPdfButton?: boolean = true;

@@ -1,0 +1,100 @@
+<ng-template #fineState let-item>
+  {{ item.fine_state | getValueByKeyForEnum : FineStatusEnum }}
+</ng-template>
+
+<ng-template #fineDate let-item>
+  {{ item.created_date | date : "dd/MM/yyyy" }}
+</ng-template>
+
+<app-main-container title="Reporte de Multas" (infoButtonClick)="infoModal()">
+  <div class="d-flex justify-content-center gap-3">
+    <div class="w-25">
+      <app-table
+        [items]="(items$ | async) || []"
+        [columns]="columns"
+        [isLoading]="(isLoading$ | async) || false"
+        [showHeaderButton]="false"
+        [showExportOptions]="false"
+        [showSearchBar]="false"
+        [showOnlyTableFilters]="true"
+        [tableFilters]="filterConfig"
+        (filterValueChange)="onFilterValueChange($event)"
+      ></app-table>
+    </div>
+    <div class="w-75 card" style="height: 614px">
+      <div class="card-body d-flex gap-3">
+        <div class="w-50">
+          <!-- Gráfico de Torta -->
+          <div class="pb-5 h-50">
+            <h5 class="text-center mb-3">Multas por Tipo de Sanción</h5>
+            <div class="w-100 d-flex justify-content-center">
+              <canvas
+                baseChart
+                height="220px"
+                [type]="'pie'"
+                [datasets]="pieChartSanctionTypeDatasets"
+                [labels]="pieChartSanctionTypeLabels"
+                [options]="pieChartOptions"
+                [plugins]="pieChartPlugins"
+                [legend]="pieChartLegend"
+              >
+              </canvas>
+            </div>
+          </div>
+          <!-- Gráfico de Barras -->
+          <div class="h-50">
+            <h5 class="text-center mb-3">Multas por Lote</h5>
+            <div class="w-100 d-flex justify-content-center">
+              <canvas
+                height="240px"
+                baseChart
+                [data]="barChartPlotData"
+                [options]="barChartOptions"
+                [plugins]="barChartPlugins"
+                [legend]="barChartLegend"
+                [type]="'bar'"
+              >
+              </canvas>
+            </div>
+          </div>
+        </div>
+        <div class="w-50">
+          <!-- Gráfico de Torta -->
+          <div class="pb-5">
+            <h5 class="text-center mb-3">Multas por Estado</h5>
+            <div class="w-100 d-flex justify-content-center">
+              <canvas
+                height="220px"
+                baseChart
+                [type]="'pie'"
+                [datasets]="pieChartStatusDatasets"
+                [labels]="pieChartStatusLabels"
+                [options]="pieChartOptions"
+                [plugins]="pieChartPlugins"
+                [legend]="pieChartLegend"
+              >
+              </canvas>
+            </div>
+          </div>
+          <!-- Gráfico de Barras -->
+          <div class="">
+            <h5 class="text-center mb-3">Multas por Mes</h5>
+            <div class="w-100 d-flex justify-content-center">
+              <canvas
+              width="500px"
+                height="240px"
+                baseChart
+                [data]="barChartMonthlyData"
+                [options]="barChartOptions"
+                [plugins]="barChartPlugins"
+                [legend]="barChartLegend"
+                [type]="'bar'"
+              >
+              </canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-main-container>

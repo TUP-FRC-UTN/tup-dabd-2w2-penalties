@@ -35,7 +35,7 @@
   }@else { N/A }
 </ng-template>
 
-<app-main-container title="Infracciones">
+<app-main-container title="Infracciones" (infoButtonClick)="onInfoButtonClick()">
   <app-table
     [items]="(items$ | async) || []"
     [columns]="columns"
@@ -50,80 +50,10 @@
     (searchValueChange)="onSearchValueChange($event)"
     (headerButtonClick)="openFormModal()"
     (infoButtonClick)="onInfoButtonClick()"
-    [showExportOptions]="false"
+    [showExportPdfButton]="false"
     [showHeaderButton]="role === 'ADMIN'"
+    [headerButtonIcon]="'bi bi-plus'"
+    [headerButtonText]="''"
   >
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <div class="btn-group me-5" role="group">
-        <div class="d-flex align-items-center">
-          <div class="btn-group me-2">
-            <button
-              type="button"
-              class="btn btn-outline-danger"
-              (click)="clearFilters()"
-            >
-              <i class="bi bi-trash-fill"></i> Limpiar
-            </button>
-            <div
-              class="btn-group"
-              ngbDropdown
-              role="group"
-              aria-label="Button group with nested dropdown"
-            >
-              <button
-                type="button"
-                class="btn btn-outline-info dropdown-toggle"
-                ngbDropdownToggle
-              >
-                <i class="bi bi-funnel-fill"></i> Filtros
-              </button>
-              <div class="dropdown-menu" ngbDropdownMenu>
-                <button ngbDropdownItem (click)="setFilterType('fecha')">
-                  Por fecha
-                </button>
-                <button ngbDropdownItem (click)="setFilterType('estado')">
-                  Por estado
-                </button>
-              </div>
-            </div>
-          </div>
-          <!-- Fecha -->
-          @if(filterType === 'fecha'){
-          <div class="d-flex">
-            <input
-              type="date"
-              class="form-control me-2"
-              [(ngModel)]="startDate"
-              placeholder="Fecha de inicio"
-            />
-            <input
-              type="date"
-              class="form-control me-2"
-              [(ngModel)]="endDate"
-              placeholder="Fecha de fin"
-            />
-            <button class="btn btn-dark" type="button" (click)="applyFilters()">
-              Buscar
-            </button>
-          </div>
-          }
-          <!-- Estado -->
-          @if(filterType === 'estado'){
-          <div class="d-flex">
-            <select class="form-select me-2" [(ngModel)]="status">
-              <option value="">Selecciona estado</option>
-              <option value="APPROVED">Aprobado</option>
-              <option value="REJECTED">Desestimado</option>
-              <option value="ON_APPEALING">En apelación</option>
-              <option value="CREATED">Creado</option>
-            </select>
-            <button class="btn btn-dark" type="button" (click)="applyFilters()">
-              Buscar
-            </button>
-          </div>
-          }
-        </div>
-      </div>
-    </div>
   </app-table>
 </app-main-container>
