@@ -45,7 +45,7 @@ export const routes: Routes = [
     path: 'sanctionType',
     component: SanctionTypeListComponent,
   },
-  { path: 'sanctionType/:id', component: SanctionTypeDetailComponent },
+  { path: 'sanctionType/:id/:mode', component: SanctionTypeDetailComponent },
   {
     path: 'infraction',
     component: InfractionListComponent,

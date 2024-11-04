@@ -5,6 +5,7 @@ import { SanctionTypeService } from '../../services/sanction-type.service';
 import { FormFieldsComponent } from '../../../../../../../projects/ngx-dabd-grupo01/src/lib/form-fields/form-fields.component';
 import { FormConfig } from '../../../../../../../projects/ngx-dabd-grupo01/src/lib/form-fields/form-fields.model';
 import { ToastService } from 'ngx-dabd-grupo01';
+import { ChargeTypeEnum } from '../../models/sanction-type.model';
 @Component({
   selector: 'app-sanction-type-form',
   standalone: true,
@@ -40,8 +41,7 @@ export class SanctionTypeFormComponent {
         type: 'select',
         fieldSpan: 1,
         options: this.sanctionTypeService.getChargeTypeKeys().map((key) => ({
-          // name:  this.getValueByKeyForEnumPipe.transform(key, ChargeTypeEnum) || key,
-          name: key,
+          name: ChargeTypeEnum[key as keyof typeof ChargeTypeEnum] || key,
           value: key,
         })),
 

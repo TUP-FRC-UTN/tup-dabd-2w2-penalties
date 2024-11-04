@@ -1,6 +1,7 @@
 <app-main-container
   title="Tipo de infraccion"
   subTitle="{{ sanctionType?.name }}"
+  (infoButtonClick)="onInfoButtonClick()"
 >
   <form
     class="row"
@@ -155,7 +156,7 @@
   <hr style="color: #808080" />
   @if(isAdmin){ @if (editing) {
   <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-    <button class="btn btn-danger" (click)="cancelEdit()" type="button">
+    <button class="btn btn-danger" (click)="goBack()" type="button">
       Cancelar
     </button>
     <button
