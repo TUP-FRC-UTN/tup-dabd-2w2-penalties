@@ -1,4 +1,4 @@
-<app-main-container title="Tipo de infraccion" subTitle="{{ sanctionType?.name }}" [onGoBack]="goBack">
+<app-main-container title="Tipo de infraccion" subTitle="{{ sanctionType?.name }}" >
   <form #sanctionTypeForm="ngForm" (ngSubmit)="saveEdit()" novalidate>
     <div class="row">
       <div class="mb-3 col-1">
@@ -29,7 +29,7 @@
           </option>
           }
         </select>
-     
+
       </div>
       <div class="mb-3 col-3">
         <label for="amountInput" class="form-label">Monto</label>
@@ -53,7 +53,7 @@
         </div>
 
         }
-       
+
       </div>
       <div class="mb-3 col-3">
         <label for="daysInput" class="form-label">
@@ -122,7 +122,7 @@
           </div>
         }
       </div>
-      
+
     <div class="row">
       <div class="mb-3 col-12">
         <label for="description" class="form-label">Descripción</label>
@@ -144,7 +144,7 @@
           </div>
         }
       </div>
-      
+
       @if(isAdmin){ @if (editing) {
       <div class="d-grid gap-2 d-md-flex justify-content-md-end">
         <button class="btn btn-danger" (click)="cancelEdit()" type="button">
