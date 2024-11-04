@@ -6,11 +6,6 @@ import { Fine } from '../../models/fine.model';
 import { FineStatusEnum } from '../../models/fine-status.enum';
 import { FineService } from '../../services/fine.service';
 import { UpdateFineStateDTO } from '../../models/update-fine-status-dto';
-// import {
-//   ConfirmAlertComponent, MainContainerComponent,
-//
-//   ToastService,
-// } from 'ngx-dabd-grupo01';
 import { RoleService } from '../../../../../shared/services/role.service';
 import { FineInfractionsListComponent } from '../fine-infractions-list/fine-infractions-list.component';
 import { GetValueByKeyForEnumPipe } from '../../../../../shared/pipes/get-value-by-key-for-status.pipe';
