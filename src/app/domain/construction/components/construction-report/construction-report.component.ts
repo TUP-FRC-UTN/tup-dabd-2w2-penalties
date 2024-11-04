@@ -1,7 +1,6 @@
 import { Component, inject, TemplateRef, ViewChild } from '@angular/core';
 import { MainContainerComponent } from '../../../../../../projects/ngx-dabd-grupo01/src/lib/main-container/main-container.component';
 import { TableComponent } from '../../../../../../projects/ngx-dabd-grupo01/src/lib/table/table.component';
-import { TableColumn } from 'ngx-dabd-grup01';
 import {
   CONSTRUCTION_STATUSES_ENUM,
   ConstructionResponseDto,
@@ -9,8 +8,7 @@ import {
 import { Observable } from 'rxjs';
 import { ConstructionService } from '../../services/construction.service';
 import { ChartConfiguration, ChartDataset, ChartOptions } from 'chart.js';
-import { Filter } from 'ngx-dabd-grupo01';
-import { FilterConfigBuilder } from '../../../../../../projects/ngx-dabd-grupo01/src/public-api';
+import {Filter, FilterConfigBuilder, TableColumn} from '../../../../../../projects/ngx-dabd-grupo01/src/public-api';
 import { CommonModule } from '@angular/common';
 import { GetValueByKeyForEnumPipe } from '../../../../shared/pipes/get-value-by-key-for-status.pipe';
 import { BaseChartDirective } from 'ng2-charts';

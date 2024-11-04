@@ -51,6 +51,9 @@
     </div>
     <hr style="color: #808080"/>
     <div class="d-grid gap-2 d-md-flex justify-content-end">
+      <button class="btn btn-secondary me-2 col-1" (click)="goBack()">
+        Volver
+      </button>
       @if (isAdminAndOnAssembly) {
 
         <div class="col-3">
@@ -65,9 +68,7 @@
         </div>
       }
 
-      <button class="btn btn-secondary me-2 col-1" (click)="goBack()">
-        Volver
-      </button>
+
 
     </div>
     <hr style="color: #808080"/>

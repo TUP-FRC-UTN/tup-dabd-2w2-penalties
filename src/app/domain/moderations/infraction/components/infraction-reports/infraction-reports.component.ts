@@ -1,7 +1,6 @@
 import { Component, inject, TemplateRef, ViewChild } from '@angular/core';
 import { MainContainerComponent } from '../../../../../../../projects/ngx-dabd-grupo01/src/lib/main-container/main-container.component';
 import { TableComponent } from '../../../../../../../projects/ngx-dabd-grupo01/src/lib/table/table.component';
-import { TableColumn } from 'ngx-dabd-grup01';
 import { Observable } from 'rxjs';
 import {
   InfractionResponseDTO,
@@ -13,6 +12,7 @@ import { CommonModule } from '@angular/common';
 import {
   Filter,
   FilterConfigBuilder,
+  TableColumn,
 } from '../../../../../../../projects/ngx-dabd-grupo01/src/public-api';
 import { GetValueByKeyForEnumPipe } from '../../../../../shared/pipes/get-value-by-key-for-status.pipe';
 import { BaseChartDirective } from 'ng2-charts';

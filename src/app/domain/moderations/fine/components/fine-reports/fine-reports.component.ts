@@ -5,7 +5,6 @@ import { Observable } from 'rxjs';
 import { Fine } from '../../models/fine.model';
 import { FineService } from '../../services/fine.service';
 import { CommonModule } from '@angular/common';
-import { TableColumn } from 'ngx-dabd-grup01';
 import { GetValueByKeyForEnumPipe } from '../../../../../shared/pipes/get-value-by-key-for-status.pipe';
 import { FineStatusEnum } from '../../models/fine-status.enum';
 import { BaseChartDirective } from 'ng2-charts';
@@ -13,6 +12,7 @@ import { ChartConfiguration, ChartDataset, ChartOptions } from 'chart.js';
 import {
   Filter,
   FilterConfigBuilder,
+  TableColumn,
 } from '../../../../../../../projects/ngx-dabd-grupo01/src/public-api';
 
 @Component({

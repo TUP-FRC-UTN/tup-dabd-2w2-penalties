@@ -66,6 +66,7 @@
     }"
     [isLoading]="(isLoading$ | async) || false"
     (searchValueChange)="onSearchValueChange($event)"
+    [headerButtonText]="'+'"
     (headerButtonClick)="openFormModal()"
     (infoButtonClick)="onInfoButtonClick()"
     [showExportPdfButton]="false"
