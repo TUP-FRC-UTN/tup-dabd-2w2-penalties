@@ -34,17 +34,37 @@ import { InfractionBadgeService } from './domain/moderations/infraction/services
 })
 export class AppComponent implements OnInit {
   private infractionBadgeService = inject(InfractionBadgeService);
+  private infractionService = inject(InfractionServiceService);
 
   navbarMenu: NavbarItem[] = [
     {
-      label: 'Obras & Multas',
+      label: 'Construcciones',
       sidebarMenu: [
         {
-          label: 'Obras',
-          routerLink: '/constructions',
+          label: 'Administración',
+          subMenu: [
+            {
+              label: 'Obras',
+              routerLink: '/constructions',
+            },
+          ],
         },
         {
-          label: 'Moderación',
+          label: 'Reportes',
+          subMenu: [
+            {
+              label: 'Gráficos de obras',
+              routerLink: '/constructions-report',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      label: 'Moderación',
+      sidebarMenu: [
+        {
+          label: 'Administración',
           subMenu: [
             { label: 'Multas', routerLink: '/fine' },
             { label: 'Infracciones', routerLink: '/infraction' },
@@ -52,23 +72,35 @@ export class AppComponent implements OnInit {
             { label: 'Tipos de Sanciones', routerLink: '/sanctionType' },
           ],
         },
-      ],
-    },
-    {
-      label: 'Configuración',
-      subMenu: [
-        { label: 'Usuarios', routerLink: '/user' },
-        { label: 'Roles', routerLink: '/role' },
-        { label: 'Lotes', routerLink: '/lot' },
+        {
+          label: 'Reportes',
+          subMenu: [
+            { label: 'Gráficos de Multas', routerLink: '/fine-report' },
+            { label: 'Gráficos de Infracciones', routerLink: '/infraction-report' },
+            { label: 'Gráficos de Reclamos', routerLink: '/claim-report' },
+          ],
+        },
       ],
     },
   ];
 
   ngOnInit(): void {
-    // Escucha el cambio en el conteo de infracciones
+    this.infractionService
+    .getAllInfractions(1, 10000, )
+    .subscribe((response) => {
+      this.infractionService.setItems(response.items);
+      this.infractionService.setTotalItems(response.total);
+
+      const infractionsToSolve = response.items.filter(
+        (item) => item.infraction_state.toString() === "CREATED"
+      ).length;
+
+      this.infractionBadgeService.updateInfractionsCount(infractionsToSolve);
+    });
+
     this.infractionBadgeService.infractionsCount$.subscribe((count) => {
-      const mainMenu = this.navbarMenu[0];
-      const sidebarMenuItem = mainMenu?.sidebarMenu?.[1];
+      const mainMenu = this.navbarMenu[1];
+      const sidebarMenuItem = mainMenu?.sidebarMenu?.[0];
       const subMenuItem = sidebarMenuItem?.subMenu?.[1];
 
       if (count !== 0) {

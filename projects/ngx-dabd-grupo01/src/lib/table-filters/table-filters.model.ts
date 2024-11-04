@@ -162,8 +162,6 @@ export class FilterConfigBuilder {
     placeholder: string,
     format?: DateFormat
   ): FilterConfigBuilder {
-    console.log(format);
-
     this.filters.push(new DateFilter(label, key, placeholder, format));
     return this;
   }

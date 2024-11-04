@@ -83,7 +83,6 @@ export class WorkerFormComponent {
     const worker: WorkerRequestDto = {
       construction_id: this.constructionId!,
       address: formValue.address,
-      contact: { contact_value: formValue.contact },
       cuil: formValue.cuil,
       document: formValue.document,
       last_name: formValue.last_name,
