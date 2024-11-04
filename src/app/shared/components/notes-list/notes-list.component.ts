@@ -7,18 +7,17 @@ import {
   ViewChild,
 } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ConstructionNotesFormComponent } from '../construction-notes-form/construction-notes-form.component';
 import { TableColumn, TableComponent } from 'ngx-dabd-grupo01';
-import { RoleService } from '../../../../shared/services/role.service';
+import { RoleService } from '../../services/role.service';
 
 @Component({
-  selector: 'app-construction-notes-list',
+  selector: 'app-notes-list',
   standalone: true,
   imports: [TableComponent],
-  templateUrl: './construction-notes-list.component.html',
-  styleUrl: './construction-notes-list.component.scss',
+  templateUrl: './notes-list.component.html',
+  styleUrl: './notes-list.component.scss',
 })
-export class ConstructionNotesListComponent implements OnInit {
+export class NotesListComponent implements OnInit {
   // Inputs:
   @Input() notes: any[] = [];
 
@@ -53,7 +52,7 @@ export class ConstructionNotesListComponent implements OnInit {
   }
 
   openFormModal(itemId: number | null = null): void {
-    const modalRef = this.modalService.open(ConstructionNotesFormComponent);
-    modalRef.componentInstance.itemId = itemId;
+    // const modalRef = this.modalService.open(ConstructionNotesFormComponent);
+    // modalRef.componentInstance.itemId = itemId;
   }
 }

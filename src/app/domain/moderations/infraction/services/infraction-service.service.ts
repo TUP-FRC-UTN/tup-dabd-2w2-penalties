@@ -4,6 +4,7 @@ import {
   InfractionResponseDTO,
   InfractionModel,
   InfractionDto,
+  InfractionStatusEnum,
 } from '../models/infraction.model';
 import { BehaviorSubject, finalize, map, Observable } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
@@ -12,6 +13,7 @@ import { environment } from '../../../../../environments/environment';
   providedIn: 'root',
 })
 export class InfractionServiceService {
+
   private apiUrl = `${environment.moderationApiUrl}/infractions`;
 
   private itemsSubject = new BehaviorSubject<InfractionResponseDTO[]>([]);
@@ -81,7 +83,43 @@ export class InfractionServiceService {
     });
   }
 
-  rejectInfraction(id: number, userId: number = 1): Observable<void> {
-    return this.http.put<void>(`${this.apiUrl}/${id}/disapprove`, { user_id: userId });
+  changeInfractionStatus(
+    id: number,
+    userId: number = 1,
+    status: string
+  ): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${id}/status`, {
+      user_id: userId,
+      status: status,
+    });
+  }
+
+
+  downloadDocumentation(documentationId: number, filename: string): void {
+    const url = `${this.apiUrl}/proof/documentation/${documentationId}`;
+    this.http.get(url, { responseType: 'blob' }).subscribe({
+      next: (response: Blob) => {
+        this.downloadFile(response, filename);
+      },
+      error: (error) => {
+        console.error('Download failed', error);
+      },
+    });
+  }
+
+  private downloadFile(blob: Blob, filename: string): void {
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  }
+
+
+  appealInfraction(infractionData: FormData, infractionId: number): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${infractionId}/appeal`, infractionData);
   }
 }

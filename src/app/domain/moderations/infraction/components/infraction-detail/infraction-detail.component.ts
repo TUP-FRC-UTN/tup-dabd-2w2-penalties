@@ -1,16 +1,38 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { InfractionResponseDTO } from '../../models/infraction.model';
+import {
+  InfractionDto,
+  InfractionResponseDTO,
+  InfractionStatusEnum,
+  InfractionTab,
+} from '../../models/infraction.model';
 import { InfractionServiceService } from '../../services/infraction-service.service';
-import { MainContainerComponent } from '../../../../../../../projects/ngx-dabd-grupo01/src/public-api';
+import {
+  ConfirmAlertComponent,
+  MainContainerComponent,
+} from '../../../../../../../projects/ngx-dabd-grupo01/src/public-api';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { InfractionClaimListComponent } from "../infraction-claim-list/infraction-claim-list.component";
+import { InfractionClaimListComponent } from '../infraction-claim-list/infraction-claim-list.component';
 import { FormsModule } from '@angular/forms';
+import { RoleService } from '../../../../../shared/services/role.service';
+import { firstValueFrom } from 'rxjs';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { InfractionProofListComponent } from '../infraction-proof-list/infraction-proof-list.component';
+import { NotesListComponent } from '../../../../../shared/components/notes-list/notes-list.component';
+import { AppealInfractionModalComponent } from '../appeal-infraction-modal/appeal-infraction-modal.component';
+import { ToastService } from 'ngx-dabd-grupo01';
 
 @Component({
   selector: 'app-infraction-detail',
   standalone: true,
-  imports: [CommonModule, MainContainerComponent, InfractionClaimListComponent, FormsModule],
+  imports: [
+    CommonModule,
+    MainContainerComponent,
+    InfractionClaimListComponent,
+    FormsModule,
+    InfractionProofListComponent,
+    NotesListComponent,
+  ],
   templateUrl: './infraction-detail.component.html',
   styleUrl: './infraction-detail.component.scss',
 })
@@ -18,23 +40,135 @@ export class InfractionDetailComponent implements OnInit {
   infraction: InfractionResponseDTO | undefined;
   infractionService = inject(InfractionServiceService);
   private readonly activatedRoute = inject(ActivatedRoute);
+  private modalService = inject(NgbModal);
 
-  ngOnInit(): void {
-    this.activatedRoute.params.subscribe((params) => {
-      const id = params['id'];
-      this.getInfractionById(id);
+  private roleService = inject(RoleService);
+  infractionId: number | undefined;
+
+  InfractionStatusEnum = InfractionStatusEnum;
+  role: string = '';
+  userId: number | undefined;
+  userPlotsIds: number[] = [];
+
+  activeTab: InfractionTab = 'claims';
+
+  async ngOnInit(): Promise<void> {
+    let id;
+    this.roleService.currentRole$.subscribe((role: string) => {
+      this.role = role;
     });
+    this.roleService.currentUserId$.subscribe((userId: number) => {
+      this.userId = userId;
+    });
+
+    this.roleService.currentLotes$.subscribe((plots: number[]) => {
+      this.userPlotsIds = plots;
+    });
+
+    this.activatedRoute.params.subscribe(async (params) => {
+      const mode = params['mode'];
+      id = params['id'];
+      this.infractionId = id;
+    });
+
+    try {
+      const infraction: InfractionResponseDTO | undefined =
+        await this.getInfractionById(id!);
+    } catch (error) {
+      console.error(error);
+    }
+
+    this.infractionId = +this.activatedRoute.snapshot.paramMap.get('id')!;
   }
 
-  getInfractionById(id: number) {
-    this.infractionService
-      .getInfractionById(id)
-      .subscribe((infraction) => {
-        this.infraction = infraction;
-      });
+  private async getInfractionById(
+    id: number
+  ): Promise<InfractionResponseDTO | undefined> {
+    const infraction = await firstValueFrom(
+      this.infractionService.getInfractionById(id)
+    );
+
+    this.infraction = infraction;
+    return infraction;
   }
 
   goBack(): void {
     window.history.back();
+  }
+  showRejectButton(): boolean {
+    return (
+      this.role === 'ADMIN' &&
+      (this.infraction!.infraction_status ===
+        ('APPEALED' as InfractionStatusEnum) ||
+        this.infraction!.infraction_status ===
+          ('CREATED' as InfractionStatusEnum))
+    );
+  }
+
+  showAppealButton(): boolean {
+    return (
+      this.role !== 'ADMIN' &&
+      this.infraction!.infraction_status === ('CREATED' as InfractionStatusEnum)
+    );
+  }
+
+  showApproveButton(): boolean {
+    return (
+      this.role === 'ADMIN' &&
+      this.infraction!.infraction_status ===
+        ('APPEALED' as InfractionStatusEnum)
+    );
+  }
+
+  setActiveTab(tab: InfractionTab): void {
+    this.activeTab = tab;
+  }
+
+  rejectInfraction() {
+    const modalRef = this.modalService.open(ConfirmAlertComponent);
+    modalRef.componentInstance.alertTitle = 'Confirmación';
+    modalRef.componentInstance.alertMessage = `¿Está seguro de que desea desestimar esta infracción?`;
+
+    modalRef.result
+      .then((result) => {
+        if (result) {
+          this.infractionService
+            .changeInfractionStatus(this.infractionId!, this.userId, 'REJECTED')
+            .subscribe(() => {
+              this.getInfractionById(this.infractionId!);
+            });
+        }
+      })
+      .catch(() => {});
+  }
+
+  approveInfraction() {
+    const modalRef = this.modalService.open(ConfirmAlertComponent);
+    modalRef.componentInstance.alertTitle = 'Confirmación';
+    modalRef.componentInstance.alertMessage = `¿Está seguro de que desea aprobar esta infracción?`;
+
+    modalRef.result
+      .then((result) => {
+        if (result) {
+          this.infractionService
+            .changeInfractionStatus(this.infractionId!, this.userId, 'APPROVED')
+            .subscribe(() => {
+              this.getInfractionById(this.infractionId!);
+            });
+        }
+      })
+      .catch(() => {});
+  }
+
+  appealInfraction() {
+    const modalRef = this.modalService.open(AppealInfractionModalComponent);
+    modalRef.componentInstance.infractionId = this.infractionId;
+    modalRef.result
+      .then((result) => {
+        if (result) {
+          this.getInfractionById(this.infractionId!);
+        }
+      })
+      .catch(() => {});
   }
 }

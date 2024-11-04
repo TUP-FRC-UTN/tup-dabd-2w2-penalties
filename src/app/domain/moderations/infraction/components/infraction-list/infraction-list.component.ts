@@ -55,7 +55,7 @@ export class InfractionListComponent {
 
   page: number = 1;
   size: number = 10;
-  searchParams: { [key: string]: string | string[] } = {};
+  searchParams: { [key: string]: any | any[] } = {};
 
   // Role
   role: string = '';
@@ -112,7 +112,7 @@ export class InfractionListComponent {
         },
         {
           headerName: 'Estado',
-          accessorKey: 'infraction_state',
+          accessorKey: 'infraction_status',
           cellRenderer: this.statusTemplate,
         },
         { headerName: 'Lote', accessorKey: 'plot_id' },
@@ -126,6 +126,7 @@ export class InfractionListComponent {
   }
 
   loadItems(): void {
+    this.updateFiltersAccordingToUser();
     this.infractionService
       .getAllInfractions(this.page, this.size, this.searchParams)
       .subscribe((response) => {
@@ -133,9 +134,9 @@ export class InfractionListComponent {
         this.infractionService.setTotalItems(response.total);
 
         const infractionsToSolve = response.items.filter(
-          (item) => item.infraction_state.toString() === "CREATED"
+          (item) => item.infraction_status.toString() === 'CREATED'
         ).length;
-  
+
         this.infractionBadgeService.updateInfractionsCount(infractionsToSolve);
       });
   }
@@ -179,7 +180,7 @@ export class InfractionListComponent {
         endDate: this.endDate,
       };
     } else if (this.filterType === 'estado') {
-      this.searchParams = { infractionState: [this.status] };
+      this.searchParams = { infractionStatus: [this.status] };
     }
     this.page = 1;
     this.loadItems();
@@ -202,25 +203,25 @@ export class InfractionListComponent {
     modalRef.componentInstance.alertMessage = `Esta pantalla te permite consultar tus infracciones recibidos, y al administrador gestionarlo para generar multas. \n Considerá que de tener mas multas que las configuradas para cada tipo, entonces serás multado, podes ver mas en "Tipos de sanciones"`;
   }
 
-  rejectInfraction(id: number) {
-    const modalRef = this.modalService.open(ConfirmAlertComponent);
-    modalRef.componentInstance.alertTitle = 'Confirmación';
-    modalRef.componentInstance.alertMessage = `¿Está seguro de que desea desestimar esta infracción?`;
-
-    modalRef.result
-      .then((result) => {
-        if (result) {
-          this.infractionService
-            .rejectInfraction(id, this.userId)
-            .subscribe(() => {
-              this.loadItems();
-            });
-        }
-      })
-      .catch(() => {});
-  }
+ 
 
   goToDetails(id: number) {
     this.router.navigate(['/infraction', id]);
+  }
+  updateFiltersAccordingToUser() {
+    if (this.role !== 'ADMIN') {
+      this.searchParams = {
+        ...this.searchParams,
+        plotsIds: this.userPlotsIds,
+        userId: this.userId!,
+      };
+    } else {
+      if (this.searchParams['userId']) {
+        delete this.searchParams['userId'];
+      }
+      if (this.searchParams['plotsIds']) {
+        delete this.searchParams['plotsIds'];
+      }
+    }
   }
 }
