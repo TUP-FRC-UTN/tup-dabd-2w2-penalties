@@ -117,7 +117,7 @@ export class FineReportsComponent {
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.columns = [
-        { headerName: 'Nº de multa', accessorKey: 'id' },
+        { headerName: 'Nº', accessorKey: 'id' },
         { headerName: 'Lote', accessorKey: 'plot_id' },
         {
           headerName: 'Tipo',

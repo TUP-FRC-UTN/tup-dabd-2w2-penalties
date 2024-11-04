@@ -212,6 +212,7 @@ export class ConstructionListComponent {
       { value: 'APPROVED', label: 'Aprobado' },
       { value: 'COMPLETED', label: 'Finalizadas' },
       { value: 'IN_PROGRESS', label: 'En progreso' },
+      { value: 'ON_REVISION', label: 'En revisión' },
     ])
     .dateFilter(
       'Fecha desde',

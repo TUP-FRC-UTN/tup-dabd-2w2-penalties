@@ -101,7 +101,7 @@ export class InfractionReportsComponent {
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.columns = [
-        { headerName: 'Infracción', accessorKey: 'id' },
+        { headerName: 'N.°', accessorKey: 'id' },
         {
           headerName: 'Alta',
           accessorKey: 'created_date',
