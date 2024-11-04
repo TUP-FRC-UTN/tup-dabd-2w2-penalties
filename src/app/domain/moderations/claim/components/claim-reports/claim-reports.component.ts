@@ -7,10 +7,10 @@ import { BaseChartDirective } from 'ng2-charts';
 import { ClaimDTO, ClaimStatusEnum } from '../../models/claim.model';
 import { ClaimService } from '../../service/claim.service';
 import { ChartOptions, ChartConfiguration, ChartDataset } from 'chart.js';
-import { TableColumn } from 'ngx-dabd-grup01';
-import { Filter, FilterConfigBuilder } from 'ngx-dabd-grupo01';
+
 import { Observable } from 'rxjs';
 import { InfractionResponseDTO } from '../../../infraction/models/infraction.model';
+import { Filter, FilterConfigBuilder, TableColumn } from 'ngx-dabd-grupo01';
 
 @Component({
   selector: 'app-claim-reports',

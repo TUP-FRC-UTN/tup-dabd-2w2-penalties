@@ -13,8 +13,7 @@ import { environment } from '../../../../../environments/environment';
   providedIn: 'root',
 })
 export class InfractionServiceService {
-
-  private apiUrl = `${environment.moderationApiUrl}/infractions`;
+  private apiUrl = `${environment.moderationApiUrl}`;
 
   private itemsSubject = new BehaviorSubject<InfractionResponseDTO[]>([]);
   items$ = this.itemsSubject.asObservable();
@@ -56,18 +55,20 @@ export class InfractionServiceService {
       }
     });
 
-    return this.http.get<any>(`${this.apiUrl}/pageable`, { params }).pipe(
-      map((data) => {
-        const items = data.content || [];
-        const total = data.totalElements || 0;
-        return { items, total };
-      }),
-      finalize(() => this.isLoadingSubject.next(false))
-    );
+    return this.http
+      .get<any>(`${this.apiUrl}/infractions/pageable`, { params })
+      .pipe(
+        map((data) => {
+          const items = data.content || [];
+          const total = data.totalElements || 0;
+          return { items, total };
+        }),
+        finalize(() => this.isLoadingSubject.next(false))
+      );
   }
 
   getInfractionById(id: number): Observable<InfractionResponseDTO | undefined> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`).pipe(
+    return this.http.get<any>(`${this.apiUrl}/infractions/${id}`).pipe(
       map((oneInfraction) => {
         this.oneInfraction.next(oneInfraction);
         return oneInfraction;
@@ -76,11 +77,15 @@ export class InfractionServiceService {
   }
 
   createInfraction(infraction: InfractionDto): Observable<InfractionModel> {
-    return this.http.post<InfractionModel>(this.apiUrl, infraction, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    return this.http.post<InfractionModel>(
+      `${this.apiUrl}/infractions`,
+      infraction,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
   }
 
   changeInfractionStatus(
@@ -88,12 +93,11 @@ export class InfractionServiceService {
     userId: number = 1,
     status: string
   ): Observable<void> {
-    return this.http.put<void>(`${this.apiUrl}/${id}/status`, {
+    return this.http.put<void>(`${this.apiUrl}/infractions/${id}/status`, {
       user_id: userId,
       status: status,
     });
   }
-
 
   downloadDocumentation(documentationId: number, filename: string): void {
     const url = `${this.apiUrl}/proof/documentation/${documentationId}`;
@@ -118,8 +122,13 @@ export class InfractionServiceService {
     window.URL.revokeObjectURL(url);
   }
 
-
-  appealInfraction(infractionData: FormData, infractionId: number): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${infractionId}/appeal`, infractionData);
+  appealInfraction(
+    infractionData: FormData,
+    infractionId: number
+  ): Observable<any> {
+    return this.http.put(
+      `${this.apiUrl}/infractions/${infractionId}/appeal`,
+      infractionData
+    );
   }
 }
