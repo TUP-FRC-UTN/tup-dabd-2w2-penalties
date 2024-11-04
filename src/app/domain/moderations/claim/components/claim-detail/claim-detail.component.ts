@@ -1,9 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import {
-  ConfirmAlertComponent,
-  MainContainerComponent,
-  ToastService,
-} from 'ngx-dabd-grupo01';
+import { ConfirmAlertComponent, ToastService } from 'ngx-dabd-grupo01';
 import { SanctionTypeService } from '../../../sanction-type/services/sanction-type.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
@@ -19,6 +15,7 @@ import { Plot } from '../../../../cadastre/plot/models/plot.model';
 import { RoleService } from '../../../../../shared/services/role.service';
 import { firstValueFrom } from 'rxjs';
 import { ClaimDocumentsComponent } from '../claim-documents/claim-documents.component';
+import { MainContainerComponent } from '../../../../../../../projects/ngx-dabd-grupo01/src/public-api';
 
 @Component({
   selector: 'app-claim-detail',
@@ -141,7 +138,6 @@ export class ClaimDetailComponent implements OnInit {
     modalRef.componentInstance.alertTitle = 'Confirmación';
     modalRef.componentInstance.alertMessage = `¿Estás seguro de que desea modificar el reclamo?`;
 
-
     modalRef.result.then((result) => {
       if (result) {
         this.claimService.updateClaim(this.claim!, this.userId!).subscribe({
@@ -155,5 +151,13 @@ export class ClaimDetailComponent implements OnInit {
         });
       }
     });
+  }
+
+  infoModal() {
+    const modalRef = this.modalService.open(ConfirmAlertComponent);
+    modalRef.componentInstance.alertType = 'info';
+
+    modalRef.componentInstance.alertTitle = 'Ayuda';
+    modalRef.componentInstance.alertMessage = `Esta pantalla proporciona una vista detallada del reclamo seleccionado, permitiéndole analizar toda la información relacionada de manera clara y estructurada. En esta sección puede acceder a todos los datos relevantes sobre el reclamo de forma precisa.`;
   }
 }
