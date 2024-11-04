@@ -92,11 +92,14 @@ export class InfractionServiceService {
     id: number,
     userId: number = 1,
     status: string
-  ): Observable<void> {
-    return this.http.put<void>(`${this.apiUrl}/infractions/${id}/status`, {
-      user_id: userId,
-      status: status,
-    });
+  ): Observable<InfractionResponseDTO> {
+    return this.http.put<InfractionResponseDTO>(
+      `${this.apiUrl}/infractions/${id}/status`,
+      {
+        user_id: userId,
+        status: status,
+      }
+    );
   }
 
   downloadDocumentation(documentationId: number, filename: string): void {

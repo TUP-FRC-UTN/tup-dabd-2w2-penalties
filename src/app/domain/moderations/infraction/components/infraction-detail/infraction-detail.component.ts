@@ -41,6 +41,7 @@ export class InfractionDetailComponent implements OnInit {
   infractionService = inject(InfractionServiceService);
   private readonly activatedRoute = inject(ActivatedRoute);
   private modalService = inject(NgbModal);
+  private toastService = inject(ToastService);
 
   private roleService = inject(RoleService);
   infractionId: number | undefined;
@@ -152,8 +153,20 @@ export class InfractionDetailComponent implements OnInit {
         if (result) {
           this.infractionService
             .changeInfractionStatus(this.infractionId!, this.userId, 'APPROVED')
-            .subscribe(() => {
-              this.getInfractionById(this.infractionId!);
+            .subscribe({
+              next: (response) => {
+                this.infraction = response;
+                this.toastService.sendSuccess('Infracción aprobada exitosamente.');
+                if (response.fine_id !== null) {
+                  this.toastService.sendSuccess(
+                    'Multa ' + response.fine_id + ' creada exitosamente'
+                  );
+                }
+                modalRef.close();
+              },
+              error: (error) => {
+                this.toastService.sendError('Error al crear la infracción');
+              },
             });
         }
       })
