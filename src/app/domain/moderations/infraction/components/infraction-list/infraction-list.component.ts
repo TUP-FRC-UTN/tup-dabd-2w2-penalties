@@ -14,7 +14,7 @@ import {
   MainContainerComponent,
   TableComponent,
 } from '../../../../../../../projects/ngx-dabd-grupo01/src/public-api';
-import { TableColumn } from 'ngx-dabd-grupo01';
+import { Filter, FilterConfigBuilder, TableColumn } from 'ngx-dabd-grupo01';
 import { InfractionListInfoComponent } from '../infraction-list-info/infraction-list-info.component';
 import { FormsModule } from '@angular/forms';
 import { GetValueByKeyForEnumPipe } from '../../../../../shared/pipes/get-value-by-key-for-status.pipe';
@@ -173,18 +173,16 @@ export class InfractionListComponent {
     this.filterType = type;
   }
 
-  applyFilters(): void {
-    if (this.filterType === 'fecha') {
-      this.searchParams = {
-        startDate: this.startDate,
-        endDate: this.endDate,
-      };
-    } else if (this.filterType === 'estado') {
-      this.searchParams = { infractionStatus: [this.status] };
-    }
+
+  onFilterValueChange(filters: Record<string, any>) {
+    this.searchParams = {
+      ...filters,
+    };
+
     this.page = 1;
     this.loadItems();
   }
+
 
   clearFilters(): void {
     this.filterType = '';
@@ -203,11 +201,36 @@ export class InfractionListComponent {
     modalRef.componentInstance.alertMessage = `Esta pantalla te permite consultar tus infracciones recibidos, y al administrador gestionarlo para generar multas. \n Considerá que de tener mas multas que las configuradas para cada tipo, entonces serás multado, podes ver mas en "Tipos de sanciones"`;
   }
 
+  filterConfig: Filter[] = new FilterConfigBuilder()
+  // .selectFilter('Estado', 'constructionStatuses', 'Seleccione el Estado', [
+  //   { value: 'LOADING', label: 'En proceso de carga' },
+  //   { value: 'REJECTED', label: 'Rechazado' },
+  //   { value: 'APPROVED', label: 'Aprobado' },
+  //   { value: 'COMPLETED', label: 'Finalizadas' },
+  //   { value: 'IN_PROGRESS', label: 'En progreso' },
+  //   { value: 'ON_REVISION', label: 'En revisión' },
+  // ])
+  .dateFilter(
+    'Fecha desde',
+    'startDate',
+    'Placeholder',
+    "yyyy-MM-dd'T'HH:mm:ss"
+  )
+  .dateFilter(
+    'Fecha hasta',
+    'endDate',
+    'Placeholder',
+    "yyyy-MM-dd'T'HH:mm:ss"
+  )
+  .build();
+
  
 
   goToDetails(id: number) {
     this.router.navigate(['/infraction', id]);
   }
+
+
   updateFiltersAccordingToUser() {
     if (this.role !== 'ADMIN') {
       this.searchParams = {

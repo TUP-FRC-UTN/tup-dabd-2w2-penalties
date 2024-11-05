@@ -54,6 +54,9 @@
     [showHeaderButton]="role === 'ADMIN'"
     [headerButtonIcon]="'bi bi-plus'"
     [headerButtonText]="''"
+    [tableFilters]="filterConfig"
+    (filterValueChange)="onFilterValueChange($event)"
+
   >
   </app-table>
 </app-main-container>

@@ -9,11 +9,12 @@ import {
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TableColumn, TableComponent } from 'ngx-dabd-grupo01';
 import { RoleService } from '../../services/role.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-notes-list',
   standalone: true,
-  imports: [TableComponent],
+  imports: [TableComponent, CommonModule],
   templateUrl: './notes-list.component.html',
   styleUrl: './notes-list.component.scss',
 })
@@ -26,6 +27,7 @@ export class NotesListComponent implements OnInit {
 
   // Properties:
   @ViewChild('actionsTemplate') actionsTemplate!: TemplateRef<any>;
+  @ViewChild('date') dateTemplate!: TemplateRef<any>;
 
   columns: TableColumn[] = [];
 
@@ -43,10 +45,9 @@ export class NotesListComponent implements OnInit {
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.columns = [
-        { headerName: 'N° de Nota', accessorKey: 'id' },
+        { headerName: 'Usuario', accessorKey: 'created_by' },
+        { headerName: 'Fecha', accessorKey: 'created_date' },
         { headerName: 'Nota', accessorKey: 'description' },
-        /*         { headerName: 'Usuario', accessorKey: 'createdBy' },
-        { headerName: 'Fecha', accessorKey: 'createdDate' }, */
       ];
     });
   }

@@ -204,6 +204,14 @@ export class ClaimListComponent {
   };
 
   openFormModal(sanctionTypeToEdit: number | null = null): void {
+    if ( this.checkedClaims.length !== 0) {
+      this.openCreateInfractionModal();
+    } else {
+      this.openNewCaimModal();
+    }
+  }
+
+  openNewCaimModal() {
     const modalRef = this.modalService.open(NewClaimModalComponent);
     modalRef.result
       .then((result) => {
