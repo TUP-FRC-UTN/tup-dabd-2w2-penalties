@@ -89,16 +89,12 @@ export class InfractionServiceService {
   }
 
   changeInfractionStatus(
-    id: number,
-    userId: number = 1,
-    status: string
+    infractionData: FormData,
+    infractionId: number
   ): Observable<InfractionResponseDTO> {
     return this.http.put<InfractionResponseDTO>(
-      `${this.apiUrl}/infractions/${id}/status`,
-      {
-        user_id: userId,
-        status: status,
-      }
+      `${this.apiUrl}/infractions/${infractionId}/status`,
+      infractionData
     );
   }
 

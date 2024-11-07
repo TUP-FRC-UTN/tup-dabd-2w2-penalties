@@ -21,6 +21,8 @@ import { InfractionProofListComponent } from '../infraction-proof-list/infractio
 import { NotesListComponent } from '../../../../../shared/components/notes-list/notes-list.component';
 import { AppealInfractionModalComponent } from '../appeal-infraction-modal/appeal-infraction-modal.component';
 import { ToastService } from 'ngx-dabd-grupo01';
+import { RejectInfractionModalComponent } from '../reject-infraction-modal/reject-infraction-modal.component';
+import { ApproveInfractionModalComponent } from '../approve-infraction-modal/approve-infraction-modal.component';
 
 @Component({
   selector: 'app-infraction-detail',
@@ -126,48 +128,24 @@ export class InfractionDetailComponent implements OnInit {
   }
 
   rejectInfraction() {
-    const modalRef = this.modalService.open(ConfirmAlertComponent);
-    modalRef.componentInstance.alertTitle = 'Confirmación';
-    modalRef.componentInstance.alertMessage = `¿Está seguro de que desea desestimar esta infracción?`;
-
+    const modalRef = this.modalService.open(RejectInfractionModalComponent);
+    modalRef.componentInstance.infractionId = this.infractionId;
     modalRef.result
       .then((result) => {
         if (result) {
-          this.infractionService
-            .changeInfractionStatus(this.infractionId!, this.userId, 'REJECTED')
-            .subscribe(() => {
-              this.getInfractionById(this.infractionId!);
-            });
+          this.getInfractionById(this.infractionId!);
         }
       })
       .catch(() => {});
   }
 
   approveInfraction() {
-    const modalRef = this.modalService.open(ConfirmAlertComponent);
-    modalRef.componentInstance.alertTitle = 'Confirmación';
-    modalRef.componentInstance.alertMessage = `¿Está seguro de que desea aprobar esta infracción?`;
-
+    const modalRef = this.modalService.open(ApproveInfractionModalComponent);
+    modalRef.componentInstance.infractionId = this.infractionId;
     modalRef.result
       .then((result) => {
         if (result) {
-          this.infractionService
-            .changeInfractionStatus(this.infractionId!, this.userId, 'APPROVED')
-            .subscribe({
-              next: (response) => {
-                this.infraction = response;
-                this.toastService.sendSuccess('Infracción aprobada exitosamente.');
-                if (response.fine_id !== null) {
-                  this.toastService.sendSuccess(
-                    'Multa ' + response.fine_id + ' creada exitosamente'
-                  );
-                }
-                modalRef.close();
-              },
-              error: (error) => {
-                this.toastService.sendError('Error al crear la infracción');
-              },
-            });
+          this.getInfractionById(this.infractionId!);
         }
       })
       .catch(() => {});

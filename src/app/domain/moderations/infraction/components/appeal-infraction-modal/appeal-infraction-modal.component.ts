@@ -93,7 +93,7 @@ export class AppealInfractionModalComponent {
               this.toastService.sendSuccess(
                 'Multa ' + response.fine_id + ' creada exitosamente'
               );
-            } 
+            }
           },
           error: (error) => {
             this.toastService.sendError('Error en la apelación.');
@@ -103,24 +103,4 @@ export class AppealInfractionModalComponent {
       console.error('Faltan datos obligatorios en el formulario');
     }
   }
-
-  // Método para convertir data URI a Blob
-  dataURItoBlob(dataURI: string): Blob {
-    const byteString = atob(dataURI.split(',')[1]);
-    const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-    const ab = new ArrayBuffer(byteString.length);
-    const ia = new Uint8Array(ab);
-    for (let i = 0; i < byteString.length; i++) {
-      ia[i] = byteString.charCodeAt(i);
-    }
-    return new Blob([ab], { type: mimeString });
-  }
-
-  @ViewChild('videoPreview') videoPreview!: ElementRef<HTMLVideoElement>;
-
-  private stream: MediaStream | null = null;
-
-  isCameraOpen = false;
-  isFrontCamera: boolean = true;
-  capturedImage: string | null = null;
 }
