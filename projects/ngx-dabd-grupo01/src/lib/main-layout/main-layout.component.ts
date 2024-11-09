@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { NavbarItem } from '../navbar/navbar.model';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { NavbarComponent } from '../navbar/navbar.component';
@@ -15,11 +15,17 @@ import { CommonModule } from '@angular/common';
 })
 export class MainLayoutComponent {
   @Input() navbarMenu: NavbarItem[] = [];
+  @Output() logoutButtonClick = new EventEmitter<void>();
+
   sidebarMenu: SidebarItem[] = [];
   sidebarTitle: string = '';
 
   onSidebarChange(newMenu: SidebarItem[], label: string) {
     this.sidebarMenu = newMenu;
     this.sidebarTitle = label;
+  }
+
+  onLogoutButtonClick() {
+    this.logoutButtonClick.emit();
   }
 }

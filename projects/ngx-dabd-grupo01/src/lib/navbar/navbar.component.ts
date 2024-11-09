@@ -19,17 +19,22 @@ interface SidebarChangeEvent {
 export class NavbarComponent {
   @Input() navbarMenu: NavbarItem[] = [];
   @Output() sidebarChange = new EventEmitter<SidebarChangeEvent>();
+  @Output() logoutButtonClick = new EventEmitter<void>();
 
   selectedNavbarItem: string = '';
 
   selectSidebar(menu: NavbarItem) {
     if (menu.sidebarMenu) {
       this.selectedNavbarItem = menu.label;
-      
+
       this.sidebarChange.emit({
         sidebarMenu: menu.sidebarMenu,
         sidebarTitle: menu.label,
       });
     }
+  }
+
+  onLogoutButtonClick() {
+    this.logoutButtonClick.emit();
   }
 }

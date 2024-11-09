@@ -6,6 +6,7 @@
     <app-navbar
       [navbarMenu]="navbarMenu"
       (sidebarChange)="onSidebarChange($event.sidebarMenu, $event.sidebarTitle)"
+      (logoutButtonClick)="onLogoutButtonClick()"
     ></app-navbar>
     <router-outlet></router-outlet>
   </div>
