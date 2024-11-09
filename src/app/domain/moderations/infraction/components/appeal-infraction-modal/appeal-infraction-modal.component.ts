@@ -89,11 +89,7 @@ export class AppealInfractionModalComponent {
             this.toastService.sendSuccess(
               'Se apelo correctamente a la infracción.'
             );
-            if (response.fine_id !== null) {
-              this.toastService.sendSuccess(
-                'Multa ' + response.fine_id + ' creada exitosamente'
-              );
-            }
+   
           },
           error: (error) => {
             this.toastService.sendError('Error en la apelación.');

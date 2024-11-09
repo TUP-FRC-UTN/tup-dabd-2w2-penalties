@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Fine } from '../../models/fine.model';
 import { FineStatusEnum } from '../../models/fine-status.enum';
@@ -21,7 +21,7 @@ import { ConfirmAlertComponent } from '../../../../../../../projects/ngx-dabd-gr
   imports: [
     CommonModule,
     FormsModule,
-
+    NgClass,
     FineInfractionsListComponent,
     GetValueByKeyForEnumPipe,
     MainContainerComponent,

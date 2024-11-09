@@ -32,8 +32,6 @@ export class InfractionProofListComponent {
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.columns = [
-        { headerName: 'N° de Documento', accessorKey: 'id' },
-
         { headerName: 'Nombre', accessorKey: 'document_identifier' },
         {
           headerName: 'Fecha',

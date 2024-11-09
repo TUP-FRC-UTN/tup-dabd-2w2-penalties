@@ -32,7 +32,7 @@
         id="name"
         name="name"
         class="form-control"
-        value="{{ infraction?.created_date }}"
+        value="{{ infraction?.created_date | date : 'dd/MM/yyyy HH:mm' }}"
         disabled
       />
     </div>
@@ -68,7 +68,18 @@
         id="name"
         name="name"
         class="form-control"
-        value="{{ infraction?.infraction_status }}"
+        [ngClass]="{
+          'border-success bg-success-subtle text-success':
+            infraction!.infraction_status.toString() === 'APPROVED',
+          'border-warning bg-warning-subtle text-warning':
+            infraction!.infraction_status.toString() === 'APPEALED',
+          'border-danger bg-danger-subtle text-danger':
+            infraction!.infraction_status.toString() === 'REJECTED'
+        }"
+        value="{{
+          infraction!.infraction_status
+            | getValueByKeyForEnum : InfractionStatusEnum
+        }}"
         disabled
       />
     </div>
@@ -108,7 +119,7 @@
         [ngClass]="{ active: activeTab === 'proofs' }"
         (click)="setActiveTab('proofs')"
       >
-        Pruebas
+        Pruebas de apelación
       </button>
     </li>
     <li class="nav-item">

@@ -94,7 +94,11 @@ export class InfractionServiceService {
   ): Observable<InfractionResponseDTO> {
     return this.http.put<InfractionResponseDTO>(
       `${this.apiUrl}/infractions/${infractionId}/status`,
-      infractionData
+      {
+        user_id: infractionData.get('user_id'),
+        status: infractionData.get('status'),
+        description: infractionData.get('description'),
+      }
     );
   }
 

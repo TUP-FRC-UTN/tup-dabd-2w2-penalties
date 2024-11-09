@@ -6,7 +6,7 @@
 
 <ng-template #statusTemplate let-item>
   <span
-    class="badge p-2 border"
+    class="badge p-2 border w-100"
     [ngClass]="{
       'text-secondary': item.infraction_status === 'CREATED',
       'border-secondary': item.infraction_status === 'CREATED',
@@ -34,8 +34,14 @@
   </a>
   }@else { N/A }
 </ng-template>
+<ng-template #sanctionType let-item>
+  {{ item.sanction_type.name }}
+</ng-template>
 
-<app-main-container title="Infracciones" (infoButtonClick)="onInfoButtonClick()">
+<app-main-container
+  title="Infracciones"
+  (infoButtonClick)="onInfoButtonClick()"
+>
   <app-table
     [items]="(items$ | async) || []"
     [columns]="columns"
@@ -56,7 +62,6 @@
     [headerButtonText]="''"
     [tableFilters]="filterConfig"
     (filterValueChange)="onFilterValueChange($event)"
-
   >
   </app-table>
 </app-main-container>

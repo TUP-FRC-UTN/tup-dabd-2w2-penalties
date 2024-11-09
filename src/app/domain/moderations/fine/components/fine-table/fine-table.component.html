@@ -1,5 +1,16 @@
 <ng-template #fineState let-item>
-  {{ item.fine_state | getValueByKeyForEnum : FineStatusEnum }}
+  <span
+    class="badge p-2 border "
+    [ngClass]="{
+      'text-success': item.fine_state === 'APPROVED',
+      'border-success': item.fine_state === 'APPROVED',
+      'text-danger': item.fine_state === 'REJECTED',
+      'border-danger': item.fine_state === 'REJECTED',
+      'border-warning': item.fine_state === 'ON_ASSEMBLY',
+      'text-warning': item.fine_state === 'ON_ASSEMBLY'
+    }"
+    >{{ item.fine_state | getValueByKeyForEnum : FineStatusEnum }}</span
+  >
 </ng-template>
 
 <ng-template #fineDate let-item>
@@ -12,7 +23,15 @@
   </button>
 </ng-template>
 
-<app-main-container title="Multas" id="pdf-template" (infoButtonClick)="infoModal()">
+<ng-template #sanctionType let-item>
+  {{ item.sanction_type.name }}
+</ng-template>
+
+<app-main-container
+  title="Multas"
+  id="pdf-template"
+  (infoButtonClick)="infoModal()"
+>
   <app-table
     [items]="(items$ | async) || []"
     [columns]="columns"

@@ -11,7 +11,7 @@ import {
   MainContainerComponent,
 } from '../../../../../../../projects/ngx-dabd-grupo01/src/public-api';
 import { ActivatedRoute } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgClass } from '@angular/common';
 import { InfractionClaimListComponent } from '../infraction-claim-list/infraction-claim-list.component';
 import { FormsModule } from '@angular/forms';
 import { RoleService } from '../../../../../shared/services/role.service';
@@ -23,6 +23,7 @@ import { AppealInfractionModalComponent } from '../appeal-infraction-modal/appea
 import { ToastService } from 'ngx-dabd-grupo01';
 import { RejectInfractionModalComponent } from '../reject-infraction-modal/reject-infraction-modal.component';
 import { ApproveInfractionModalComponent } from '../approve-infraction-modal/approve-infraction-modal.component';
+import { GetValueByKeyForEnumPipe } from '../../../../../shared/pipes/get-value-by-key-for-status.pipe';
 
 @Component({
   selector: 'app-infraction-detail',
@@ -34,6 +35,8 @@ import { ApproveInfractionModalComponent } from '../approve-infraction-modal/app
     FormsModule,
     InfractionProofListComponent,
     NotesListComponent,
+    NgClass,
+    GetValueByKeyForEnumPipe,
   ],
   templateUrl: './infraction-detail.component.html',
   styleUrl: './infraction-detail.component.scss',

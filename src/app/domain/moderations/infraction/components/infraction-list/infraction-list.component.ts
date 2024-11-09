@@ -72,6 +72,8 @@ export class InfractionListComponent {
   @ViewChild('statusTemplate') statusTemplate!: TemplateRef<any>;
   @ViewChild('dateTemplate') dateTemplate!: TemplateRef<any>;
   @ViewChild('fineTemplate') fineTemplate!: TemplateRef<any>;
+  @ViewChild('sanctionType') sanctionType!: TemplateRef<any>;
+
 
   columns: TableColumn[] = [];
 
@@ -103,6 +105,11 @@ export class InfractionListComponent {
           headerName: 'Alta',
           accessorKey: 'created_date',
           cellRenderer: this.dateTemplate,
+        },
+        {
+          headerName: 'Tipo',
+          accessorKey: 'sanction_type.name',
+          cellRenderer: this.sanctionType,
         },
         { headerName: 'Descripción', accessorKey: 'description' },
         {

@@ -45,7 +45,7 @@ export class RejectInfractionModalComponent {
     if (this.description && this.userId) {
       const formData = new FormData();
 
-      formData.append('description', this.description);
+      formData.append('description', 'Rechazo: ' + this.description);
       formData.append('user_id', this.userId.toString());
       formData.append('status', 'REJECTED');
 
