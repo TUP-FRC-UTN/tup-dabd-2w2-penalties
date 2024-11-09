@@ -1,42 +1,24 @@
 <ng-template #actionsTemplate let-item>
-  <div class="col">
-    <div ngbDropdown class="d-inline-block">
-      <button
-        type="button"
-        class="btn btn-sm btn-secondary"
-        id="dropdownBasic1"
-        ngbDropdownToggle
-      >
-        <i class="bi bi-three-dots-vertical"></i>
-      </button>
-      <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-        <button ngbDropdownItem (click)="goToDetails(item.id)">
-          Ver detalle
-        </button>
-        @if((this.role === 'ADMIN' ) && (item.infraction_state === 'CREATED' ||
-        item.infraction_state === 'ON_APPEALING')) {
-        <button ngbDropdownItem (click)="rejectInfraction(item.id)">Desestimar</button>
-        }
-      </div>
-    </div>
-  </div>
+  <button class="btn btn-primary btn-sm me-2" (click)="goToDetails(item.id)">
+    <i class="bi bi-eye"></i>
+  </button>
 </ng-template>
 
 <ng-template #statusTemplate let-item>
   <span
-    class="badge p-2 border"
+    class="badge p-2 border w-100"
     [ngClass]="{
-      'text-secondary': item.infraction_state === 'CREATED',
-      'border-secondary': item.infraction_state === 'CREATED',
-      'text-success': item.infraction_state === 'APPROVED',
-      'border-success': item.infraction_state === 'APPROVED',
-      'text-danger': item.infraction_state === 'REJECTED',
-      'border-danger': item.infraction_state === 'REJECTED',
-      'border-warning': item.infraction_state === 'ON_APPEALING',
-      'text-warning': item.infraction_state === 'ON_APPEALING'
+      'text-secondary': item.infraction_status === 'CREATED',
+      'border-secondary': item.infraction_status === 'CREATED',
+      'text-success': item.infraction_status === 'APPROVED',
+      'border-success': item.infraction_status === 'APPROVED',
+      'text-danger': item.infraction_status === 'REJECTED',
+      'border-danger': item.infraction_status === 'REJECTED',
+      'border-warning': item.infraction_status === 'APPEALED',
+      'text-warning': item.infraction_status === 'APPEALED'
     }"
     >{{
-      item.infraction_state | getValueByKeyForEnum : InfractionStatusEnum
+      item.infraction_status | getValueByKeyForEnum : InfractionStatusEnum
     }}</span
   >
 </ng-template>
@@ -50,10 +32,16 @@
   <a [href]="['/fine/' + item.fine_id]">
     {{ item.fine_id }}
   </a>
-  }@else { N/A } </ng-template
->
+  }@else { N/A }
+</ng-template>
+<ng-template #sanctionType let-item>
+  {{ item.sanction_type.name }}
+</ng-template>
 
-<app-main-container title="Infracciones" (infoButtonClick)="onInfoButtonClick()">
+<app-main-container
+  title="Infracciones"
+  (infoButtonClick)="onInfoButtonClick()"
+>
   <app-table
     [items]="(items$ | async) || []"
     [columns]="columns"
@@ -72,6 +60,8 @@
     [showHeaderButton]="role === 'ADMIN'"
     [headerButtonIcon]="'bi bi-plus'"
     [headerButtonText]="''"
+    [tableFilters]="filterConfig"
+    (filterValueChange)="onFilterValueChange($event)"
   >
   </app-table>
 </app-main-container>

@@ -46,15 +46,15 @@
 
 <ng-template #claimStatus let-item>
   @if(item.claim_status === 'APPROVED') {
-  <span class="badge border border-success text-success p-2">{{
+  <span class="badge border border-success text-success p-2 w-100">{{
     item.claim_status | getValueByKeyForEnum : ClaimStatusEnum
   }}</span>
   } @else if(item.claim_status === 'REJECTED') {
-  <span class="badge border border-danger text-danger p-2">{{
+  <span class="badge border border-danger text-danger p-2 w-100">{{
     item.claim_status | getValueByKeyForEnum : ClaimStatusEnum
   }}</span>
   } @else if (item.claim_status === 'SENT') {
-  <span class="badge text-secondary border border-secondary p-2">{{
+  <span class="badge text-secondary border border-secondary p-2 w-100">{{
     item.claim_status | getValueByKeyForEnum : ClaimStatusEnum
   }}</span>
   }

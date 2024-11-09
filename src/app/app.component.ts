@@ -92,7 +92,7 @@ export class AppComponent implements OnInit {
       this.infractionService.setTotalItems(response.total);
 
       const infractionsToSolve = response.items.filter(
-        (item) => item.infraction_state.toString() === "CREATED"
+        (item) => item.infraction_status.toString() === "CREATED"
       ).length;
 
       this.infractionBadgeService.updateInfractionsCount(infractionsToSolve);

@@ -156,7 +156,7 @@ export class InfractionReportsComponent {
 
     items.forEach((item) => {
       let status;
-      const itemStatus = item.infraction_state.toString();
+      const itemStatus = item.infraction_status.toString();
 
       switch (itemStatus) {
         case 'APPROVED':

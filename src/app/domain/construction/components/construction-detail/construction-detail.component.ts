@@ -27,7 +27,7 @@ import {
 } from '@angular/forms';
 import { NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { ConstructionDocumentationListComponent } from '../../../construction-documentation/components/construction-documentation-list/construction-documentation-list.component';
-import { ConstructionNotesListComponent } from '../../../note/components/construction-notes-list/construction-notes-list.component';
+import { NotesListComponent } from '../../../../shared/components/notes-list/notes-list.component';
 import { WorkerService } from '../../../workers/services/worker.service';
 import {
   ConfirmAlertComponent,
@@ -50,7 +50,7 @@ import { RoleService } from '../../../../shared/services/role.service';
     ConstructionWorkersComponent,
     NgbTooltipModule,
     ConstructionDocumentationListComponent,
-    ConstructionNotesListComponent,
+    NotesListComponent,
     GetValueByKeyForEnumPipe,
   ],
   templateUrl: './construction-detail.component.html',

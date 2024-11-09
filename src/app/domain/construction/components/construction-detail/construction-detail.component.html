@@ -187,12 +187,12 @@
           construction?.construction_status === 'REJECTED' &&
           construction?.construction_status !== 'IN_PROGRESS' &&
           construction?.construction_status !== 'COMPLETED',
-        'alert-warning': 
+        'alert-warning':
           !isConstructionAbleToApprove() &&
           construction?.construction_status !== 'REJECTED' &&
           construction?.construction_status !== 'IN_PROGRESS' &&
           construction?.construction_status !== 'COMPLETED',
-          'alert-info': construction?.construction_status === 'COMPLETED'
+        'alert-info': construction?.construction_status === 'COMPLETED'
       }"
     >
       <!-- STARTED -->
@@ -252,9 +252,12 @@
       </button>
       }
       <!--  -->
-      @if(role === "OWNER" && construction?.construction_status === "IN_PROGRESS")
-      {
-      <button class="btn btn-info me-2 text-white" (click)="onFinishConstruction()">
+      @if(role === "OWNER" && construction?.construction_status ===
+      "IN_PROGRESS") {
+      <button
+        class="btn btn-info me-2 text-white"
+        (click)="onFinishConstruction()"
+      >
         <i class="bi bi-check-circle"></i>
         Finalizar obra
       </button>
@@ -350,9 +353,7 @@
   }
   <!-- Notes -->
   @case ('notes') {
-  <app-construction-notes-list
-    [notes]="construction?.notes || []"
-  ></app-construction-notes-list>
+  <app-notes-list [notes]="construction?.notes || []"></app-notes-list>
   } }
   <!-- Message -->
   @if (successMessage) {

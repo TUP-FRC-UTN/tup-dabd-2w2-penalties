@@ -32,7 +32,10 @@ import { GetValueByKeyForEnumPipe } from '../../../../../shared/pipes/get-value-
 import { FineStatusEnum } from '../../models/fine-status.enum';
 import { PdfService } from '../../../../../shared/services/pdf.service';
 import { RoleService } from '../../../../../shared/services/role.service';
-import { TableColumn, TableComponent } from '../../../../../../../projects/ngx-dabd-grupo01/src/public-api';
+import {
+  TableColumn,
+  TableComponent,
+} from '../../../../../../../projects/ngx-dabd-grupo01/src/public-api';
 
 @Component({
   selector: 'app-fine-table',
@@ -63,6 +66,7 @@ export class FineTable {
   @ViewChild('fineDate') fineDateTemplate!: TemplateRef<any>;
   @ViewChild('actionsTemplate') actionsTemplate!: TemplateRef<any>;
   @ViewChild('pdfTemplate', { static: true }) pdfTemplate!: TemplateRef<any>;
+  @ViewChild('sanctionType') sanctionType!: TemplateRef<any>;
 
   role: string = '';
   userId: number | undefined;
@@ -128,6 +132,11 @@ export class FineTable {
         { headerName: 'Lote', accessorKey: 'plot_id' },
         {
           headerName: 'Tipo',
+          accessorKey: 'sanction_type.name',
+          cellRenderer: this.sanctionType,
+        },
+        {
+          headerName: 'Estado',
           accessorKey: 'type',
           cellRenderer: this.fineStateTemplate,
         },
