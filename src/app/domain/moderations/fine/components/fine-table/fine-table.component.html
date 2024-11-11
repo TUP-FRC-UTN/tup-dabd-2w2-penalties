@@ -1,6 +1,7 @@
 <ng-template #fineState let-item>
   <span
-    class="badge p-2 border "
+    class="badge p-2 border w-100"
+    style="max-width: 160px"
     [ngClass]="{
       'text-success': item.fine_state === 'APPROVED',
       'border-success': item.fine_state === 'APPROVED',
@@ -48,6 +49,7 @@
     [showSearchBar]="false"
     (infoButtonClick)="infoModal()"
     [getAllItems]="getAllFines"
+    [showExportPdfButton]="false"
   >
     <div class="d-flex justify-content-between align-items-center mb-3">
       <div class="btn-group me-5" role="group">

@@ -104,7 +104,9 @@
     <thead>
       <tr>
         @for(column of columns; track $index) {
-        <th>{{ column.headerName }}</th>
+        <th [ngStyle]="{ 'text-align': column.align || 'left' }">
+          {{ column.headerName }}
+        </th>
         }
       </tr>
     </thead>

@@ -46,17 +46,23 @@
 
 <ng-template #claimStatus let-item>
   @if(item.claim_status === 'APPROVED') {
-  <span class="badge border border-success text-success p-2 w-100">{{
-    item.claim_status | getValueByKeyForEnum : ClaimStatusEnum
-  }}</span>
+  <span
+    class="badge border border-success text-success p-2 w-100"
+    style="max-width: 160px"
+    >{{ item.claim_status | getValueByKeyForEnum : ClaimStatusEnum }}</span
+  >
   } @else if(item.claim_status === 'REJECTED') {
-  <span class="badge border border-danger text-danger p-2 w-100">{{
-    item.claim_status | getValueByKeyForEnum : ClaimStatusEnum
-  }}</span>
+  <span
+    class="badge border border-danger text-danger p-2 w-100"
+    style="max-width: 160px"
+    >{{ item.claim_status | getValueByKeyForEnum : ClaimStatusEnum }}</span
+  >
   } @else if (item.claim_status === 'SENT') {
-  <span class="badge text-secondary border border-secondary p-2 w-100">{{
-    item.claim_status | getValueByKeyForEnum : ClaimStatusEnum
-  }}</span>
+  <span
+    class="badge text-secondary border border-secondary p-2 w-100"
+    style="max-width: 160px"
+    >{{ item.claim_status | getValueByKeyForEnum : ClaimStatusEnum }}</span
+  >
   }
 </ng-template>
 
@@ -103,6 +109,8 @@
     (infoButtonClick)="onInfoButtonClick()"
     [headerButtonIcon]="'bi bi-plus'"
     [headerButtonText]="''"
+    [showExportPdfButton]="false"
+    [getAllItems]="getAllItems"
   >
   </app-table>
 </app-main-container>

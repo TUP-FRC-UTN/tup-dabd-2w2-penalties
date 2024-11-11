@@ -67,6 +67,21 @@ export class InfractionServiceService {
       );
   }
 
+  getAllItems(page: number, limit: number) {
+    let params = new HttpParams()
+      .set('page', (page - 1).toString())
+      .set('size', limit.toString());
+
+    return this.http
+      .get<any>(`${this.apiUrl}/infractions/pageable`, { params })
+      .pipe(
+        map((data) => {
+          return data.content;
+        }),
+        finalize(() => this.isLoadingSubject.next(false))
+      );
+  }
+
   getInfractionById(id: number): Observable<InfractionResponseDTO | undefined> {
     return this.http.get<any>(`${this.apiUrl}/infractions/${id}`).pipe(
       map((oneInfraction) => {

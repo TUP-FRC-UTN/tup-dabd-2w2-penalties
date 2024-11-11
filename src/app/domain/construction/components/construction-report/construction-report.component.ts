@@ -11,12 +11,13 @@ import { ConstructionService } from '../../services/construction.service';
 import { ChartConfiguration, ChartDataset, ChartOptions } from 'chart.js';
 import { Filter } from 'ngx-dabd-grupo01';
 import { FilterConfigBuilder } from '../../../../../../projects/ngx-dabd-grupo01/src/public-api';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { GetValueByKeyForEnumPipe } from '../../../../shared/pipes/get-value-by-key-for-status.pipe';
 import { BaseChartDirective } from 'ng2-charts';
-import { TableFiltersComponent } from "../../../../../../projects/ngx-dabd-grupo01/src/lib/table-filters/table-filters.component";
+import { TableFiltersComponent } from '../../../../../../projects/ngx-dabd-grupo01/src/lib/table-filters/table-filters.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmAlertComponent } from 'ngx-dabd-grupo01';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-construction-report',
@@ -25,10 +26,11 @@ import { ConfirmAlertComponent } from 'ngx-dabd-grupo01';
     MainContainerComponent,
     TableComponent,
     CommonModule,
+    FormsModule,
     GetValueByKeyForEnumPipe,
     BaseChartDirective,
-    TableFiltersComponent
-],
+    TableFiltersComponent,
+  ],
   templateUrl: './construction-report.component.html',
   styleUrl: './construction-report.component.scss',
 })
@@ -36,8 +38,29 @@ export class ConstructionReportComponent {
   constructionService = inject(ConstructionService);
 
   CONSTRUCTION_STATUSES_ENUM = CONSTRUCTION_STATUSES_ENUM;
+  MONTH_NAMES = [
+    'Enero',
+    'Febrero',
+    'Marzo',
+    'Abril',
+    'Mayo',
+    'Junio',
+    'Julio',
+    'Agosto',
+    'Septiembre',
+    'Octubre',
+    'Noviembre',
+    'Diciembre',
+  ];
+
+  groupedItems: any[] = [];
 
   columns: TableColumn[] = [];
+
+  dateFilter = {
+    startDate: '',
+    endDate: '',
+  };
 
   searchParams: { [key: string]: any } = {};
 
@@ -45,12 +68,14 @@ export class ConstructionReportComponent {
     this.constructionService.items$;
   isLoading$: Observable<boolean> = this.constructionService.isLoading$;
 
-  @ViewChild('statusTemplate') statusTemplate!: TemplateRef<any>;
+  @ViewChild('monthTemplate') monthTemplate!: TemplateRef<any>;
 
   averageDuration = '';
   averageWorkers = '';
 
   private modalService = inject(NgbModal);
+
+  constructor(private datePipe: DatePipe) {}
 
   // Datos genéricos para gráficos
   public pieChartLegend = true;
@@ -107,19 +132,37 @@ export class ConstructionReportComponent {
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.columns = [
-        { headerName: 'N.°', accessorKey: 'construction_id' },
-        { headerName: 'Lote', accessorKey: 'plot_id' },
-        { headerName: 'Inicio', accessorKey: 'planned_start_date' },
-        { headerName: 'Finalización', accessorKey: 'planned_end_date' },
-        { headerName: 'Nombre', accessorKey: 'project_name' },
-        { headerName: 'Dirección', accessorKey: 'project_address' },
         {
-          headerName: 'Estado',
-          accessorKey: 'construction_status',
-          cellRenderer: this.statusTemplate,
+          headerName: 'Año',
+          accessorKey: 'yearValue',
+        },
+        {
+          headerName: 'Mes',
+          accessorKey: 'monthValue',
+          cellRenderer: this.monthTemplate,
+        },
+        {
+          headerName: 'Obras Iniciadas',
+          accessorKey: 'startedCount',
+        },
+        {
+          headerName: 'Obras finalizadas',
+          accessorKey: 'completedCount',
         },
       ];
     });
+
+    const startDate = new Date();
+    startDate.setMonth(startDate.getMonth() - 24);
+    const endDate = new Date();
+
+    const startDateString = startDate.toISOString().split('T')[0];
+    const endDateString = endDate.toISOString().split('T')[0];
+
+    this.dateFilter = {
+      startDate: startDateString,
+      endDate: endDateString,
+    };
 
     this.loadItems();
 
@@ -130,10 +173,34 @@ export class ConstructionReportComponent {
 
   loadItems(): void {
     this.constructionService
-      .getAllConstructions(1, 1000, this.searchParams)
+      .getAllConstructions(1, 1000, {
+        startDate: this.datePipe.transform(
+          this.dateFilter.startDate,
+          "yyyy-MM-dd'T'HH:mm:ss"
+        ),
+        endDate: this.datePipe.transform(
+          this.dateFilter.endDate,
+          "yyyy-MM-dd'T'HH:mm:ss"
+        ),
+      })
       .subscribe((response) => {
         this.constructionService.setItems(response.items);
         this.constructionService.setTotalItems(response.total);
+      });
+
+    this.constructionService
+      .getMonthlyConstructionStats({
+        startDate: this.datePipe.transform(
+          this.dateFilter.startDate,
+          "yyyy-MM-dd'T'HH:mm:ss"
+        ),
+        endDate: this.datePipe.transform(
+          this.dateFilter.endDate,
+          "yyyy-MM-dd'T'HH:mm:ss"
+        ),
+      })
+      .subscribe((data) => {
+        this.groupedItems = data;
       });
   }
 
@@ -142,6 +209,10 @@ export class ConstructionReportComponent {
       ...filters,
     };
 
+    this.loadItems();
+  }
+
+  onDateFilterChange() {
     this.loadItems();
   }
 
@@ -164,6 +235,9 @@ export class ConstructionReportComponent {
           break;
         case 'IN_PROGRESS':
           status = 'En progreso';
+          break;
+        case 'ON_REVISION':
+          status = 'En revisión';
           break;
         case 'COMPLETED':
           status = 'Finalizada';
@@ -201,14 +275,6 @@ export class ConstructionReportComponent {
 
       totalDuration += durationInDays;
       totalWorkers += item.workers.length;
-
-      console.log({
-        startDate,
-        endDate,
-        durationInDays,
-        totalDuration,
-        totalWorkers,
-      });
     });
 
     const averageDurationInDays = Math.floor(totalDuration / items.length);
@@ -230,6 +296,10 @@ export class ConstructionReportComponent {
 
     this.averageDuration = averageDurationString;
     this.averageWorkers = averageWorkersString;
+  }
+
+  getMonthName(monthNumber: number): string {
+    return this.MONTH_NAMES[monthNumber - 1];
   }
 
   infoModal() {
