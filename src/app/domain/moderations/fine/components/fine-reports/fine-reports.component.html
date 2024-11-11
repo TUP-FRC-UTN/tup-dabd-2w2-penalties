@@ -88,7 +88,7 @@
           </h6>
         </div>
         <h2 class="card-title mb-0 text-secondary">
-          {{ fineResolutionAverage }}
+          {{ fineResolutionAverage }} días
         </h2>
         <small class="text-muted"
           >Tiempo promedio que tarda una multa en ser resuelta</small
@@ -106,14 +106,15 @@
             <i class="bi bi-graph-up-arrow"></i>
           </div>
           <h6 class="card-subtitle text-muted mb-0">
-            Incremento de multas mes a mes
+            Variación de multas en el último mes
           </h6>
         </div>
         <h2 class="card-title mb-0 text-secondary">
           {{ monthlyFineGrowthRate }}%
         </h2>
         <small class="text-muted"
-          >Cantidad de multas en relación al último mes</small
+          >Incremento de multas en {{ currentMonth }}, en relación a
+          {{ previousMonth }}.</small
         >
       </div>
     </div>

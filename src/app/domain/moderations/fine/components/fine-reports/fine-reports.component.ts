@@ -44,6 +44,28 @@ export class FineReportsComponent {
     endDate: '',
   };
 
+  MONTH_NAMES = [
+    'enero',
+    'febrero',
+    'marzo',
+    'abril',
+    'mayo',
+    'junio',
+    'julio',
+    'agosto',
+    'septiembre',
+    'octubre',
+    'noviembre',
+    'diciembre',
+  ];
+
+  currentMonth: string =
+    this.MONTH_NAMES[new Date().getMonth() < 1 ? 0 : new Date().getMonth()];
+  previousMonth: string =
+    this.MONTH_NAMES[
+      new Date().getMonth() - 1 < 0 ? 11 : new Date().getMonth() - 1
+    ];
+
   searchParams: { [key: string]: any } = {};
 
   items$: Observable<Fine[]> = this.fineService.items$;
@@ -169,6 +191,7 @@ export class FineReportsComponent {
       this.getTotalApprovedFines(items);
       this.getTotalRejectedFines(items);
       this.getFineResolutionAverage(items);
+      this.getMonthlyFineGrowthRate(items);
     });
   }
 
@@ -312,13 +335,17 @@ export class FineReportsComponent {
 
   getFineResolutionAverage(items: Fine[]) {
     const totalDays = items.reduce((acc, item) => {
-      const startDate = new Date(item.created_date.split('T')[0]);
-      const endDate = new Date(item.last_updated_at.split('T')[0]);
+      if (item.last_updated_at) {
+        const startDate = new Date(item.created_date.split('T')[0]);
+        const endDate = new Date(item.last_updated_at.split('T')[0]);
 
-      const timeDifference = endDate.getTime() - startDate.getTime();
-      const dayDifference = timeDifference / (1000 * 3600 * 24);
+        const timeDifference = endDate.getTime() - startDate.getTime();
+        const dayDifference = timeDifference / (1000 * 3600 * 24);
 
-      return acc + dayDifference;
+        return acc + dayDifference;
+      }
+
+      return acc;
     }, 0);
 
     const averageDays = totalDays / items.length;
@@ -332,19 +359,25 @@ export class FineReportsComponent {
     items.forEach((item) => {
       const date = new Date(item.created_date.split('T')[0]);
       const yearMonth = `${date.getFullYear()}-${date.getMonth() + 1}`;
-
       finesByMonth[yearMonth] = (finesByMonth[yearMonth] || 0) + 1;
     });
 
-    const months = Object.keys(finesByMonth).sort();
+    const now = new Date();
+    const currentYearMonth = `${now.getFullYear()}-${now.getMonth() + 1}`;
+    let previousYearMonth = `${now.getFullYear()}-${now.getMonth()}`;
 
-    if (months.length < 2) {
+    if (now.getMonth() === 0) {
+      const lastYear = now.getFullYear() - 1;
+      previousYearMonth = `${lastYear}-12`;
+    }
+
+    const currentMonthCount = finesByMonth[currentYearMonth] || 0;
+    const previousMonthCount = finesByMonth[previousYearMonth] || 0;
+
+    if (currentMonthCount === 0 && previousMonthCount === 0) {
       this.monthlyFineGrowthRate = 0;
       return;
     }
-
-    const currentMonthCount = finesByMonth[months[months.length - 1]];
-    const previousMonthCount = finesByMonth[months[months.length - 2]];
 
     if (previousMonthCount === 0) {
       this.monthlyFineGrowthRate = currentMonthCount > 0 ? 100 : 0;
