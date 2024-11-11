@@ -152,6 +152,8 @@ export class ConstructionDetailComponent implements OnInit {
           description: construction?.project_description || '',
           planned_start_date: planned_start_date,
           planned_end_date: planned_end_date,
+          start_time: construction?.start_time,
+          end_time: construction?.end_time,
         };
       });
   }
@@ -196,6 +198,7 @@ export class ConstructionDetailComponent implements OnInit {
             this.toastService.sendSuccess(
               'Los datos se actualizaron correctamente'
             );
+            this.mode = 'detail';
           },
           error: (err) => {
             console.error('Error al actualizar los datos', err);

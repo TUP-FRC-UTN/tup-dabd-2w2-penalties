@@ -75,7 +75,9 @@ export class ConstructionService {
     construction: ConstructionRequestDto
   ): Observable<ConstructionResponseDto> {
     return this.http
-      .post<ConstructionResponseDto>(this.apiUrl, construction)
+      .post<ConstructionResponseDto>(this.apiUrl, construction, {
+        headers: { 'Content-Type': 'application/json' },
+      })
       .pipe(
         map((newItem) => {
           const updatedItems = [...this.itemsSubject.value, newItem];

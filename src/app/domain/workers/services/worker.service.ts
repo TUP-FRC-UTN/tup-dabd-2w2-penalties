@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, catchError, map, throwError } from 'rxjs';
 import { environment } from '../../../../environments/environment';
@@ -43,9 +43,11 @@ export class WorkerService {
       );
   }
 
-  unAssignWorker(id: number): Observable<string> {
+  unAssignWorker(id: number, userId: number): Observable<string> {
+    const headers = new HttpHeaders().set('x-user-id', userId.toString());
+  
     return this.http
-      .put<string>(`${this.apiUrl}/workers/${id}/unassign`, undefined)
+      .put<string>(`${this.apiUrl}/workers/${id}/unassign`, undefined, { headers })
       .pipe(
         map((response) => {
           return response;
@@ -58,4 +60,5 @@ export class WorkerService {
         })
       );
   }
+  
 }
