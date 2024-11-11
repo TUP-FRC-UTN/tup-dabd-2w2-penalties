@@ -237,7 +237,7 @@ export class ConstructionListComponent {
     this.loadItems();
   }
 
-  getAllTimes = (): Observable<any> => {
+  getAllItems = (): Observable<any> => {
     return this.constructionService.getAllItems();
   };
 }

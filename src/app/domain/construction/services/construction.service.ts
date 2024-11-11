@@ -7,6 +7,7 @@ import {
   ConstructionUpdateRequestDto,
   ConstructionUpdateStatusRequestDto,
 } from '../models/construction.model';
+import { environment } from '../../../../environments/environment';
 
 type OneConstruction = ConstructionResponseDto | undefined;
 
@@ -14,7 +15,7 @@ type OneConstruction = ConstructionResponseDto | undefined;
   providedIn: 'root',
 })
 export class ConstructionService {
-  private apiUrl = 'http://localhost:8080/constructions';
+  private apiUrl = environment.constructionApiUrl + '/constructions';
 
   private oneConstruction = new BehaviorSubject<OneConstruction>(undefined);
   oneConstruction$ = this.oneConstruction.asObservable();
@@ -157,7 +158,7 @@ export class ConstructionService {
 
   getMonthlyConstructionStats(searchParams: any = {}): Observable<any[]> {
     let params = new HttpParams();
-    
+
     Object.keys(searchParams).forEach((key) => {
       if (searchParams[key]) {
         params = params.set(key, searchParams[key]);

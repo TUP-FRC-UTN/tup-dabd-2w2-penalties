@@ -124,7 +124,6 @@ export class InfractionListComponent {
         { headerName: 'Lote', accessorKey: 'plot_id' },
         {
           headerName: 'Acciones',
-          accessorKey: 'actions',
           cellRenderer: this.actionsTemplate,
         },
       ];
@@ -248,4 +247,8 @@ export class InfractionListComponent {
       }
     }
   }
+
+  getAllItems = (): Observable<any> => {
+    return this.infractionService.getAllItems(1, 1000);
+  };
 }

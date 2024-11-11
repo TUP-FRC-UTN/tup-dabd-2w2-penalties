@@ -151,7 +151,6 @@ export class ClaimListComponent {
         },
         {
           headerName: 'Acciones',
-          accessorKey: 'actions',
           cellRenderer: this.actionsTemplate,
         },
       ];
@@ -318,4 +317,8 @@ export class ClaimListComponent {
       }
     });
   }
+
+  getAllItems = (): Observable<any> => {
+    return this.claimService.getAllItems(1, 1000);
+  };
 }
