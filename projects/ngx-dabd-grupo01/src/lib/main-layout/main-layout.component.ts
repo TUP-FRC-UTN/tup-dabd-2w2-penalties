@@ -16,6 +16,7 @@ import { CommonModule } from '@angular/common';
 export class MainLayoutComponent {
   @Input() navbarMenu: NavbarItem[] = [];
   @Output() logoutButtonClick = new EventEmitter<void>();
+  @Output() profileButtonClick = new EventEmitter<void>();
 
   sidebarMenu: SidebarItem[] = [];
   sidebarTitle: string = '';
@@ -27,5 +28,9 @@ export class MainLayoutComponent {
 
   onLogoutButtonClick() {
     this.logoutButtonClick.emit();
+  }
+
+  onProfileButtonClick() {
+    this.profileButtonClick.emit();
   }
 }

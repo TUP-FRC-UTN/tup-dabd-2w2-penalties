@@ -20,6 +20,7 @@ export class NavbarComponent {
   @Input() navbarMenu: NavbarItem[] = [];
   @Output() sidebarChange = new EventEmitter<SidebarChangeEvent>();
   @Output() logoutButtonClick = new EventEmitter<void>();
+  @Output() profileButtonClick = new EventEmitter<void>();
 
   selectedNavbarItem: string = '';
 
@@ -36,5 +37,9 @@ export class NavbarComponent {
 
   onLogoutButtonClick() {
     this.logoutButtonClick.emit();
+  }
+
+  onProfileButtonClick() {
+    this.profileButtonClick.emit();
   }
 }
