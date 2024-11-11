@@ -74,7 +74,6 @@ export class InfractionListComponent {
   @ViewChild('fineTemplate') fineTemplate!: TemplateRef<any>;
   @ViewChild('sanctionType') sanctionType!: TemplateRef<any>;
 
-
   columns: TableColumn[] = [];
 
   // Methods:
@@ -119,13 +118,12 @@ export class InfractionListComponent {
         },
         {
           headerName: 'Estado',
-          accessorKey: 'infraction_status',
+          accessorKey: 'infraction_state',
           cellRenderer: this.statusTemplate,
         },
         { headerName: 'Lote', accessorKey: 'plot_id' },
         {
           headerName: 'Acciones',
-          accessorKey: 'actions',
           cellRenderer: this.actionsTemplate,
         },
       ];
@@ -180,7 +178,6 @@ export class InfractionListComponent {
     this.filterType = type;
   }
 
-
   onFilterValueChange(filters: Record<string, any>) {
     this.searchParams = {
       ...filters,
@@ -189,7 +186,6 @@ export class InfractionListComponent {
     this.page = 1;
     this.loadItems();
   }
-
 
   clearFilters(): void {
     this.filterType = '';
@@ -209,34 +205,31 @@ export class InfractionListComponent {
   }
 
   filterConfig: Filter[] = new FilterConfigBuilder()
-  // .selectFilter('Estado', 'constructionStatuses', 'Seleccione el Estado', [
-  //   { value: 'LOADING', label: 'En proceso de carga' },
-  //   { value: 'REJECTED', label: 'Rechazado' },
-  //   { value: 'APPROVED', label: 'Aprobado' },
-  //   { value: 'COMPLETED', label: 'Finalizadas' },
-  //   { value: 'IN_PROGRESS', label: 'En progreso' },
-  //   { value: 'ON_REVISION', label: 'En revisión' },
-  // ])
-  .dateFilter(
-    'Fecha desde',
-    'startDate',
-    'Placeholder',
-    "yyyy-MM-dd'T'HH:mm:ss"
-  )
-  .dateFilter(
-    'Fecha hasta',
-    'endDate',
-    'Placeholder',
-    "yyyy-MM-dd'T'HH:mm:ss"
-  )
-  .build();
-
- 
+    // .selectFilter('Estado', 'constructionStatuses', 'Seleccione el Estado', [
+    //   { value: 'LOADING', label: 'En proceso de carga' },
+    //   { value: 'REJECTED', label: 'Rechazado' },
+    //   { value: 'APPROVED', label: 'Aprobado' },
+    //   { value: 'COMPLETED', label: 'Finalizadas' },
+    //   { value: 'IN_PROGRESS', label: 'En progreso' },
+    //   { value: 'ON_REVISION', label: 'En revisión' },
+    // ])
+    .dateFilter(
+      'Fecha desde',
+      'startDate',
+      'Placeholder',
+      "yyyy-MM-dd'T'HH:mm:ss"
+    )
+    .dateFilter(
+      'Fecha hasta',
+      'endDate',
+      'Placeholder',
+      "yyyy-MM-dd'T'HH:mm:ss"
+    )
+    .build();
 
   goToDetails(id: number) {
     this.router.navigate(['/infraction', id]);
   }
-
 
   updateFiltersAccordingToUser() {
     if (this.role !== 'ADMIN') {
@@ -254,4 +247,8 @@ export class InfractionListComponent {
       }
     }
   }
+
+  getAllItems = (): Observable<any> => {
+    return this.infractionService.getAllItems(1, 1000);
+  };
 }

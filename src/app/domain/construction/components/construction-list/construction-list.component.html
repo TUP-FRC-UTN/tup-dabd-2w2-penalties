@@ -1,7 +1,12 @@
 <ng-template #statusTemplate let-item>
-  <span class="badge text-secondary border border-secondary p-2">{{
-    item.construction_status | getValueByKeyForEnum : CONSTRUCTION_STATUSES_ENUM
-  }}</span>
+  <span
+    class="badge text-secondary border border-secondary p-2 w-100"
+    style="max-width: 160px"
+    >{{
+      item.construction_status
+        | getValueByKeyForEnum : CONSTRUCTION_STATUSES_ENUM
+    }}</span
+  >
 </ng-template>
 
 <ng-template #actionsTemplate let-item>
@@ -53,7 +58,7 @@
     [tableFilters]="filterConfig"
     (filterValueChange)="onFilterValueChange($event)"
     [showExportPdfButton]="false"
-    [getAllItems]="getAllTimes"
+    [getAllItems]="getAllItems"
   >
   </app-table>
 </app-main-container>

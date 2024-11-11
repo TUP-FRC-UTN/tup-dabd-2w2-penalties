@@ -11,6 +11,7 @@ import { ChartOptions, ChartConfiguration, ChartDataset } from 'chart.js';
 import { Observable } from 'rxjs';
 import { InfractionResponseDTO } from '../../../infraction/models/infraction.model';
 import { Filter, FilterConfigBuilder, TableColumn } from 'ngx-dabd-grupo01';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-claim-reports',
@@ -18,6 +19,7 @@ import { Filter, FilterConfigBuilder, TableColumn } from 'ngx-dabd-grupo01';
   imports: [
     MainContainerComponent,
     TableComponent,
+    FormsModule,
     CommonModule,
     GetValueByKeyForEnumPipe,
     BaseChartDirective,
@@ -36,6 +38,11 @@ export class ClaimReportsComponent {
   isLoading$: Observable<boolean> = this.claimService.isLoading$;
 
   ClaimStatusEnum = ClaimStatusEnum;
+
+  dateFilter = {
+    startDate: '',
+    endDate: '',
+  };
 
   @ViewChild('sanctionType') sanctionType!: TemplateRef<any>;
   @ViewChild('date') date!: TemplateRef<any>;
@@ -125,6 +132,18 @@ export class ClaimReportsComponent {
       ];
     });
 
+    const startDate = new Date();
+    startDate.setMonth(startDate.getMonth() - 24);
+    const endDate = new Date();
+
+    const startDateString = startDate.toISOString().split('T')[0];
+    const endDateString = endDate.toISOString().split('T')[0];
+
+    this.dateFilter = {
+      startDate: startDateString,
+      endDate: endDateString,
+    };
+
     this.loadItems();
 
     this.items$.subscribe((items) => {
@@ -135,7 +154,10 @@ export class ClaimReportsComponent {
 
   loadItems(): void {
     this.claimService
-      .getPaginatedClaims(1, 1000, this.searchParams)
+      .getPaginatedClaims(1, 1000, {
+        startDate: this.dateFilter.startDate,
+        endDate: this.dateFilter.endDate,
+      })
       .subscribe((response) => {
         this.claimService.setItems(response.items);
         this.claimService.setTotalItems(response.total);
@@ -147,6 +169,10 @@ export class ClaimReportsComponent {
       ...filters,
     };
 
+    this.loadItems();
+  }
+
+  onDateFilterChange() {
     this.loadItems();
   }
 

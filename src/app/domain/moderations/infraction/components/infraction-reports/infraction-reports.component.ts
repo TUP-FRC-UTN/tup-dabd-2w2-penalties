@@ -17,12 +17,14 @@ import {
 import { GetValueByKeyForEnumPipe } from '../../../../../shared/pipes/get-value-by-key-for-status.pipe';
 import { BaseChartDirective } from 'ng2-charts';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-infraction-reports',
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     MainContainerComponent,
     TableComponent,
     GetValueByKeyForEnumPipe,
@@ -37,6 +39,11 @@ export class InfractionReportsComponent {
   columns: TableColumn[] = [];
 
   InfractionStatusEnum = InfractionStatusEnum;
+
+  dateFilter = {
+    startDate: '',
+    endDate: '',
+  };
 
   searchParams: { [key: string]: any } = {};
 
@@ -117,26 +124,39 @@ export class InfractionReportsComponent {
         },
         {
           headerName: 'Estado',
-          accessorKey: 'infraction_state',
+          accessorKey: 'infraction_status',
           cellRenderer: this.statusTemplate,
         },
         { headerName: 'Lote', accessorKey: 'plot_id' },
       ];
     });
 
+    const startDate = new Date();
+    startDate.setMonth(startDate.getMonth() - 24);
+    const endDate = new Date();
+
+    const startDateString = startDate.toISOString().split('T')[0];
+    const endDateString = endDate.toISOString().split('T')[0];
+
+    this.dateFilter = {
+      startDate: startDateString,
+      endDate: endDateString,
+    };
+
     this.loadItems();
 
     this.items$.subscribe((items) => {
       this.updatePieChartStatusData(items);
       this.updateBarPlotChartData(items);
-      /* thisthis.updatePieChartStatusData(items);
-      this.updateBarChartMonthlyData(items); */
     });
   }
 
   loadItems(): void {
     this.infractionService
-      .getAllInfractions(1, 1000, this.searchParams)
+      .getAllInfractions(1, 1000, {
+        startDate: this.dateFilter.startDate,
+        endDate: this.dateFilter.endDate,
+      })
       .subscribe((response) => {
         this.infractionService.setItems(response.items);
         this.infractionService.setTotalItems(response.total);
@@ -197,6 +217,10 @@ export class InfractionReportsComponent {
         { data: Object.values(plotCounts), label: 'Cantidad de infracciones' },
       ],
     };
+  }
+
+  onDateFilterChange() {
+    this.loadItems();
   }
 
   infoModal() {
