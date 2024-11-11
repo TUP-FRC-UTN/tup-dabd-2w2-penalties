@@ -23,6 +23,18 @@
 >
   <form #editForm="ngForm" class="row">
     <div class="mb-3 col-6 d-flex align-items-center">
+      <label for="plot_id" class="form-label me-3" style="width: 15%"
+        >Lote</label
+      >
+      <input
+        id="plot_id"
+        name="plot_id"
+        class="form-control flex-grow-1"
+        value="{{ construction?.plot_id }}"
+        disabled
+      />
+    </div>
+    <div class="mb-3 col-6 d-flex align-items-center">
       <label for="name" class="form-label me-3" style="width: 15%"
         >Nombre</label
       >
@@ -152,21 +164,53 @@
         [disabled]="mode === 'detail'"
         required
       />
+
       <!--       @if (endDateControl.invalid && (endDateControl.dirty ||
       endDateControl.touched)) { @if (endDateControl.getError('required')) {
       <div class="invalid-feedback">Este campo es obligatorio</div>
       } } -->
     </div>
+
     <div class="mb-3 col-6 d-flex align-items-center">
-      <label for="plot_id" class="form-label me-3" style="width: 15%"
-        >Lote</label
+      <label for="start_time" class="form-label me-3" style="width: 15%"
+        >Hora de inicio</label
       >
       <input
-        id="plot_id"
-        name="plot_id"
+        #startTimeControl="ngModel"
+        id="start_time"
+        name="start_time"
         class="form-control flex-grow-1"
-        value="{{ construction?.plot_id }}"
-        disabled
+        value="{{ construction?.start_time }}"
+        [(ngModel)]="editConstruction.start_time"
+        [ngClass]="{
+          'is-invalid':
+            startTimeControl.invalid &&
+            (startTimeControl.dirty || startTimeControl.touched)
+        }"
+        type="time"
+        [disabled]="mode === 'detail'"
+        required
+      />
+    </div>
+    <div class="mb-3 col-6 d-flex align-items-center">
+      <label for="end_time" class="form-label me-3" style="width: 15%"
+        >Hora finalización</label
+      >
+      <input
+        #startTimeControl="ngModel"
+        id="end_time"
+        name="end_time"
+        class="form-control flex-grow-1"
+        value="{{ construction?.end_time }}"
+        [(ngModel)]="editConstruction.end_time"
+        [ngClass]="{
+          'is-invalid':
+            startTimeControl.invalid &&
+            (startTimeControl.dirty || startTimeControl.touched)
+        }"
+        type="time"
+        [disabled]="mode === 'detail'"
+        required
       />
     </div>
   </form>
