@@ -117,7 +117,7 @@ export class InfractionReportsComponent {
         },
         {
           headerName: 'Estado',
-          accessorKey: 'infraction_state',
+          accessorKey: 'infraction_status',
           cellRenderer: this.statusTemplate,
         },
         { headerName: 'Lote', accessorKey: 'plot_id' },

@@ -82,6 +82,15 @@ export class AppComponent implements OnInit {
         },
       ],
     },
+    {
+      label: 'Normas',
+      sidebarMenu: [
+        {
+          label: 'Reglamento',
+          routerLink: '/rules',
+        }
+      ]
+    }
   ];
 
   ngOnInit(): void {

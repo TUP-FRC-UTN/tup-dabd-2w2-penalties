@@ -2,17 +2,17 @@
   <span
     class="badge p-2 border"
     [ngClass]="{
-      'text-secondary': item.infraction_state === 'CREATED',
-      'border-secondary': item.infraction_state === 'CREATED',
-      'text-success': item.infraction_state === 'APPROVED',
-      'border-success': item.infraction_state === 'APPROVED',
-      'text-danger': item.infraction_state === 'REJECTED',
-      'border-danger': item.infraction_state === 'REJECTED',
-      'border-warning': item.infraction_state === 'ON_APPEALING',
-      'text-warning': item.infraction_state === 'ON_APPEALING'
+      'text-secondary': item.infraction_status === 'CREATED',
+      'border-secondary': item.infraction_status === 'CREATED',
+      'text-success': item.infraction_status === 'APPROVED',
+      'border-success': item.infraction_status === 'APPROVED',
+      'text-danger': item.infraction_status === 'REJECTED',
+      'border-danger': item.infraction_status === 'REJECTED',
+      'border-warning': item.infraction_status === 'ON_APPEALING',
+      'text-warning': item.infraction_status === 'ON_APPEALING'
     }"
     >{{
-      item.infraction_state | getValueByKeyForEnum : InfractionStatusEnum
+      item.infraction_status | getValueByKeyForEnum : InfractionStatusEnum
     }}</span
   >
 </ng-template>

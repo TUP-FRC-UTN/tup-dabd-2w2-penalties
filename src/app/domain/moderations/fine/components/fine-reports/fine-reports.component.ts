@@ -15,12 +15,14 @@ import {
   FilterConfigBuilder,
 } from '../../../../../../../projects/ngx-dabd-grupo01/src/public-api';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-fine-reports',
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     MainContainerComponent,
     TableComponent,
     GetValueByKeyForEnumPipe,
@@ -37,10 +39,20 @@ export class FineReportsComponent {
 
   private modalService = inject(NgbModal);
 
+  dateFilter = {
+    startDate: '',
+    endDate: '',
+  };
+
   searchParams: { [key: string]: any } = {};
 
   items$: Observable<Fine[]> = this.fineService.items$;
   isLoading$: Observable<boolean> = this.fineService.isLoading$;
+
+  totalApprovedFines = 0;
+  totalRejectedFines = 0;
+  fineResolutionAverage = 0;
+  monthlyFineGrowthRate = 0;
 
   @ViewChild('fineState') fineStateTemplate!: TemplateRef<any>;
   @ViewChild('fineDate') fineDateTemplate!: TemplateRef<any>;
@@ -135,6 +147,18 @@ export class FineReportsComponent {
       ];
     });
 
+    const startDate = new Date();
+    startDate.setMonth(startDate.getMonth() - 24);
+    const endDate = new Date();
+
+    const startDateString = startDate.toISOString().split('T')[0];
+    const endDateString = endDate.toISOString().split('T')[0];
+
+    this.dateFilter = {
+      startDate: startDateString,
+      endDate: endDateString,
+    };
+
     this.loadItems();
 
     this.items$.subscribe((items) => {
@@ -142,12 +166,18 @@ export class FineReportsComponent {
       this.updateBarPlotChartData(items);
       this.updatePieChartStatusData(items);
       this.updateBarChartMonthlyData(items);
+      this.getTotalApprovedFines(items);
+      this.getTotalRejectedFines(items);
+      this.getFineResolutionAverage(items);
     });
   }
 
   loadItems(): void {
     this.fineService
-      .getPaginatedFines(1, 1000, this.searchParams)
+      .getPaginatedFines(1, 1000, {
+        startDate: this.dateFilter.startDate,
+        endDate: this.dateFilter.endDate,
+      })
       .subscribe((response) => {
         this.fineService.setItems(response.items);
         this.fineService.setTotalItems(response.total);
@@ -250,6 +280,79 @@ export class FineReportsComponent {
     };
 
     this.loadItems();
+  }
+
+  onDateFilterChange() {
+    this.loadItems();
+  }
+
+  getTotalApprovedFines(items: Fine[]) {
+    const total = items.reduce((acc, item) => {
+      if (item.fine_state.toString() === 'APPROVED') {
+        return acc + 1;
+      } else {
+        return acc;
+      }
+    }, 0);
+
+    this.totalApprovedFines = total;
+  }
+
+  getTotalRejectedFines(items: Fine[]) {
+    const total = items.reduce((acc, item) => {
+      if (item.fine_state.toString() === 'REJECTED') {
+        return acc + 1;
+      } else {
+        return acc;
+      }
+    }, 0);
+
+    this.totalRejectedFines = total;
+  }
+
+  getFineResolutionAverage(items: Fine[]) {
+    const totalDays = items.reduce((acc, item) => {
+      const startDate = new Date(item.created_date.split('T')[0]);
+      const endDate = new Date(item.last_updated_at.split('T')[0]);
+
+      const timeDifference = endDate.getTime() - startDate.getTime();
+      const dayDifference = timeDifference / (1000 * 3600 * 24);
+
+      return acc + dayDifference;
+    }, 0);
+
+    const averageDays = totalDays / items.length;
+
+    this.fineResolutionAverage = Math.floor(averageDays);
+  }
+
+  getMonthlyFineGrowthRate(items: Fine[]): void {
+    const finesByMonth: { [key: string]: number } = {};
+
+    items.forEach((item) => {
+      const date = new Date(item.created_date.split('T')[0]);
+      const yearMonth = `${date.getFullYear()}-${date.getMonth() + 1}`;
+
+      finesByMonth[yearMonth] = (finesByMonth[yearMonth] || 0) + 1;
+    });
+
+    const months = Object.keys(finesByMonth).sort();
+
+    if (months.length < 2) {
+      this.monthlyFineGrowthRate = 0;
+      return;
+    }
+
+    const currentMonthCount = finesByMonth[months[months.length - 1]];
+    const previousMonthCount = finesByMonth[months[months.length - 2]];
+
+    if (previousMonthCount === 0) {
+      this.monthlyFineGrowthRate = currentMonthCount > 0 ? 100 : 0;
+    } else {
+      const growthRate =
+        ((currentMonthCount - previousMonthCount) / previousMonthCount) * 100;
+      this.monthlyFineGrowthRate = parseFloat(growthRate.toFixed(2));
+    }
   }
 
   infoModal() {

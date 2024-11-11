@@ -155,6 +155,18 @@ export class ConstructionService {
     );
   }
 
+  getMonthlyConstructionStats(searchParams: any = {}): Observable<any[]> {
+    let params = new HttpParams();
+    
+    Object.keys(searchParams).forEach((key) => {
+      if (searchParams[key]) {
+        params = params.set(key, searchParams[key]);
+      }
+    });
+
+    return this.http.get<any[]>(`${this.apiUrl}/stats/monthly`, { params });
+  }
+
   /* rejectConstruction(id: number): Observable<ConstructionResponseDto> {
     return this.http.put<ConstructionResponseDto>(`${this.apiUrl}/reject/${id}`, {});
   } */
