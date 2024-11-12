@@ -1,10 +1,13 @@
 <div class="d-flex mb-3">
-  <div class="w-100 d-flex align-items-center" [ngClass]="{
-    'justify-content-between': showSearchBar,
-    'justify-content-end': !showSearchBar
-  }">
+  <div
+    class="w-100 d-flex align-items-center"
+    [ngClass]="{
+      'justify-content-between': showSearchBar,
+      'justify-content-end': !showSearchBar && !showOnlyTableFilters
+    }"
+  >
     @if(showSearchBar){
-    <div class="input-group" style="max-width: 280px">
+    <div class="input-group btn-group" style="max-width: 280px">
       <span class="input-group-text" id="search-icon">
         <i class="bi bi-search"></i>
       </span>
@@ -16,11 +19,28 @@
         (ngModelChange)="onSearchValueChange()"
         aria-describedby="search-icon"
       />
+      <app-table-filters
+        class="btn-group"
+        [filters]="tableFilters"
+        (filterValueChange)="onFilterValueChange($event)"
+      ></app-table-filters>
     </div>
+    <ng-content></ng-content>
+    } @if(showOnlyTableFilters) {
+    <app-table-filters
+      class="btn-group"
+      [filters]="tableFilters"
+      (filterValueChange)="onFilterValueChange($event)"
+    ></app-table-filters>
     } @if(showHeaderButton) {
     <button class="btn btn-outline-primary" (click)="onHeaderButtonClick()">
       @if(headerButtonIcon) {
-      <i class="{{ headerButtonIcon }} me-1"></i>
+      <i
+        class="{{ headerButtonIcon }}"
+        [ngClass]="{
+          'me-1': headerButtonText
+        }"
+      ></i>
       }
       {{ headerButtonText }}
     </button>
@@ -33,7 +53,7 @@
       class="btn btn-success"
       placement="top"
       ngbTooltip="Exportar Excel"
-      (click)="onExcelButtonClick()"
+      (click)="onExportToExcel()"
     >
       <i class="bi bi-file-earmark-excel"></i>
     </button>
@@ -50,7 +70,6 @@
   </div>
   }
 </div>
-<ng-content></ng-content>
 <div
   class="table-responsive border overflow-auto"
   [ngStyle]="{ height: height }"
@@ -85,7 +104,9 @@
     <thead>
       <tr>
         @for(column of columns; track $index) {
-        <th>{{ column.headerName }}</th>
+        <th [ngStyle]="{ 'text-align': column.align || 'left' }">
+          {{ column.headerName }}
+        </th>
         }
       </tr>
     </thead>
@@ -96,7 +117,7 @@
         <td>
           @if(!column.cellRenderer) {
           <ng-container>
-            {{ getNestedValue(item, column.accessorKey) }}
+            {{ getNestedValue(item, column.accessorKey || "") }}
           </ng-container>
           } @else {
           <ng-container
@@ -131,7 +152,7 @@
       (change)="onItemsPerPageChange(pagination.size)"
     >
       @for(option of sizeOptions; track $index) {
-      <option [value]="option">{{ option }} Elementos</option>
+      <option [value]="option">{{ option }}</option>
       }
     </select>
   </div>

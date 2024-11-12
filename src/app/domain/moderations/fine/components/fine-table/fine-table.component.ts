@@ -25,8 +25,6 @@ import { Fine } from '../../models/fine.model';
 import {
   ConfirmAlertComponent,
   MainContainerComponent,
-  TableColumn,
-  TableComponent,
   ToastService,
 } from 'ngx-dabd-grupo01';
 
@@ -34,6 +32,10 @@ import { GetValueByKeyForEnumPipe } from '../../../../../shared/pipes/get-value-
 import { FineStatusEnum } from '../../models/fine-status.enum';
 import { PdfService } from '../../../../../shared/services/pdf.service';
 import { RoleService } from '../../../../../shared/services/role.service';
+import {
+  TableColumn,
+  TableComponent,
+} from '../../../../../../../projects/ngx-dabd-grupo01/src/public-api';
 
 @Component({
   selector: 'app-fine-table',
@@ -50,11 +52,7 @@ import { RoleService } from '../../../../../shared/services/role.service';
     NgbDatepickerModule,
     TableComponent,
     GetValueByKeyForEnumPipe,
-    CommonModule,
-    TableComponent,
-    GetValueByKeyForEnumPipe,
     NgbDropdownModule,
-    FormsModule,
   ],
   templateUrl: './fine-table.component.html',
   providers: [FineService],
@@ -64,6 +62,7 @@ export class FineTable {
   @ViewChild('fineDate') fineDateTemplate!: TemplateRef<any>;
   @ViewChild('actionsTemplate') actionsTemplate!: TemplateRef<any>;
   @ViewChild('pdfTemplate', { static: true }) pdfTemplate!: TemplateRef<any>;
+  @ViewChild('sanctionType') sanctionType!: TemplateRef<any>;
 
   role: string = '';
   userId: number | undefined;
@@ -91,7 +90,6 @@ export class FineTable {
   private roleService = inject(RoleService);
   fineService = inject(FineService);
   modalService = inject(NgbModal);
-
 
   items$: Observable<Fine[]> = this.fineService.items$;
   totalItems$: Observable<number> = this.fineService.totalItems$;
@@ -130,6 +128,11 @@ export class FineTable {
         { headerName: 'Lote', accessorKey: 'plot_id' },
         {
           headerName: 'Tipo',
+          accessorKey: 'sanction_type.name',
+          cellRenderer: this.sanctionType,
+        },
+        {
+          headerName: 'Estado',
           accessorKey: 'type',
           cellRenderer: this.fineStateTemplate,
         },
@@ -203,12 +206,9 @@ export class FineTable {
   onSearchValueChange = (key: string, searchValue: any): void => {
     this.searchSubject.next({ key, value: searchValue });
   };
-  onExportToExcel = (): void => {
-    try {
-      this.fineService.onExportToExcel();
-    } catch (error) {
-      this.toastService.sendError('Sucedió un error al generar el excel');
-    }
+
+  getAllFines = () => {
+    return this.fineService.findAll();
   };
 
   applyFilters(): void {
@@ -237,14 +237,11 @@ export class FineTable {
     this.loadItems();
   }
 
-
   infoModal() {
     const modalRef = this.modalService.open(ConfirmAlertComponent);
     modalRef.componentInstance.alertType = 'info';
 
     modalRef.componentInstance.alertTitle = 'Ayuda';
-    modalRef.componentInstance.alertMessage = `Esta pantalla te permite consultar tus reclamos realizados y recibidos, y al administrador gestionarlo para generar multas `;
-
-
+    modalRef.componentInstance.alertMessage = `Esta pantalla te permite consultar tanto los reclamos realizados como los recibidos. Además, proporciona al administrador las herramientas necesarias para gestionar estos reclamos y generar multas cuando sea necesario. La interfaz facilita la visualización y administración de los reclamos, asegurando un control efectivo en el proceso de sanciones.`;
   }
 }

@@ -24,3 +24,6 @@ export * from './lib/sidebar/sidebar.model';
 
 export * from './lib/navbar/navbar.component';
 export * from './lib/navbar/navbar.model';
+
+export * from './lib/table-filters/table-filters.component';
+export * from './lib/table-filters/table-filters.model';

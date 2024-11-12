@@ -252,32 +252,4 @@ export class FineService {
       finalize(() => this._loading$.next(false))
     );
   }
-
-  onExportToExcel(): void {
-    this.findAll().subscribe((fines) => {
-      const columns = [
-        { header: 'ID Multa', accessor: (fine: Fine) => fine.id },
-        {
-          header: 'Fecha de Creación',
-          accessor: (fine: Fine) => fine.created_date,
-        },
-        { header: 'Lote', accessor: (fine: Fine) => fine.plot_id },
-        { header: 'Tipo', accessor: (fine: Fine) => fine.sanction_type.name },
-        {
-          header: 'Estado de Multa',
-          accessor: (fine: Fine) =>
-            this.getValueByKeyForStatusEnum(fine.fine_state),
-        },
-        {
-          header: 'ID Infracción',
-          accessor: (fine: Fine) =>
-            fine.infractions.length > 0
-              ? fine.infractions.map((inf) => inf.id).join(', ')
-              : 'N/A',
-        },
-      ];
-
-      this.excelService.exportToExcel(fines, columns, 'multas', 'Multas');
-    });
-  }
 }

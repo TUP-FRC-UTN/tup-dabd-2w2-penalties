@@ -1,9 +1,13 @@
 <div class="d-flex">
-  <app-sidebar [menu]="sidebarMenu" [title]="sidebarTitle"></app-sidebar>
+  <app-sidebar [menu]="sidebarMenu" [title]="sidebarTitle">
+    <ng-content></ng-content>
+  </app-sidebar>
   <div class="flex-grow-1">
     <app-navbar
       [navbarMenu]="navbarMenu"
       (sidebarChange)="onSidebarChange($event.sidebarMenu, $event.sidebarTitle)"
+      (logoutButtonClick)="onLogoutButtonClick()"
+      (profileButtonClick)="onProfileButtonClick()"
     ></app-navbar>
     <router-outlet></router-outlet>
   </div>

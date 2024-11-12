@@ -18,13 +18,13 @@ import { ConstructionDocumentationFormComponent } from '../construction-document
 import { CommonModule } from '@angular/common';
 import {
   TableColumn,
-  TableComponent,
   ConfirmAlertComponent,
   ToastService,
 } from 'ngx-dabd-grupo01';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ConstructionDocumentationService } from '../../services/construction-documentation.service';
 import { RoleService } from '../../../../shared/services/role.service';
+import { TableComponent } from '../../../../../../projects/ngx-dabd-grupo01/src/public-api';
 
 @Component({
   selector: 'app-construction-documentation-list',
