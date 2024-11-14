@@ -13,7 +13,6 @@ import {
   ConfirmAlertComponent,
   MainContainerComponent,
   TableColumn,
-  TableComponent,
   ToastService,
 } from 'ngx-dabd-grupo01';
 import { CommonModule } from '@angular/common';
@@ -24,6 +23,7 @@ import { ClaimDTO, ClaimStatusEnum } from '../../models/claim.model';
 import { RoleService } from '../../../../../shared/services/role.service';
 import { NewInfractionModalComponent } from '../../../infraction/components/new-infraction-modal/new-infraction-modal.component';
 import { FormsModule } from '@angular/forms';
+import { TableComponent } from '../../../../../../../projects/ngx-dabd-grupo01/src/public-api';
 
 @Component({
   selector: 'app-claim-list',

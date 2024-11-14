@@ -221,6 +221,18 @@ export class FineService {
     doc.save('infracciones.pdf');
   }
 
+  getMostFinedPlots(searchParams: any = {}): Observable<any[]> {
+    let params = new HttpParams();
+
+    Object.keys(searchParams).forEach((key) => {
+      if (searchParams[key]) {
+        params = params.set(key, searchParams[key]);
+      }
+    });
+
+    return this.http.get<any[]>(`${this.apiUrl}/fine/plots/most-fined`, { params });
+  }
+
   getPaginatedFines(
     page: number,
     limit: number,

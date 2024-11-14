@@ -18,10 +18,11 @@
     [items]="workers || []"
     [columns]="columns"
     [showExportOptions]="false"
-    [headerButtonText]="'Nuevo'"
     (headerButtonClick)="openFormModal()"
     [showSearchBar]="false"
     [showHeaderButton]="role === 'OWNER' && constructionStatus !== 'COMPLETED'"
+    [headerButtonIcon]="'bi bi-plus'"
+    [headerButtonText]="''"
   >
   </app-table>
 </div>

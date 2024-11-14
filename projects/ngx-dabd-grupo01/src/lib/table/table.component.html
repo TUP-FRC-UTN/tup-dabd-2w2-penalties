@@ -19,11 +19,13 @@
         (ngModelChange)="onSearchValueChange()"
         aria-describedby="search-icon"
       />
+      @if(showTableFiltersButton) {
       <app-table-filters
         class="btn-group"
         [filters]="tableFilters"
         (filterValueChange)="onFilterValueChange($event)"
       ></app-table-filters>
+      }
     </div>
     <ng-content></ng-content>
     } @if(showOnlyTableFilters) {

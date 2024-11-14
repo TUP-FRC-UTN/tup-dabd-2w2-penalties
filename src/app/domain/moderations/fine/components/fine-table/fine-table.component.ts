@@ -85,8 +85,6 @@ export class FineTable {
   router = inject(Router);
   private = inject(NgbModal);
   FineStatusEnum = FineStatusEnum;
-  private toastService = inject(ToastService);
-  private pdfService = inject(PdfService);
   private roleService = inject(RoleService);
   fineService = inject(FineService);
   modalService = inject(NgbModal);

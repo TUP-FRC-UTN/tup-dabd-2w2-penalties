@@ -40,6 +40,7 @@ export class TableComponent {
   @Input() showExportOptions?: boolean = true;
   @Input() showExportExcelButton?: boolean = true;
   @Input() showExportPdfButton?: boolean = true;
+  @Input() showTableFiltersButton?: boolean = true;
   @Input() showHeaderButton?: boolean = true;
   @Input() headerButtonText?: string = 'Nuevo';
   @Input() headerButtonIcon?: string = undefined;
