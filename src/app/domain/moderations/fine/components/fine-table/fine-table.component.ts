@@ -63,6 +63,7 @@ export class FineTable {
   @ViewChild('actionsTemplate') actionsTemplate!: TemplateRef<any>;
   @ViewChild('pdfTemplate', { static: true }) pdfTemplate!: TemplateRef<any>;
   @ViewChild('sanctionType') sanctionType!: TemplateRef<any>;
+  @ViewChild('infoModal') infoModal!: TemplateRef<any>;
 
   role: string = '';
   userId: number | undefined;
@@ -237,11 +238,7 @@ export class FineTable {
     this.loadItems();
   }
 
-  infoModal() {
-    const modalRef = this.modalService.open(ConfirmAlertComponent);
-    modalRef.componentInstance.alertType = 'info';
-
-    modalRef.componentInstance.alertTitle = 'Ayuda';
-    modalRef.componentInstance.alertMessage = `Esta pantalla te permite consultar tanto los reclamos realizados como los recibidos. Además, proporciona al administrador las herramientas necesarias para gestionar estos reclamos y generar multas cuando sea necesario. La interfaz facilita la visualización y administración de los reclamos, asegurando un control efectivo en el proceso de sanciones.`;
+  onInfoButtonClick() {
+    this.modalService.open(this.infoModal, { size: 'lg' });
   }
 }

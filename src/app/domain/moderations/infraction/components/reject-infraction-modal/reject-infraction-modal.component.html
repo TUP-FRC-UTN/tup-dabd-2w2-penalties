@@ -26,8 +26,8 @@
           name="descriptionClaim"
           required
         ></textarea>
-        @if (descriptionControl.invalid && (descriptionControl.dirty
-        || descriptionControl.touched)) { @if
+        @if (descriptionControl.invalid && (descriptionControl.dirty ||
+        descriptionControl.touched)) { @if
         (descriptionControl.getError('required')) {
         <div class="invalid-feedback">Este campo es obligatorio</div>
         } }
