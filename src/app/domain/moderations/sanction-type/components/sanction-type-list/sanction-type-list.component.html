@@ -41,6 +41,8 @@
     [showHeaderButton]="role === 'ADMIN'"
     [showExportOptions]="false"
   >
-    <app-appeal-days-form></app-appeal-days-form>
+    @if (role==='ADMIN'){
+      <app-appeal-days-form></app-appeal-days-form>
+    }
   </app-table>
 </app-main-container>
