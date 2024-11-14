@@ -13,7 +13,6 @@ import {
   ConfirmAlertComponent,
   MainContainerComponent,
   TableColumn,
-  TableComponent,
   ToastService,
 } from 'ngx-dabd-grupo01';
 import { CommonModule } from '@angular/common';
@@ -24,6 +23,7 @@ import { ClaimDTO, ClaimStatusEnum } from '../../models/claim.model';
 import { RoleService } from '../../../../../shared/services/role.service';
 import { NewInfractionModalComponent } from '../../../infraction/components/new-infraction-modal/new-infraction-modal.component';
 import { FormsModule } from '@angular/forms';
+import { TableComponent } from '../../../../../../../projects/ngx-dabd-grupo01/src/public-api';
 
 @Component({
   selector: 'app-claim-list',
@@ -77,7 +77,7 @@ export class ClaimListComponent {
   @ViewChild('date') date!: TemplateRef<any>;
   @ViewChild('claimStatus') claimStatus!: TemplateRef<any>;
   @ViewChild('infraction') infraction!: TemplateRef<any>;
-
+  @ViewChild('infoModal') infoModal!: TemplateRef<any>;
   @ViewChild('check') check!: TemplateRef<any>;
 
   columns: TableColumn[] = [];
@@ -203,7 +203,7 @@ export class ClaimListComponent {
   };
 
   openFormModal(sanctionTypeToEdit: number | null = null): void {
-    if ( this.checkedClaims.length !== 0) {
+    if (this.checkedClaims.length !== 0) {
       this.openCreateInfractionModal();
     } else {
       this.openNewCaimModal();
@@ -218,7 +218,7 @@ export class ClaimListComponent {
           this.loadItems();
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   }
 
   checkClaim(claim: ClaimDTO): void {
@@ -263,7 +263,7 @@ export class ClaimListComponent {
           this.checkedClaims = [];
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   }
 
   setFilterType(type: string): void {
@@ -292,12 +292,9 @@ export class ClaimListComponent {
     this.loadItems();
   }
   onInfoButtonClick() {
-    const modalRef = this.modalService.open(ConfirmAlertComponent);
-    modalRef.componentInstance.alertType = 'info';
-
-    modalRef.componentInstance.alertTitle = 'Ayuda';
-    modalRef.componentInstance.alertMessage = `Esta pantalla te permite consultar tus reclamos recibidos y realizado, y al administrador gestionarlo para generar multas. \n Considerá que depende del administrador rechazar un reclamo o agrupar alguno de ellos para generar una infracción para el lote.`;
+    this.modalService.open(this.infoModal, { size: 'lg' });
   }
+
   disapproveClaim(claimId: number) {
     const modalRef = this.modalService.open(ConfirmAlertComponent);
     modalRef.componentInstance.alertTitle = 'Confirmación';

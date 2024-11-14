@@ -68,6 +68,7 @@ export class ConstructionListComponent {
 
   @ViewChild('actionsTemplate') actionsTemplate!: TemplateRef<any>;
   @ViewChild('statusTemplate') statusTemplate!: TemplateRef<any>;
+  @ViewChild('infoModal') infoModal!: TemplateRef<any>;
 
   columns: TableColumn[] = [];
 
@@ -196,13 +197,9 @@ export class ConstructionListComponent {
     this.searchParams = {};
     this.loadItems();
   }
-  infoModal() {
-    const modalRef = this.modalService.open(ConfirmAlertComponent);
-    modalRef.componentInstance.alertType = 'info';
 
-    modalRef.componentInstance.alertTitle = 'Ayuda';
-    modalRef.componentInstance.alertMessage = `Esta pantalla presenta un listado completo de tus obras en curso. 
-    La pantalla está diseñada para ayudarle a visualizar de manera organizada y estructurada toda la información relevante y, al mismo tiempo, ofrece herramientas que le permiten interactuar con los datos de forma más efectiva, lo cual incluye opciones de filtrado, búsqueda y exportación.`;
+  onInfoButtonClick() {
+    this.modalService.open(this.infoModal, { size: 'lg' });
   }
 
   filterConfig: Filter[] = new FilterConfigBuilder()

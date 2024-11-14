@@ -127,4 +127,12 @@ export class FineDetailComponent {
   goBack = (): void => {
     window.history.back();
   };
+
+  infoModal() {
+    const modalRef = this.modalService.open(ConfirmAlertComponent);
+    modalRef.componentInstance.alertType = 'info';
+
+    modalRef.componentInstance.alertTitle = 'Ayuda';
+    modalRef.componentInstance.alertMessage = `Esta pantalla proporciona una vista detallada de la multa seleccionada, permitiéndole analizar toda la información relacionada de manera clara y estructurada. En esta sección puede acceder a todos los datos relevantes sobre la multa de forma precisa.`;
+  }
 }

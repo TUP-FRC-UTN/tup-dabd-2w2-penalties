@@ -77,7 +77,7 @@ export class NewInfractionModalComponent {
       next: (response) => {
         this.sanctionTypes = response.items;
       },
-      error: (error) => {},
+      error: (error) => { },
     });
 
     this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' });
@@ -108,7 +108,7 @@ export class NewInfractionModalComponent {
           this.toastService.sendSuccess(
             'Infracción ' + response.id + ' creada exitosamente'
           );
- 
+
           this.activeModal.close(response);
         },
         error: (error) => {

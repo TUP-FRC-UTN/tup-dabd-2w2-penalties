@@ -20,6 +20,8 @@ import {
 export class TableFiltersComponent implements OnInit {
   @Input() filters: Filter[] = [];
   @Output() filterValueChange = new EventEmitter<Record<string, any>>();
+  @Output() filterValueClear = new EventEmitter<Record<string, any>>();
+  @Output() filterValueSubmit = new EventEmitter<Record<string, any>>();
 
   filterValues: Record<string, any> = {};
   filtersApplied: number = 0;
@@ -55,6 +57,7 @@ export class TableFiltersComponent implements OnInit {
 
     this.updateFiltersApplied();
     this.emitFilterValues();
+    this.filterValueClear.emit();
   }
 
   updateFiltersApplied() {
@@ -84,6 +87,7 @@ export class TableFiltersComponent implements OnInit {
   applyFilters() {
     this.updateFiltersApplied();
     this.emitFilterValues();
+    this.filterValueSubmit.emit();
   }
 
   private emitFilterValues() {
@@ -91,7 +95,6 @@ export class TableFiltersComponent implements OnInit {
 
     this.filters.forEach((filter) => {
       if (filter instanceof DateFilter && this.filterValues[filter.key]) {
-
         const dateString = this.datePipe.transform(
           this.filterValues[filter.key],
           filter.format
