@@ -10,6 +10,7 @@ import { GetValueByKeyForEnumPipe } from '../../../../../shared/pipes/get-value-
 import { MainContainerComponent } from '../../../../../../../projects/ngx-dabd-grupo01/src/lib/main-container/main-container.component';
 import { ConfirmAlertComponent } from '../../../../../../../projects/ngx-dabd-grupo01/src/lib/confirm-alert/confirm-alert.component';
 import { ToastService } from 'ngx-dabd-grupo01';
+import {AppealDaysFormComponent} from "../appeal-days-form/appeal-days-form.component";
 
 @Component({
   selector: 'app-sanction-type-detail',
@@ -21,6 +22,7 @@ import { ToastService } from 'ngx-dabd-grupo01';
     MainContainerComponent,
     NgbTooltipModule,
     GetValueByKeyForEnumPipe,
+    AppealDaysFormComponent,
   ],
   templateUrl: './sanction-type-detail.component.html',
   styleUrl: './sanction-type-detail.component.scss',

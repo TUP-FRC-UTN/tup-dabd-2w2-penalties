@@ -42,5 +42,8 @@
     [showExportOptions]="false"
     [showTableFiltersButton]="false"
   >
+    @if (role==='ADMIN'){
+      <app-appeal-days-form></app-appeal-days-form>
+    }
   </app-table>
 </app-main-container>
