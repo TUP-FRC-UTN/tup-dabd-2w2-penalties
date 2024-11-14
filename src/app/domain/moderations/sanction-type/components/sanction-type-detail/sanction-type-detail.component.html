@@ -3,6 +3,7 @@
   subTitle="{{ sanctionType?.name }}"
   (infoButtonClick)="onInfoButtonClick()"
 >
+
   <form
     class="row"
     #sanctionTypeForm="ngForm"
@@ -170,6 +171,8 @@
   </div>
   }@else {
   <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+      <app-appeal-days-form></app-appeal-days-form>
+
     <button class="btn btn-secondary" (click)="goBack()" type="button">
       Volver
     </button>
