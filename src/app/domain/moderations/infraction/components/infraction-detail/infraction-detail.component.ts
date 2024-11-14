@@ -107,7 +107,7 @@ export class InfractionDetailComponent implements OnInit {
       (this.infraction!.infraction_status ===
         ('APPEALED' as InfractionStatusEnum) ||
         this.infraction!.infraction_status ===
-          ('CREATED' as InfractionStatusEnum))
+        ('CREATED' as InfractionStatusEnum))
     );
   }
 
@@ -122,7 +122,7 @@ export class InfractionDetailComponent implements OnInit {
     return (
       this.role === 'ADMIN' &&
       this.infraction!.infraction_status ===
-        ('APPEALED' as InfractionStatusEnum)
+      ('APPEALED' as InfractionStatusEnum)
     );
   }
 
@@ -139,7 +139,7 @@ export class InfractionDetailComponent implements OnInit {
           this.getInfractionById(this.infractionId!);
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   }
 
   approveInfraction() {
@@ -151,7 +151,7 @@ export class InfractionDetailComponent implements OnInit {
           this.getInfractionById(this.infractionId!);
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   }
 
   appealInfraction() {
@@ -163,7 +163,7 @@ export class InfractionDetailComponent implements OnInit {
           this.getInfractionById(this.infractionId!);
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   }
 
   infoModal() {
