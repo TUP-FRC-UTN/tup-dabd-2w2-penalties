@@ -1,12 +1,16 @@
 import {Component, inject, TemplateRef} from '@angular/core';
 import {ModalDismissReasons, NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {ConfigurationPenaltiesService} from "../../../../../shared/services/configuration-penalties.service";
-import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
+import {NgClass} from "@angular/common";
 
 @Component({
   selector: 'app-appeal-days-form',
   standalone: true,
-  imports: [],
+  imports: [
+    ReactiveFormsModule,
+    NgClass
+  ],
   templateUrl: './appeal-days-form.component.html',
   styleUrl: './appeal-days-form.component.scss'
 })
