@@ -15,6 +15,9 @@ import {
   Indent,
 } from 'ckeditor5';
 import { RoleService } from '../shared/services/role.service';
+import {ConfigurationPenaltiesService} from "../shared/services/configuration-penalties.service";
+import {RuleDto, Rules} from "./rules";
+import * as http from "node:http";
 
 @Component({
   selector: 'app-rules',
@@ -25,14 +28,19 @@ import { RoleService } from '../shared/services/role.service';
   styleUrl: './rules.component.scss',
 })
 export class RulesComponent {
+  //services
   private roleService = inject(RoleService);
 
   public Editor = ClassicEditor;
 
+  private configService = inject(ConfigurationPenaltiesService);
+
+  //variables
   rulesContent: string = '';
   editMode: boolean = false;
   isAdmin: boolean = true;
-  
+  currentRules!:Rules;
+
 
   public config = {
     toolbar: [
@@ -51,6 +59,7 @@ export class RulesComponent {
     language: { ui: 'en' },
   };
 
+  //methods
   ngOnInit(): void {
     this.roleService.currentRole$.subscribe((role: string) => {
       this.isAdmin = role === "ADMIN";
@@ -61,8 +70,15 @@ export class RulesComponent {
   }
 
   loadRules(): void {
-    const savedRules = localStorage.getItem('rulesContent');
-    this.rulesContent = savedRules || 'No hay reglas definidas.';
+    // const savedRules = localStorage.getItem('rulesContent');
+    // this.rulesContent = savedRules || 'No hay reglas definidas.';
+
+    this.configService.getRules().subscribe(rules => {
+      this.currentRules = rules;
+      this.rulesContent = rules.rules
+      // console.log('rules object loaded ', this.currentRules);
+      // console.log('current rules: '+this.rulesContent)
+    })
   }
 
   onChange({ editor }: any): void {
@@ -74,7 +90,23 @@ export class RulesComponent {
   }
 
   saveRules(): void {
-    localStorage.setItem('rulesContent', this.rulesContent);
-    this.editMode = false;
+    // localStorage.setItem('rulesContent', this.rulesContent);
+
+
+    const newRules:Rules = this.currentRules
+    newRules.rules= this.rulesContent;
+
+    this.configService.putRules(newRules,5).subscribe({
+      next: (result) => {
+        console.log('new rules: ', result.rules);
+        this.loadRules()
+        this.editMode = false;
+      },
+      error: (error) => {
+        console.log('error: ', error);
+      }
+
+    })
+
   }
 }

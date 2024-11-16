@@ -14,6 +14,7 @@ import { MainContainerComponent } from '../../../../../../../projects/ngx-dabd-g
 import { TableColumn } from '../../../../../../../projects/ngx-dabd-grupo01/src/lib/table/table.models';
 import { ConfirmAlertComponent } from 'ngx-dabd-grupo01';
 import { RoleService } from '../../../../../shared/services/role.service';
+import {AppealDaysFormComponent} from "../appeal-days-form/appeal-days-form.component";
 
 @Component({
   selector: 'app-sanction-type-list',
@@ -24,6 +25,7 @@ import { RoleService } from '../../../../../shared/services/role.service';
     MainContainerComponent,
     GetValueByKeyForEnumPipe,
     TruncatePipe,
+    AppealDaysFormComponent,
   ],
   templateUrl: './sanction-type-list.component.html',
   styleUrl: './sanction-type-list.component.scss',
