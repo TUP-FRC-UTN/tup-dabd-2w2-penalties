@@ -91,22 +91,22 @@ export class RulesComponent {
 
   saveRules(): void {
     // localStorage.setItem('rulesContent', this.rulesContent);
-    // this.editMode = false;
+
 
     const newRules:Rules = this.currentRules
+    newRules.rules= this.rulesContent;
 
     this.configService.putRules(newRules,5).subscribe({
       next: (result) => {
         console.log('new rules: ', result.rules);
         this.loadRules()
+        this.editMode = false;
       },
       error: (error) => {
         console.log('error: ', error);
       }
 
     })
-
-
 
   }
 }

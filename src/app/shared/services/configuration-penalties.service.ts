@@ -42,6 +42,8 @@ export class ConfigurationPenaltiesService {
       'Content-Type': 'application/json'
     })
 
+    console.log("header created ", header)
+
     return this.httpMethods.put<Rules>(
       environment.moderationApiUrl + "/Configuration/rules",
       rules,
