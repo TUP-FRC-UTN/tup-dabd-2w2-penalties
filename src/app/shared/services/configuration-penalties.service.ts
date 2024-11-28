@@ -15,18 +15,18 @@ export class ConfigurationPenaltiesService {
   private httpMethods = inject(HttpClient)
 
   getDays(): Observable<number> {
-    return this.httpMethods.get<number>(environment.moderationApiUrl + "/Configuration/appeal-days")
+    return this.httpMethods.get<number>(environment.moderationApiUrl + "/infraction-config/appeal-days")
   }
 
 
   putDays(days: number, id: number): Observable<number> {
 
     const header = new HttpHeaders({
-      'userId': id.toString(),
+      'x-user-id': id.toString(),
       'Content-Type': 'application/json'
     });
 
-    return this.httpMethods.put<number>(environment.moderationApiUrl + `/Configuration/appeal-days?daysToAppeal=${days}`,
+    return this.httpMethods.put<number>(environment.moderationApiUrl + `/infraction-config/appeal-days?daysToAppeal=${days}`,
       null,
       {headers: header});
   }
