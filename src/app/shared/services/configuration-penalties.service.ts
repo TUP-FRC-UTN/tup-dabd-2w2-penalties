@@ -32,7 +32,7 @@ export class ConfigurationPenaltiesService {
   }
 
   getRules(): Observable<Rules> {
-    return this.httpMethods.get<Rules>(environment.moderationApiUrl + "/Configuration/rules")
+    return this.httpMethods.get<Rules>(environment.moderationApiUrl + "/rules")
 
   }
 
@@ -45,7 +45,7 @@ export class ConfigurationPenaltiesService {
     console.log("header created ", header)
 
     return this.httpMethods.put<Rules>(
-      environment.moderationApiUrl + "/Configuration/rules",
+      environment.moderationApiUrl + "/rules",
       rules,
       {headers: header}
     )

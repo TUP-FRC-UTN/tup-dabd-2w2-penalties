@@ -70,14 +70,13 @@ export class RulesComponent {
   }
 
   loadRules(): void {
-    // const savedRules = localStorage.getItem('rulesContent');
-    // this.rulesContent = savedRules || 'No hay reglas definidas.';
-
+    console.log("fetching data")
     this.configService.getRules().subscribe(rules => {
+      console.log("data: ",rules)
       this.currentRules = rules;
       this.rulesContent = rules.rules
-      // console.log('rules object loaded ', this.currentRules);
-      // console.log('current rules: '+this.rulesContent)
+      console.log('rules object loaded ', this.currentRules);
+      console.log('current rules: '+this.rulesContent)
     })
   }
 
