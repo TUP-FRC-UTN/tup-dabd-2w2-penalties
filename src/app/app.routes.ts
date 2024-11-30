@@ -70,6 +70,6 @@ export const routes: Routes = [
   { path: 'claim/:id/:mode', component: ClaimDetailComponent },
   {
     path: 'rules',
-    component: RulesComponent,
+    loadChildren: () => import('./rules/rules.component').then((m) => m.RulesComponent),
   },
 ];

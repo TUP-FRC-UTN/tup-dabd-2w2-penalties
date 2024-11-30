@@ -1,16 +1,27 @@
 .sidebar-width {
-  width: 250px;
+  width: 228px;
+  transition: all 0.3s ease-in-out;
 }
 
-.nav-link:hover {
-  color: #00CC64 !important;
+.sidebar-collapsed {
+  width: 0px !important;
+  transition: all 0.3s ease-in-out;
+}
+
+.item-hover i, 
+.item-hover a {
+  transition: all 0.3s ease-in-out;
+}
+
+.item-hover:hover i,
+.item-hover:hover a {
+  color: #0a6e3a !important;
 }
 
 .nav-link-active {
-  color: #00CC64 !important;
+  color: #0a6e3a !important;
 }
 
 .sidebar-logo {
   height: 60px;
 }
-

@@ -1,5 +1,6 @@
 <nav
-  class="navbar navbar-expand-lg navbar-dark bg-dark z-3 position-fixed top-0 navbar-width"
+  class="navbar navbar-expand-lg bg-white z-3 position-fixed top-0 navbar-width"
+  [class.navbar-collapsed]="isSidebarCollapsed"
 >
   <div class="container-fluid">
     <button
@@ -25,9 +26,12 @@
           style="cursor: pointer"
           [class.dropdown]="item.subMenu"
         >
+          <!-- Show -->
+          @if(!item.hideItem) {
+          <!-- Submenu -->
           @if(item.subMenu) {
           <a
-            class="nav-link dropdown-toggle text-white-50"
+            class="nav-link dropdown-toggle text-secondary"
             href="#"
             role="button"
             data-bs-toggle="dropdown"
@@ -36,9 +40,11 @@
           >
             {{ item.label }}
           </a>
-          } @if(!item.subMenu) {
+          }
+          <!-- No Submenu -->
+          @if(!item.subMenu) {
           <a
-            class="nav-link text-white-50"
+            class="nav-link text-secondary"
             [ngClass]="{
               'nav-link-active': item.label === selectedNavbarItem
             }"
@@ -47,7 +53,9 @@
           >
             {{ item.label }}
           </a>
-          } @if(item.subMenu) {
+          }
+          <!-- Submenu Options -->
+          @if(item.subMenu) {
           <ul class="dropdown-menu">
             @for(subItem of item.subMenu; track $index) {
             <li>
@@ -61,17 +69,23 @@
             </li>
             }
           </ul>
-          }
+          }}
         </li>
-        @if(item.badge) {
+        <!-- Badge -->
+        @if(!item.hideItem && item.badge) {
         <span class="badge rounded-pill bg-danger"> {{ item.badge }} </span>
         } }
       </div>
       <div class="d-flex align-items-center">
-        <i class="bi bi-bell text-white ms-auto me-4"></i>
+        <ng-content></ng-content>
         <i
-          class="bi bi-person-circle text-white ms-auto me-4"
-          style="cursor: pointer;"
+          class="bi bi-bell text-dark ms-auto me-4"
+          style="cursor: pointer"
+          (click)="onNotificationButtonClick()"
+        ></i>
+        <i
+          class="bi bi-person-circle text-dark ms-auto me-4"
+          style="cursor: pointer"
           (click)="onProfileButtonClick()"
         ></i>
         <button

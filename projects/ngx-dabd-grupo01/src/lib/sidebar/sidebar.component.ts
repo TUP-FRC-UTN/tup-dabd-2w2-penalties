@@ -14,6 +14,7 @@ import { NgbCollapse } from '@ng-bootstrap/ng-bootstrap';
 export class SidebarComponent {
   @Input() menu: SidebarItem[] = [];
   @Input() title: string = '';
+  @Input() isSidebarCollapsed: boolean = false;
 
   selectedSidebarItem: string = '';
   isOpen: boolean[] = [];

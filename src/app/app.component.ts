@@ -39,47 +39,85 @@ export class AppComponent implements OnInit {
   navbarMenu: NavbarItem[] = [
     {
       label: 'Construcciones',
-      sidebarMenu: [
+      subMenu: [
         {
-          label: 'Administración',
-          subMenu: [
-            {
-              label: 'Obras',
-              routerLink: '/constructions',
-            },
-          ],
+          label: 'Obras',
+          routerLink: '/constructions',
         },
         {
-          label: 'Reportes',
+          label: 'Gráficos de obras',
+          routerLink: '/constructions-report',
+        }
+      ],
+      sidebarMenu: [
+        /* {
+          label: 'Administración',
+          subMenu: [ */
+        {
+          icon: 'bi-tools',
+          label: 'Obras',
+          routerLink: '/constructions',
+          hr: true,
+        },
+        /* ],
+        }, */
+        {
+          /* label: 'Reportes',
           subMenu: [
-            {
-              label: 'Gráficos de obras',
-              routerLink: '/constructions-report',
-            },
-          ],
+            { */
+          icon: 'bi-bar-chart-line-fill',
+          label: 'Gráficos de obras',
+          routerLink: '/constructions-report',
+          /* },
+          ], */
         },
       ],
     },
     {
       label: 'Moderación',
       sidebarMenu: [
-        {
+        /* {
           label: 'Administración',
-          subMenu: [
-            { label: 'Multas', routerLink: '/fine' },
-            { label: 'Infracciones', routerLink: '/infraction' },
-            { label: 'Reclamos', routerLink: '/claim' },
-            { label: 'Tipos de Sanciones', routerLink: '/sanctionType' },
-          ],
+          subMenu: [ */
+        { label: 'Multas', routerLink: '/fine', icon: 'bi-journal-x' },
+        {
+          label: 'Infracciones',
+          routerLink: '/infraction',
+          icon: 'bi-building-x',
         },
         {
-          label: 'Reportes',
-          subMenu: [
-            { label: 'Gráficos de Multas', routerLink: '/fine-report' },
-            { label: 'Gráficos de Infracciones', routerLink: '/infraction-report' },
-            { label: 'Gráficos de Reclamos', routerLink: '/claim-report' },
-          ],
+          label: 'Reclamos',
+          routerLink: '/claim',
+          icon: 'bi-house-exclamation',
         },
+        {
+          label: 'Tipos de Sanciones',
+          routerLink: '/sanctionType',
+          hr: true,
+          icon: 'bi-list-ul',
+        },
+        /* ],
+        }, */
+        /* {
+          label: 'Reportes',
+          subMenu: [ */
+        {
+          label: 'Reporte de Multas',
+          routerLink: '/fine-report',
+          icon: 'bi-bar-chart-line-fill',
+        },
+        {
+          label: 'Reporte de Infracciones',
+          routerLink: '/infraction-report',
+          icon: 'bi-bar-chart-line-fill',
+        },
+        {
+          label: 'Reporte de Reclamos',
+          routerLink: '/claim-report',
+          icon: 'bi-bar-chart-line-fill',
+        },
+        /* ],
+        }, */
       ],
     },
     {
@@ -88,20 +126,18 @@ export class AppComponent implements OnInit {
         {
           label: 'Reglamento',
           routerLink: '/rules',
-        }
-      ]
-    }
+        },
+      ],
+    },
   ];
 
   ngOnInit(): void {
-    this.infractionService
-    .getAllInfractions(1, 10000, )
-    .subscribe((response) => {
+    this.infractionService.getAllInfractions(1, 10000).subscribe((response) => {
       this.infractionService.setItems(response.items);
       this.infractionService.setTotalItems(response.total);
 
       const infractionsToSolve = response.items.filter(
-        (item) => item.infraction_status.toString() === "CREATED"
+        (item) => item.infraction_status.toString() === 'CREATED'
       ).length;
 
       this.infractionBadgeService.updateInfractionsCount(infractionsToSolve);

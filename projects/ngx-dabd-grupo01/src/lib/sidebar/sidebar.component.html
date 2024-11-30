@@ -1,8 +1,9 @@
 <aside
   id="sidebar"
-  class="p-3 vh-100 sticky-top bg-dark z-0 sidebar-width position-fixed overflow-auto"
+  class="vh-100 sticky-top z-0 sidebar-width position-fixed overflow-hidden border-end bg-white"
+  [ngClass]="{ 'sidebar-collapsed': isSidebarCollapsed }"
 >
-  <div class="sidebar-header mb-2">
+  <div class="m-3 sidebar-header mb-4" style="width: 196px; overflow: hidden">
     <div class="d-flex justify-content-center">
       <img
         src="https://www.villadelcondor.com/imagenes/villa_del_condor.png"
@@ -10,53 +11,77 @@
         class="mb-5 sidebar-logo"
       />
     </div>
-    <a class="navbar-brand text-white h2" href="#">{{ title }}</a>
+    <a class="navbar-brand text-dark h2" href="#">{{ title }}</a>
   </div>
-  <ul class="nav flex-column mb-5">
+  <ul class="m-3 nav flex-column mb-5" style="width: 196px; overflow: hidden">
     @for(item of menu; track $index) {
     <li class="nav-item">
-      <div class="d-flex justify-content-between align-items-center">
-        <a
-          class="nav-link text-white"
+      @if (!item.hideItem) {
+      <div class="d-flex align-items-center item-hover">
+        @if (item.icon) {
+        <i
+          class="bi {{ item.icon }} text-secondary"
           [ngClass]="{
-            'dropdown-toggle': item.subMenu,
             'nav-link-active': item.label === selectedSidebarItem
           }"
-          [routerLink]="!item.subMenu ? item.routerLink : null"
-          routerLinkActive="active"
-          role="button"
-          (click)="toggleCollapse($index, item)"
-        >
-          {{ item.label }}
-        </a>
-        @if(item.badge) {
-        <span class="badge rounded-pill bg-danger"> {{ item.badge }} </span>
+        ></i>
         }
+        <div class="d-flex justify-content-between align-items-center">
+          <a
+            class="nav-link text-secondary"
+            [ngClass]="{
+              'dropdown-toggle': item.subMenu,
+              'nav-link-active': item.label === selectedSidebarItem
+            }"
+            [routerLink]="!item.subMenu ? item.routerLink : null"
+            routerLinkActive="active"
+            role="button"
+            (click)="toggleCollapse($index, item)"
+          >
+            {{ item.label }}
+          </a>
+          @if(item.badge) {
+          <span class="badge rounded-pill bg-danger"> {{ item.badge }} </span>
+          }
+        </div>
       </div>
+
       @if(item.subMenu) {
       <div class="collapse" [ngbCollapse]="!isOpen[$index]">
         <ul class="nav flex-column ms-3">
-          @for(subItem of item.subMenu; track $index) {
-          <li (click)="selectSidebarItem(subItem)" class="d-flex justify-content-between align-items-center">
-            <a
-              class="nav-link text-white"
-              [routerLink]="subItem.routerLink"
-              [ngClass]="{
-                'nav-link-active': subItem.label === selectedSidebarItem
-              }"
-              routerLinkActive="active"
-              >{{ subItem.label }}</a
-            >
-            @if(subItem.badge) {
-            <span class="badge rounded-pill bg-danger"> {{ item.badge }} </span>
-            }
+          @for(subItem of item.subMenu; track $index) { @if (!subItem.hideItem)
+          {
+          <li (click)="selectSidebarItem(subItem)">
+            <div class="d-flex align-items-center item-hover">
+              @if (subItem.icon) {
+              <i class="bi {{ subItem.icon }} text-secondary"></i>
+              }
+              <div class="d-flex justify-content-between align-items-center">
+                <a
+                  class="nav-link text-secondary"
+                  [routerLink]="subItem.routerLink"
+                  [ngClass]="{
+                    'nav-link-active': subItem.label === selectedSidebarItem
+                  }"
+                  routerLinkActive="active"
+                  >{{ subItem.label }}</a
+                >
+                @if(subItem.badge) {
+                <span class="badge rounded-pill bg-danger">
+                  {{ item.badge }}
+                </span>
+                }
+              </div>
+            </div>
           </li>
-          }
+          } }
         </ul>
       </div>
-      }
+      }}
     </li>
-    }
+    @if(item.hr) {
+    <hr class="bg-light" style="height: 2px" />
+    } }
   </ul>
   <ng-content></ng-content>
 </aside>

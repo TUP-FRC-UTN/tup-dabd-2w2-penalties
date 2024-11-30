@@ -14,5 +14,13 @@
 <!-- <router-outlet /> -->
 
 <app-main-layout [navbarMenu]="navbarMenu">
-  <app-role-selector></app-role-selector>
+    <button class="btn btn-outline-dark rounded-circle me-3 border-0">
+      @if(true) {
+      <i class="bi bi-moon"></i>
+      } @else {
+      <i class="bi bi-brightness-high"></i>
+      }
+
+      {{ true ? "" : "" }}
+    </button>
 </app-main-layout>

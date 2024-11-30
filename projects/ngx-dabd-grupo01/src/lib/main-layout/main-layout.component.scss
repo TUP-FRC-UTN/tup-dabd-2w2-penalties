@@ -1,5 +1,32 @@
 .flex-grow-1 {
   flex-grow: 1;
   margin-top: 56px;
-  margin-left: 250px;
+  margin-left: 228px;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Contenedor principal ajustado */
+.collapsed-margin {
+  margin-left: 0px; /* Debe coincidir con el ancho del sidebar colapsado */
+  transition: all 0.3s ease-in-out;
+}
+
+/* Botón de la flecha */
+.toggle-sidebar-btn {
+  position: absolute;
+  top: 10px;
+  left: -16px;
+  z-index: 10;
+  transition: all 0.3s ease-in-out;
+}
+
+.collapsed-button-margin {
+  margin-left: 24px; /* Debe coincidir con el ancho del sidebar colapsado */
+  transition: all 0.3s ease-in-out;
+}
+
+/* Estilo para ícono de Bootstrap */
+.bi-chevron-left,
+.bi-chevron-right {
+  font-size: 1.5rem;
 }

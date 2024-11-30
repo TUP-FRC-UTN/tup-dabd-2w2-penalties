@@ -19,13 +19,20 @@ app-notifications {
 }
 
 .navbar-width {
-  width: calc(100% - 250px);
+  width: calc(100% - 228px);
+  transition: all 0.3s ease-in-out;
+}
+
+.navbar-collapsed {
+  padding-left: 20px;
+  width: calc(100% - 0px);
+  transition: all 0.3s ease-in-out;
 }
 
 .nav-link:hover {
-  color: #00CC64 !important;
+  color: #0a6e3a !important;
 }
 
 .nav-link-active {
-  color: #00CC64 !important;
+  color: #0a6e3a !important;
 }

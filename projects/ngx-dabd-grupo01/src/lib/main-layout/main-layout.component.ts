@@ -17,13 +17,19 @@ export class MainLayoutComponent {
   @Input() navbarMenu: NavbarItem[] = [];
   @Output() logoutButtonClick = new EventEmitter<void>();
   @Output() profileButtonClick = new EventEmitter<void>();
+  @Output() notificationButtonClick = new EventEmitter<void>();
 
   sidebarMenu: SidebarItem[] = [];
   sidebarTitle: string = '';
+  isSidebarCollapsed: boolean = false;
 
   onSidebarChange(newMenu: SidebarItem[], label: string) {
     this.sidebarMenu = newMenu;
     this.sidebarTitle = label;
+  }
+
+  toggleSidebar() {
+    this.isSidebarCollapsed = !this.isSidebarCollapsed;
   }
 
   onLogoutButtonClick() {
@@ -32,5 +38,9 @@ export class MainLayoutComponent {
 
   onProfileButtonClick() {
     this.profileButtonClick.emit();
+  }
+
+  onNotificationButtonClick() {
+    this.notificationButtonClick.emit();
   }
 }

@@ -1,14 +1,37 @@
 <div class="d-flex">
-  <app-sidebar [menu]="sidebarMenu" [title]="sidebarTitle">
-    <ng-content></ng-content>
-  </app-sidebar>
-  <div class="flex-grow-1">
+  <app-sidebar
+    [menu]="sidebarMenu"
+    [title]="sidebarTitle"
+    [isSidebarCollapsed]="isSidebarCollapsed"
+  ></app-sidebar>
+  <div
+    class="flex-grow-1"
+    [ngClass]="{ 'collapsed-margin': isSidebarCollapsed }"
+  >
     <app-navbar
       [navbarMenu]="navbarMenu"
       (sidebarChange)="onSidebarChange($event.sidebarMenu, $event.sidebarTitle)"
       (logoutButtonClick)="onLogoutButtonClick()"
       (profileButtonClick)="onProfileButtonClick()"
-    ></app-navbar>
+      (notificationButtonClick)="onNotificationButtonClick()"
+      [isSidebarCollapsed]="isSidebarCollapsed"
+    >
+      <button
+        class="btn btn-sm btn-light rounded-circle toggle-sidebar-btn"
+        (click)="toggleSidebar()"
+        [ngClass]="{ 'collapsed-button-margin': isSidebarCollapsed }"
+      >
+        <i
+          class="bi"
+          style="font-size: 16px"
+          [ngClass]="{
+            'bi-chevron-left': !isSidebarCollapsed,
+            'bi-chevron-right': isSidebarCollapsed
+          }"
+        ></i>
+      </button>
+      <ng-content></ng-content>
+    </app-navbar>
     <router-outlet></router-outlet>
   </div>
 </div>
