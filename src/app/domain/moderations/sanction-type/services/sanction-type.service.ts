@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import {
   ChargeTypeEnum,
@@ -100,10 +100,14 @@ export class SanctionTypeService {
   }
 
   registerSanctionType(
-    sanctionType: SanctionTypeRequestDTO
+    sanctionType: SanctionTypeRequestDTO,
+    id:number
   ): Observable<SanctionType> {
+    console.log("sanction type dto:", sanctionType);
+
+    const headers = new HttpHeaders().set('x-user-id', id.toString());
     return this.http
-      .post<SanctionType>(`${this.apiUrl}/sanction-type`, sanctionType)
+      .post<SanctionType>(`${this.apiUrl}/sanction-type`, sanctionType, { headers })
       .pipe(
         map((newItem) => {
           const updatedItems = [...this.itemsSubject.value, newItem];

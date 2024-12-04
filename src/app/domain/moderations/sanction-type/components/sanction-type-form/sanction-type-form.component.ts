@@ -33,6 +33,7 @@ export class SanctionTypeFormComponent {
         name: 'name',
         label: 'Nombre',
         type: 'text',
+        fieldSpan:1,
         validations: { required: true },
       },
       {
@@ -55,6 +56,13 @@ export class SanctionTypeFormComponent {
         validations: { required: true, pattern: '^[0-9]+(.[0-9]{1,2})?$' },
       },
       {
+        name: 'amount_of_infractions_for_fine',
+        label: 'Strikes',
+        type: 'number',
+        fieldSpan: 1,
+        validations: { required: true, pattern: '^[0-9]+$' },
+      },
+      {
         name: 'infraction_days_to_expire',
         label: 'Dias de vencimiento',
         type: 'number',
@@ -62,8 +70,8 @@ export class SanctionTypeFormComponent {
         validations: { required: true, pattern: '^[0-9]+$' },
       },
       {
-        name: 'amount_of_infractions_for_fine',
-        label: 'Strikes',
+        name: 'max_days_to_appeal',
+        label: 'Dias de Gracia',
         type: 'number',
         fieldSpan: 1,
         validations: { required: true, pattern: '^[0-9]+$' },
@@ -78,7 +86,7 @@ export class SanctionTypeFormComponent {
   };
 
   onSubmit = (formValue: any): void => {
-    this.sanctionTypeService.registerSanctionType(formValue).subscribe({
+    this.sanctionTypeService.registerSanctionType(formValue,2).subscribe({
       next: (result) => {
         this.activeModal.close();
         this.toastService.sendSuccess(`Se creó el tipo ${result.id}`);
@@ -91,6 +99,7 @@ export class SanctionTypeFormComponent {
 
   // In case you want to use the button outside the form
   // @ViewChild(FormFieldsComponent) formFieldsComponent!: FormFieldsComponent; line needed
+
   submitForm(): void {
     this.formFieldsComponent.submit();
   }

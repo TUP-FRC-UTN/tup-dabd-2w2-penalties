@@ -9,6 +9,7 @@ export interface SanctionTypeRequestDTO {
   amount: number;
   infraction_days_to_expire: number;
   amount_of_infractions_for_fine: number;
+  max_days_to_appeal: number;
 }
 
 export enum ChargeTypeEnum {

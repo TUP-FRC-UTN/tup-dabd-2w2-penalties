@@ -38,7 +38,7 @@ export class AppealDaysFormComponent {
   private checkForDays() {
     this.configService.getDays().subscribe(days => {
       this.daysToAppeal = days
-      console.log(this.daysToAppeal)
+      // console.log(this.daysToAppeal)
     })
   }
 
@@ -67,12 +67,12 @@ export class AppealDaysFormComponent {
   onSubmit() {
     if (this.maxDaysToAppeal.valid) {
       const days = this.maxDaysToAppeal.controls['days'].value;
-      console.log(days);
+      // console.log(days);
 
       //todo: el segundo parametro es el id del usuario que hay que cambiar como lo esten usando el grupo 2
       this.configService.putDays(days,10).subscribe({
         next: (result) => {
-          console.log('dias nuevos ', days)
+          // console.log('dias nuevos ', days)
           this.daysToAppeal=result
           this.modalService.dismissAll()
         },
